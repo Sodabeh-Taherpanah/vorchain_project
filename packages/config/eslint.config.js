@@ -11,13 +11,16 @@ import tseslint from 'typescript-eslint';
 const WEB_FILES = ['apps/web/**/*.{js,jsx,mjs,ts,tsx}'];
 const TEST_FILES = ['**/*.test.{ts,tsx}', '**/e2e/**'];
 
-/** Architecture elements (AGENTS.md §4). Paths are relative to `boundaries/root-path`. */
+/**
+ * Architecture elements (AGENTS.md §4), relative to `boundaries/root-path`. Only `src` counts:
+ * package-level tool config (e.g. `vitest.config.ts`) may use the shared presets.
+ */
 const ELEMENTS = [
-  { type: 'engine', pattern: 'packages/engine' },
-  { type: 'parsers', pattern: 'packages/parsers' },
-  { type: 'sample-data', pattern: 'packages/sample-data' },
-  { type: 'config', pattern: 'packages/config' },
-  { type: 'web', pattern: 'apps/web' },
+  { type: 'engine', pattern: 'packages/engine/src' },
+  { type: 'parsers', pattern: 'packages/parsers/src' },
+  { type: 'sample-data', pattern: 'packages/sample-data/src' },
+  { type: 'config', pattern: 'packages/config/src' },
+  { type: 'web', pattern: 'apps/web/src' },
 ];
 
 const toElements = (/** @type {string[]} */ types) => ({
@@ -27,41 +30,39 @@ const toElements = (/** @type {string[]} */ types) => ({
 /**
  * Dependency rule `web -> parsers -> engine` (ADR-0002, ADR-0010).
  * Default is "allow" so imports inside one element and of declared npm packages keep working;
- * the policies below forbid every edge the architecture does not allow.
+ * the policies forbid every edge the architecture does not allow. Module selectors take plain
+ * micromatch strings or arrays (`{ anyOf }` is only valid for element types and file categories).
  */
 const BOUNDARY_POLICIES = [
-  // Nothing may depend on the web app.
+  // Nothing may depend on the web app, resolved or not.
   { disallow: { to: { module: { source: '@vorchain/web' } } } },
   { from: { element: { type: '!web' } }, disallow: toElements(['web']) },
-  // The engine is pure: no internal packages, no npm packages, no Node core modules.
+  // The engine depends on no other workspace package.
   {
     from: { element: { type: 'engine' } },
     disallow: toElements(['parsers', 'sample-data', 'config', 'web']),
   },
   {
     from: { element: { type: 'engine' } },
-    disallow: { to: { module: { origin: { anyOf: ['external', 'core'] } } } },
-  },
-  {
-    from: { element: { type: 'engine' } },
     disallow: { to: { module: { source: '@vorchain/*' } } },
   },
-  // parsers -> engine only; sample-data -> engine only.
-  {
-    from: { element: { type: 'parsers' } },
-    disallow: toElements(['sample-data', 'web']),
-  },
-  {
-    from: { element: { type: 'sample-data' } },
-    disallow: toElements(['parsers', 'web']),
-  },
+  // parsers -> engine; sample-data -> engine. Neither may use UI frameworks.
+  { from: { element: { type: 'parsers' } }, disallow: toElements(['sample-data', 'config']) },
+  { from: { element: { type: 'sample-data' } }, disallow: toElements(['parsers', 'config']) },
   {
     from: { element: { types: { anyOf: ['parsers', 'sample-data'] } } },
-    disallow: {
-      to: { module: { source: { anyOf: ['@vorchain/web', 'react', 'react-dom', 'next'] } } },
-    },
+    disallow: { to: { module: { source: ['react', 'react-dom', 'next', 'next/**'] } } },
   },
 ];
+
+/**
+ * Engine production code is pure (AGENTS.md §2): no npm packages and no Node core modules.
+ * Engine tests may import test tooling (vitest, fast-check), so this skips test files.
+ */
+const ENGINE_PURITY_POLICY = {
+  from: { element: { type: 'engine' } },
+  disallow: { to: { module: { origin: ['external', 'core'] } } },
+};
 
 /**
  * @param {{ rootDir: string }} options `rootDir` is the absolute monorepo root.
@@ -104,6 +105,15 @@ export function createEslintConfig({ rootDir }) {
       files: ['**/*.{js,mjs,cjs}'],
       extends: [tseslint.configs.disableTypeChecked],
     },
+    // Next.js (React, hooks, import, Core Web Vitals) and full jsx-a11y, only for the web app.
+    ...nextVitals.map((config) => ({ ...config, files: WEB_FILES })),
+    {
+      name: 'vorchain/web',
+      files: WEB_FILES,
+      settings: { next: { rootDir: `${rootDir}/apps/web` } },
+      languageOptions: { globals: { ...globals.browser } },
+      rules: { ...jsxA11y.flatConfigs.recommended.rules },
+    },
     {
       name: 'vorchain/boundaries',
       files: ['apps/*/**/*.{ts,tsx}', 'packages/*/**/*.{ts,tsx}'],
@@ -111,28 +121,35 @@ export function createEslintConfig({ rootDir }) {
       settings: {
         'boundaries/root-path': rootDir,
         'boundaries/elements': ELEMENTS,
-        'boundaries/include': ['apps/**/*', 'packages/**/*'],
         'import/resolver': {
           typescript: {
             alwaysTryTypes: true,
-            project: ['apps/*/tsconfig.json', 'packages/*/tsconfig.json'].map(
-              (glob) => `${rootDir}/${glob}`,
-            ),
+            noWarnOnMultipleProjects: true,
+            project: [`${rootDir}/apps/*/tsconfig.json`, `${rootDir}/packages/*/tsconfig.json`],
           },
         },
       },
       rules: {
-        'boundaries/dependencies': ['error', { default: 'allow', policies: BOUNDARY_POLICIES }],
+        'boundaries/dependencies': [
+          'error',
+          { default: 'allow', checkAllOrigins: true, policies: BOUNDARY_POLICIES },
+        ],
       },
     },
-    // Next.js (React, hooks, import, Core Web Vitals) and full jsx-a11y, only for the web app.
-    ...nextVitals.map((config) => ({ ...config, files: config.files ?? WEB_FILES })),
     {
-      name: 'vorchain/web',
-      files: WEB_FILES,
-      settings: { next: { rootDir: `${rootDir}/apps/web` } },
-      languageOptions: { globals: { ...globals.browser } },
-      rules: { ...jsxA11y.flatConfigs.recommended.rules },
+      name: 'vorchain/boundaries/engine-purity',
+      files: ['packages/engine/src/**/*.ts'],
+      ignores: TEST_FILES,
+      rules: {
+        'boundaries/dependencies': [
+          'error',
+          {
+            default: 'allow',
+            checkAllOrigins: true,
+            policies: [...BOUNDARY_POLICIES, ENGINE_PURITY_POLICY],
+          },
+        ],
+      },
     },
     {
       name: 'vorchain/tests',

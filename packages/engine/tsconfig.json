@@ -1,0 +1,9 @@
+{
+  "extends": "@vorchain/config/tsconfig.base.json",
+  "compilerOptions": {
+    // Pure core (ADR-0010): no DOM and no Node types, so browser or Node APIs fail to compile.
+    "lib": ["ES2023"],
+    "types": []
+  },
+  "include": ["src", "vitest.config.ts"]
+}

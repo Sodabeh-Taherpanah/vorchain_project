@@ -38,3 +38,6 @@ pnpm-debug.log*
 
 # Claude Code local settings
 .claude/settings.local.json
+
+# Next.js generated types
+next-env.d.ts
