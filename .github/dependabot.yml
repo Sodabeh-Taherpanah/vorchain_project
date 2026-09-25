@@ -1,0 +1,49 @@
+# Dependency updates (AGENTS.md §3). Commit messages follow Conventional Commits:
+# npm -> "build(deps): ...", GitHub Actions -> "ci(deps): ...".
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:00'
+      timezone: Europe/Berlin
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: build
+      include: scope
+    groups:
+      # One PR for all minor/patch updates per dependency type; majors come one by one.
+      production:
+        dependency-type: production
+        update-types: [minor, patch]
+      development:
+        dependency-type: development
+        update-types: [minor, patch]
+    ignore:
+      # ADR-0010: stay on TypeScript 6 and ESLint 9 until typescript-eslint and jsx-a11y
+      # support the next majors. Supersede the ADR, then remove these entries.
+      - dependency-name: typescript
+        versions: ['>=7']
+      - dependency-name: eslint
+        versions: ['>=10']
+      - dependency-name: '@eslint/js'
+        versions: ['>=10']
+      # ADR-0002: Node 24 LTS; Node types follow the runtime major.
+      - dependency-name: '@types/node'
+        update-types: [version-update:semver-major]
+
+  - package-ecosystem: github-actions
+    directories:
+      - /
+      - /.github/actions/*
+    schedule:
+      interval: monthly
+      timezone: Europe/Berlin
+    commit-message:
+      prefix: ci
+      include: scope
+    groups:
+      github-actions:
+        patterns: ['*']
