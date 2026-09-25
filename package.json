@@ -1,0 +1,26 @@
+{
+  "name": "vorchain",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Vorchain: see the material shortages your ERP does not show.",
+  "type": "module",
+  "packageManager": "pnpm@12.6.0",
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "test:e2e": "turbo run test:e2e",
+    "coverage": "turbo run coverage",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lhci": "node -e \"console.log('Lighthouse CI is not set up yet; it arrives with P1-27 (docs/backlog.md).')\""
+  },
+  "devDependencies": {
+    "turbo": "2.11.4"
+  }
+}
