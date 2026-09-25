@@ -1,0 +1,40 @@
+{
+  "name": "@vorchain/config",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Shared TypeScript, ESLint, Prettier and Vitest presets for the Vorchain workspace.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./vitest": "./src/vitest-preset.ts",
+    "./eslint": "./eslint.config.js",
+    "./prettier": "./prettier.config.js",
+    "./tsconfig.base.json": "./tsconfig.base.json"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "@eslint/js": "^9.39.5",
+    "eslint-config-next": "^16.3.6",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-import-resolver-typescript": "^4.4.5",
+    "eslint-plugin-boundaries": "^7.2.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "globals": "^17.12.0",
+    "typescript-eslint": "^8.70.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.6",
+    "@vitest/coverage-v8": "^5.0.2",
+    "typescript": "~6.0.3",
+    "vite": "^8.3.1",
+    "vitest": "^5.0.2"
+  },
+  "peerDependencies": {
+    "vitest": "^5.0.2"
+  }
+}

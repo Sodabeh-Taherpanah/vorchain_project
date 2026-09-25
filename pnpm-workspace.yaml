@@ -2,10 +2,17 @@ packages:
   - apps/*
   - packages/*
 
-# pnpm reads its own settings from this file; .npmrc keeps the registry and engine-strict
-# for npm-compatible tooling.
+# pnpm 11+ reads its own settings from this file (.npmrc keeps registry and engine-strict).
 engineStrict: true
 
+# pnpm blocks dependency build scripts unless listed here (supply-chain hardening).
+# false = never run: these packages ship prebuilt binaries via optionalDependencies,
+# so their postinstall scripts are not needed (and native compilation is not wanted in CI).
+allowBuilds:
+  unrs-resolver: false
+
+# pnpm's default minimumReleaseAge rejects versions published in the last day.
+# These exact versions were reviewed and pinned by hand (ADR-0002).
 minimumReleaseAgeExclude:
   - '@turbo/darwin-64@2.11.4'
   - '@turbo/darwin-arm64@2.11.4'
@@ -14,3 +21,7 @@ minimumReleaseAgeExclude:
   - '@turbo/windows-64@2.11.4'
   - '@turbo/windows-arm64@2.11.4'
   - turbo@2.11.4
+  - '@vitest/coverage-v8@5.0.2'
+  - '@vitest/mocker@5.0.2'
+  - '@vitest/spy@5.0.2'
+  - vitest@5.0.2

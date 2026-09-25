@@ -1,0 +1,17 @@
+pnpm-lock.yaml
+node_modules/
+.next/
+.turbo/
+coverage/
+dist/
+playwright-report/
+test-results/
+next-env.d.ts
+CHANGELOG.md
+
+# Read-only reference implementation and its golden files.
+reference/
+
+# Prose owned by the architect agent; formatted by hand, not by Prettier.
+docs/
+*.md
