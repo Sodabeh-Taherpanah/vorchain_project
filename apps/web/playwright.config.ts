@@ -3,7 +3,8 @@ import { defineConfig, devices } from '@playwright/test';
 const PORT = 3100;
 // `localhost`, not `127.0.0.1`: with `--hostname 127.0.0.1`, Next.js 16 turns the proxy's rewrite
 // (e.g. /en/contact -> /en/kontakt) into an absolute `localhost` URL, treats it as external and
-// runs the proxy again, which redirects back to /en/contact in an endless loop.
+// runs the proxy again, which redirects back to /en/contact in an endless loop. Upstream bug:
+// https://github.com/vercel/next.js/issues/94745 (details in ADR-0004, Consequences).
 const HOSTNAME = 'localhost';
 const BASE_URL = `http://${HOSTNAME}:${String(PORT)}`;
 const isCI = Boolean(process.env.CI);
