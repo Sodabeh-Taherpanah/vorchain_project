@@ -312,14 +312,20 @@ def random_tables(as_of, horizon):
 
 
 def projection_vectors():
-    cases = []
-    for name in ("sample_data", "sample_data_de"):
+    def load_sample(name):
         folder = ROOT / "reference" / "python-prototype" / name
-        tables = {t: load_table(folder, t) for t in
-                  ("materials", "open_purchase_orders", "demand", "supplier_history")}
-        cases.append({"name": name, "asOf": AS_OF.isoformat(), "horizonDays": 28,
-                      "input": tables_payload(tables),
-                      "expected": run_analyse(tables, AS_OF, 28)})
+        return {t: load_table(folder, t) for t in
+                ("materials", "open_purchase_orders", "demand", "supplier_history")}
+
+    # sample_data_de differs only in headers, formats and descriptions; the fields the projection
+    # reads are the same, so embedding it again would double this section without new engine
+    # coverage. Loader parity for the German files is the parsers' job (P1-09, P1-10).
+    tables, tables_de = load_sample("sample_data"), load_sample("sample_data_de")
+    expected = run_analyse(tables, AS_OF, 28)
+    assert tables_payload(tables_de) == tables_payload(tables)
+    assert run_analyse(tables_de, AS_OF, 28) == expected
+    cases = [{"name": "sample_data", "asOf": AS_OF.isoformat(), "horizonDays": 28,
+              "input": tables_payload(tables), "expected": expected}]
     for i in range(40):
         as_of = AS_OF + timedelta(days=rng.randint(0, 6))  # every weekday and weekend day
         horizon = rng.choice([1, 10, 28, rng.randint(0, 45)])

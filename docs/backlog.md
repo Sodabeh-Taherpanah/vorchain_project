@@ -234,7 +234,8 @@ order.
   by their P80, as in the prototype. A negative horizon projects no day (Python `range`); a
   fractional one throws. `projectionSeries` uses the first row of a duplicated material and throws
   `RangeError` for an unknown one. Parity: `python-vectors.test.ts` replays 150 direct `project`
-  calls and every `project` call `analyse` makes on both sample datasets and 40 random datasets.
+  calls and every `project` call `analyse` makes on `sample_data` and 40 random datasets
+  (`sample_data_de` loads to the same input; the generator asserts that instead of storing it).
 
 ---
 

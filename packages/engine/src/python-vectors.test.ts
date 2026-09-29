@@ -23,7 +23,7 @@ import type { AnalysisInput, DeliveryRecord } from './types.ts';
  * hand-written tables in dates.test.ts and rounding.test.ts document intent; these vectors guard
  * against cases nobody thought to write down (random dates across years 1..9999, random bit
  * patterns for rounding, random delivery histories with weekend dates and missing values, random
- * stock projections, plus both prototype sample datasets run through the prototype's `analyse`).
+ * stock projections, plus the prototype sample dataset run through the prototype's `analyse`).
  */
 
 function d(input: string): IsoDate {
@@ -166,8 +166,8 @@ describe('CPython parity vectors', () => {
     expect(supplierStatsVectors.length).toBeGreaterThan(50);
     expect(projectVectors.length).toBeGreaterThan(100);
     expect(projectionVectors.length).toBeGreaterThan(40);
+    // sample_data_de loads to the same projection input; the generator asserts that instead.
     expect(projectionVectors.map((v) => v.name)).toContain('sample_data');
-    expect(projectionVectors.map((v) => v.name)).toContain('sample_data_de');
   });
 
   it('addWorkdays matches add_workdays', () => {
