@@ -55,6 +55,7 @@ packages/config       shared tsconfig, ESLint, Prettier and Vitest presets
 | CI and runbooks | [`docs/runbooks/`](docs/runbooks/ci.md) |
 | Conventions for humans and AI agents | [`AGENTS.md`](AGENTS.md) |
 | Reference algorithm (Python) | [`reference/python-prototype/`](reference/python-prototype/) |
+| Engine API and parity process | [`packages/engine/README.md`](packages/engine/README.md) |
 
 ## Working with AI agents
 Start with [`START_HERE.md`](START_HERE.md). Agents: **architect** → **builder** → **qa** → **devops**.

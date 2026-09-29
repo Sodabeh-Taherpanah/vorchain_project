@@ -313,7 +313,7 @@ order.
 ---
 
 ## P1-06: Engine: parity test against Python golden files + property tests + coverage gate
-- [ ] Done
+- [x] Done
 - **Owner:** builder
 - **Why:** proves the TS engine equals the Python reference before any UI depends on it (ADR-0005).
 - **Acceptance criteria:**
@@ -336,6 +336,17 @@ order.
   - `test(engine): add parity test against python golden output`
   - `test(engine): add property-based tests for projection and ranking`
   - `docs(engine): document public api and parity process`
+- **Note (P1-06):** `test/parity.test.ts` runs the public `analyse` on the English sample (test
+  loader in `test/support/`) and compares every golden column exactly, plus the summary counts;
+  `golden/sample_data_de.json` must equal the English golden (German CSV parsing is P1-10). The
+  golden encodings (`"yes"`/`"no"`, `"none"`, int or float score) are mapped in
+  `test/support/golden.ts`; supplier stats are sorted with `compareCodePoints` first. Overdue-PO
+  output (option B) is not compared. No lint override was needed: the engine purity policy only
+  covers `src/`, and `test/` has its own tsconfig with Node types (`@types/node` added as an engine
+  devDependency). fast-check runs with a fixed seed from `test/setup/fast-check.ts` (override:
+  `FC_SEED=<int>`); two report-level properties were added to `analyse.test.ts`. The 95 % gate
+  already failed `pnpm coverage` in CI since Task 0 (unchanged). `packages/engine/turbo.json`
+  hashes `reference/python-prototype/**` and `FC_SEED` for `test` and `coverage`.
 
 ---
 
