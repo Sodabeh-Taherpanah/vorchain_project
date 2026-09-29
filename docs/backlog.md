@@ -896,7 +896,7 @@ order.
 | Q1 | Accept Vercel Pro (~USD 20/month) for commercial hosting? (ADR-0006) | Yes; fallback Cloudflare Workers | P1-14 |
 | Q2 | Brevo account and sender domain for the contact form? (ADR-0007) | Brevo, owner sets up SPF/DKIM | P1-25 |
 | Q3 | Should `1.234` (no comma) mean 1234 in German files? The prototype parses it as 1.234. | Keep prototype behaviour for parity; revisit with a versioned change | P1-08 |
-| Q4 | Overdue POs (promised before as-of date) are ignored by the prototype, so they never arrive in either view. Is that intended? | Keep for parity; flag as a Phase 1.1 domain improvement (would need new golden files) | P1-03 |
+| Q4 | Overdue POs (promised before the as-of date) are dropped from the ERP view but can arrive in the realistic view after the P80 shift, so the realistic view can look less alarming and a material the ERP flags can drop out of the report. Which of options A-D in ADR-0005 item 5? | Keep for parity (pinned by a test); owner picks A-D, B (inform without changing numbers) is recommended | P1-03, P1-05, P1-17 |
 | Q5 | The prototype maps `Wunschtermin` (requested date) to the promised date. Keep? | Keep for parity | P1-09 |
 | Q6 | Plausible (paid, EU) or Umami (free tier) for analytics? (ADR-0012) | Plausible | P1-26 |
 | Q7 | Domain name and final brand assets (logo, colours) | Text logo, tokens per spec §6 | P1-13, P1-28 |
