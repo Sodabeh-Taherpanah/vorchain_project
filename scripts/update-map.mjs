@@ -14,13 +14,19 @@ const re = /^## (Task 0|P1-\d{2}):[^\n]*\n+- \[( |x|X)\] Done/gm;
 for (const m of backlog.matchAll(re)) tasks.push({ id: m[1], done: m[2] !== ' ' });
 
 const TRACKS = [
-  ['پایه', 'ابزار و CI', ['Task 0']],
-  ['موتور', 'منطق محصول', [1, 2, 3, 4, 5, 6]],
-  ['خواندن فایل', 'CSV و Excel', [7, 8, 9, 10, 11]],
-  ['اسکلت سایت', 'زبان، طراحی، انتشار', [12, 13, 14]],
-  ['دمو', 'صفحه اصلی محصول', [15, 16, 17, 18, 19, 20]],
-  ['صفحه معرفی', 'landing و SEO', [21, 22, 23]],
-  ['قانونی و انتشار', 'تماس، امنیت، دامنه', [24, 25, 26, 27, 28]],
+  ['پایه', 'Foundation', 'ابزار و CI', 'Tooling &amp; CI', ['Task 0']],
+  ['موتور', 'Engine', 'منطق محصول', 'Product logic', [1, 2, 3, 4, 5, 6]],
+  ['خواندن فایل', 'Parsers', 'CSV و Excel', 'CSV &amp; Excel', [7, 8, 9, 10, 11]],
+  ['اسکلت سایت', 'Web shell', 'زبان، طراحی، انتشار', 'i18n, design, deploy', [12, 13, 14]],
+  ['دمو', 'Demo', 'صفحه اصلی محصول', 'Interactive demo', [15, 16, 17, 18, 19, 20]],
+  ['صفحه معرفی', 'Landing page', 'landing و SEO', 'Marketing &amp; SEO', [21, 22, 23]],
+  [
+    'قانونی و انتشار',
+    'Legal &amp; launch',
+    'تماس، امنیت، دامنه',
+    'Contact, security, domain',
+    [24, 25, 26, 27, 28],
+  ],
 ];
 const idOf = (n) => (typeof n === 'number' ? `P1-${String(n).padStart(2, '0')}` : n);
 const status = new Map(tasks.map((t) => [t.id, t.done]));
@@ -33,8 +39,8 @@ const chip = (id) => {
   return `<span class="${cls}">${id}</span>`;
 };
 const rows = TRACKS.map(
-  ([name, sub, ids]) =>
-    `    <div class="track"><div class="name">${name}<small>${sub}</small></div><div class="chips">${ids
+  ([name, nameEn, sub, subEn, ids]) =>
+    `    <div class="track"><div class="name">${name} <span class="en">${nameEn}</span><small>${sub} · <span class="en">${subEn}</span></small></div><div class="chips">${ids
       .map((n) => chip(idOf(n)))
       .join('')}</div></div>`,
 ).join('\n');

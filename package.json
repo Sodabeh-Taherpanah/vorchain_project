@@ -19,6 +19,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lhci": "node -e \"console.log('Lighthouse CI is not set up yet; it arrives with P1-27 (docs/backlog.md).')\"",
+    "check": "turbo run lint typecheck test",
+    "check:all": "prettier --check . && turbo run lint typecheck test build test:e2e",
     "map": "node scripts/update-map.mjs",
     "prepare": "lefthook install"
   },
