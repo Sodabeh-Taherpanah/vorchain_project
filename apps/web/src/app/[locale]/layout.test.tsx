@@ -1,7 +1,26 @@
+import { createTranslator } from 'next-intl';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import LocaleLayout, { dynamicParams, generateStaticParams } from './layout.tsx';
+import de from '../../../messages/de.json';
+import en from '../../../messages/en.json';
+import LocaleLayout, { dynamicParams, generateMetadata, generateStaticParams } from './layout.tsx';
+
+const catalogs = { de, en } as const;
+
+// In Next.js the request config resolves the locale from the root param; here each test picks it.
+const request = vi.hoisted((): { locale: 'de' | 'en' } => ({ locale: 'de' }));
+
+vi.mock('next-intl/server', () => ({
+  getTranslations: (namespace: 'metadata') =>
+    Promise.resolve(
+      createTranslator({
+        locale: request.locale,
+        messages: catalogs[request.locale],
+        namespace,
+      }),
+    ),
+}));
 
 // The root layout renders <html>, which Testing Library cannot mount into a container,
 // so its output is checked as static markup.
@@ -31,4 +50,22 @@ describe('LocaleLayout', () => {
     expect(generateStaticParams()).toEqual([{ locale: 'de' }, { locale: 'en' }]);
     expect(dynamicParams).toBe(false);
   });
+});
+
+describe('generateMetadata', () => {
+  beforeEach(() => {
+    request.locale = 'de';
+  });
+
+  it.each(['de', 'en'] as const)(
+    'uses the %s title and description from the message catalog',
+    async (locale) => {
+      request.locale = locale;
+
+      await expect(generateMetadata()).resolves.toEqual({
+        title: catalogs[locale].metadata.title,
+        description: catalogs[locale].metadata.description,
+      });
+    },
+  );
 });
