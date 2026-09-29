@@ -1,0 +1,14 @@
+{
+  "$schema": "https://turborepo.com/schema.json",
+  "extends": ["//"],
+  "tasks": {
+    "test": {
+      "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/reference/python-prototype/**"],
+      "env": ["FC_SEED"]
+    },
+    "coverage": {
+      "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/reference/python-prototype/**"],
+      "env": ["FC_SEED"]
+    }
+  }
+}

@@ -10,11 +10,12 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.pure.json && tsc --noEmit -p test",
     "test": "vitest run",
     "coverage": "vitest run --coverage"
   },
   "devDependencies": {
+    "@types/node": "^24.13.6",
     "@vitest/coverage-v8": "^5.0.2",
     "@vorchain/config": "workspace:*",
     "fast-check": "^4.10.2",
