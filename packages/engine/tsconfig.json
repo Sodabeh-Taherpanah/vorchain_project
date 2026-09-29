@@ -1,7 +1,8 @@
 {
   "extends": "@vorchain/config/tsconfig.base.json",
   "compilerOptions": {
-    // Pure core (ADR-0010): no DOM and no Node types, so browser or Node APIs fail to compile.
+    // Pure core (ADR-0010): no DOM and no Node types. Tests here import Vitest, whose types pull
+    // in Node's, so `tsconfig.pure.json` is what makes Node APIs in shipped code fail to compile.
     "lib": ["ES2023"],
     "types": []
   },

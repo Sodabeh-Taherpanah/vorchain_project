@@ -1,0 +1,9 @@
+{
+  // Test-only code under `test/` may use Node (e.g. `node:fs` to read the golden files, P1-06).
+  // The engine's `src` stays pure: the package tsconfig has `types: []`, so no Node types there.
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "types": ["node"]
+  },
+  "include": ["."]
+}

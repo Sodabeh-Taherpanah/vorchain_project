@@ -609,6 +609,60 @@ describe('analyse: properties', () => {
     );
   });
 
+  it('adding an open PO never creates, worsens or brings forward an exception (ADR-0008)', () => {
+    // The projection-level version lives in projection.test.ts; this checks the whole pipeline
+    // (receipts, both views, severity, critical date) through `analyse`. A new PO adds stock in
+    // both views and does not touch the supplier statistics, so no problem can appear earlier.
+    const extraOrder = (horizonDays: number) =>
+      fc.record({
+        id: fc.constantFrom(...ids),
+        supplier: fc.constantFrom('S1', 'S2', 'SX'),
+        qty: fc.integer({ min: 1, max: 200 }),
+        at: offset(horizonDays),
+      });
+    const withExtra = anyQuantities.chain((sample) =>
+      fc.record({ sample: fc.constant(sample), extra: extraOrder(sample.horizonDays) }),
+    );
+    fc.assert(
+      fc.property(withExtra, ({ sample, extra }) => {
+        const options = { asOf: AS_OF, horizonDays: sample.horizonDays };
+        // One row per material, so an exception maps to exactly one row before and after.
+        const materials = sample.data.materials.filter(
+          (m, i, all) => all.findIndex((other) => other.id === m.id) === i,
+        );
+        const data = { ...sample.data, materials };
+        const before = analyse(toInput(data), options);
+        const after = analyse(toInput({ ...data, orders: [...data.orders, extra] }), options);
+        const earlier = new Map(before.exceptions.map((e) => [e.materialId, e]));
+        for (const e of after.exceptions) {
+          const previous = earlier.get(e.materialId);
+          expect(previous).toBeDefined();
+          if (previous === undefined) continue;
+          if (e.severity === 'CRITICAL') expect(previous.severity).toBe('CRITICAL');
+          if (e.severity === previous.severity) {
+            expect(e.criticalDate >= previous.criticalDate).toBe(true);
+          }
+        }
+      }),
+    );
+  });
+
+  it('the ERP view never shows a problem earlier than the realistic view (no overdue POs)', () => {
+    // ADR-0008: "realistic view is never better than ERP view" for inputs whose POs are all
+    // promised on or after asOf (an overdue PO counts only in the realistic view, ADR-0005 item 5).
+    fc.assert(
+      fc.property(anyQuantities, ({ data, horizonDays }) => {
+        const notOverdue = { ...data, orders: data.orders.filter((o) => o.at >= 0) };
+        const report = analyse(toInput(notOverdue), { asOf: AS_OF, horizonDays });
+        expect(report.overduePurchaseOrders).toEqual([]);
+        for (const e of report.exceptions) {
+          if (e.erpViewDate !== null) expect(e.erpViewDate >= e.criticalDate).toBe(true);
+          expect(e.hidden).toBe(e.erpViewDate !== e.criticalDate);
+        }
+      }),
+    );
+  });
+
   it('equals a stable sort of the material rows analysed one by one (ties keep file order)', () => {
     fc.assert(
       fc.property(anyQuantities, ({ data, horizonDays }) => {

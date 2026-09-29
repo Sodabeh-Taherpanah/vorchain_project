@@ -1,0 +1,8 @@
+{
+  // Purity check (AGENTS.md §2): only the shipped engine code, without tests or tool config.
+  // `tsconfig.json` also covers `*.test.ts` and `vitest.config.ts`, whose Vitest/Vite types pull
+  // in `@types/node` despite `types: []`, so `process`, `Buffer` or `node:fs` compiled in `src`.
+  "extends": "./tsconfig.json",
+  "include": ["src"],
+  "exclude": ["src/**/*.test.ts", "src/__fixtures__"]
+}
