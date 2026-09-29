@@ -200,7 +200,7 @@ order.
 ---
 
 ## P1-03: Engine: receipts and day-by-day stock projection
-- [ ] Done
+- [x] Done
 - **Owner:** builder
 - **Why:** the core of the product: project stock twice (ERP view vs realistic view)
   (spec §5.2 steps 2 to 4).
@@ -228,6 +228,13 @@ order.
 - **Commits:**
   - `feat(engine): build erp and realistic receipt schedules`
   - `feat(engine): project stock day by day over the horizon`
+- **Note (P1-03):** besides the AC functions, the engine exports the building blocks P1-04/P1-05
+  need: `receiptDelayDays` (P80 or 0), `realisticReceiptDate`, `demandByMaterial` and the
+  `DailyQuantities` / `ReceiptSchedule` types. Suppliers with too little history are still shifted
+  by their P80, as in the prototype. A negative horizon projects no day (Python `range`); a
+  fractional one throws. `projectionSeries` uses the first row of a duplicated material and throws
+  `RangeError` for an unknown one. Parity: `python-vectors.test.ts` replays 150 direct `project`
+  calls and every `project` call `analyse` makes on both sample datasets and 40 random datasets.
 
 ---
 

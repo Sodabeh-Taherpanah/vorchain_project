@@ -124,17 +124,18 @@ flowchart TB
     rounding["rounding.ts<br/>pyRound (CPython round semantics)"]
     stats["supplier-stats.ts<br/>percentile, computeSupplierStats,<br/>statsBySupplier"]
     compare["compare.ts<br/>compareCodePoints (Python str order)"]
-    receipts["receipts.ts<br/>erp vs realistic receipt dates"]
-    projection["projection.ts<br/>projectStock, projectionSeries"]
+    daily["daily-quantities.ts<br/>DailyQuantities (qty per day)"]
+    receipts["receipts.ts<br/>buildReceipts, realisticReceiptDate,<br/>receiptDelayDays"]
+    projection["projection.ts<br/>projectStock, demandByMaterial,<br/>projectionSeries"]
     ranking["ranking.ts<br/>detectException, severity,<br/>hidden flag, score, stable sort"]
     explain["explanations.ts<br/>Reason / Action codes + params"]
     analyse["analyse.ts<br/>public entry: analyse(input, options)"]
   end
   analyse --> stats & receipts & projection & ranking & explain
-  receipts --> stats & dates
+  receipts --> dates & daily
   stats --> dates & rounding & compare
   ranking --> rounding & dates
-  projection --> dates
+  projection --> dates & daily & receipts & stats
 ```
 
 ### 4.3 Parser components (`packages/parsers`)
@@ -306,7 +307,20 @@ interface ProjectionSeries {
 Helpers exported since P1-01 (`dates.ts`, `rounding.ts`, `result.ts`): `parseIsoDate`,
 `isoDateFromParts`, `addDays`, `diffDays`, `weekday` (Mon = 0), `isWorkday`, `addWorkdays`,
 `workdaysBetween`, `pyRound(x, ndigits?)`, `ok`, `err`, and the ID brands `materialId`,
-`supplierId`, `poId`.
+`supplierId`, `poId`. Since P1-02: `percentile`, `computeSupplierStats`, `statsBySupplier`.
+
+Building blocks exported since P1-03 (used by `analyse` in P1-04 and the explanations in P1-05):
+
+```ts
+type DailyQuantities = ReadonlyMap<IsoDate, number>;   // qty per day, first-appearance order
+interface ReceiptSchedule { erp: DailyQuantities; realistic: DailyQuantities }
+function receiptDelayDays(supplierId: SupplierId, stats: SupplierStatsMap): number; // p80 or 0
+function realisticReceiptDate(po: PurchaseOrder, stats: SupplierStatsMap): IsoDate;
+function buildReceipts(pos: PurchaseOrder[], stats: SupplierStatsMap): ReadonlyMap<MaterialId, ReceiptSchedule>;
+function demandByMaterial(demand: DemandLine[]): ReadonlyMap<MaterialId, DailyQuantities>;
+function projectStock(input: { onHand; demandByDay; receiptsByDay; asOf; horizonDays; safetyStock }):
+  { firstStockOut: IsoDate | null; firstBelowSafety: IsoDate | null; minStock: number };
+```
 
 Supplier names are resolved in the UI (`suppliers` table), not in the engine, so the engine output
 stays free of display text.
