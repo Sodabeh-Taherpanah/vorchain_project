@@ -8,9 +8,12 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
+  // Browser extensions (Grammarly, password managers, dark-mode tools) add attributes to <html> and
+  // <body> before hydration. suppressHydrationWarning only covers these two elements' own
+  // attributes, so real mismatches in the page content still surface.
   return (
-    <html lang="de">
-      <body>{children}</body>
+    <html lang="de" suppressHydrationWarning>
+      <body suppressHydrationWarning>{children}</body>
     </html>
   );
 }

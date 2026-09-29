@@ -233,12 +233,23 @@ sequenceDiagram
 
 ## 7. Engine public API (contract for builder)
 
-The engine API is JSON-in / JSON-out so the same contract can back a Phase 2 service. Names are a
-starting point; the builder may refine them in P1-01, and must update this section if they change.
+The engine API is JSON-in / JSON-out so the same contract can back a Phase 2 service. The types
+below are defined in `packages/engine/src/types.ts` (P1-01) with TSDoc on every field; this is a
+condensed view (all fields are `readonly` in code). Update this section when the contract changes.
 
 ```ts
-type IsoDate = string & { readonly __brand: 'IsoDate' };        // 'YYYY-MM-DD', no time zone
-type MaterialId = string & { readonly __brand: 'MaterialId' };  // likewise SupplierId, PoId
+type IsoDate = Brand<string, 'IsoDate'>;        // 'YYYY-MM-DD', years 0001..9999, no time zone
+type MaterialId = Brand<string, 'MaterialId'>;  // likewise SupplierId, PoId (compile-time brand only)
+type Result<T, E> = { ok: true; value: T } | { ok: false; error: E };
+
+interface Material {
+  materialId: MaterialId; description: string; mainSupplierId: SupplierId | null;
+  onHand: number; safetyStock: number /* 0 if missing */; unit: string | null;
+}
+interface PurchaseOrder { poId: PoId; materialId: MaterialId; supplierId: SupplierId; qty: number; promisedDate: IsoDate }
+interface DemandLine { materialId: MaterialId; date: IsoDate; qty: number }
+interface DeliveryRecord { supplierId: SupplierId; promisedDate: IsoDate | null; actualDate: IsoDate | null; poId: PoId | null }
+interface Supplier { supplierId: SupplierId; name: string }
 
 interface AnalysisInput {
   materials: Material[];                 // file order matters (tie-break in ranking)
@@ -278,7 +289,22 @@ type Action =
   | { code: 'PULL_FORWARD'; supplierId: SupplierId; poId: PoId; before: IsoDate }
   | { code: 'EXPEDITE'; poId: PoId; before: IsoDate }
   | { code: 'REVIEW_QTY_OR_DEMAND' };
+
+interface SupplierStats {                // prototype: mean, p80, on_time_rate, n, reliable_stats
+  supplierId: SupplierId; meanDelayDays: number; p80DelayDays: number;
+  onTimeRate: number; deliveries: number; reliable: boolean;
+}
+interface ProjectionSeries {
+  materialId: MaterialId; safetyStock: number;
+  points: { date: IsoDate; demand: number; erpReceipts: number; realisticReceipts: number;
+            erpStock: number; realisticStock: number }[];   // one per day of [asOf, asOf + horizon)
+}
 ```
+
+Helpers exported since P1-01 (`dates.ts`, `rounding.ts`, `result.ts`): `parseIsoDate`,
+`isoDateFromParts`, `addDays`, `diffDays`, `weekday` (Mon = 0), `isWorkday`, `addWorkdays`,
+`workdaysBetween`, `pyRound(x, ndigits?)`, `ok`, `err`, and the ID brands `materialId`,
+`supplierId`, `poId`.
 
 Supplier names are resolved in the UI (`suppliers` table), not in the engine, so the engine output
 stays free of display text.
