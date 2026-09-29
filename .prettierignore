@@ -15,3 +15,6 @@ reference/
 # Prose owned by the architect agent; formatted by hand, not by Prettier.
 docs/
 *.md
+
+# Generated project map (scripts/update-map.mjs).
+PROJECT_MAP.html

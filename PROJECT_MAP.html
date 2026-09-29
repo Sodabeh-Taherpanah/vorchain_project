@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>نقشه پروژه Vorchain</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: one reading column, RTL; a "map" of five zones, then a flow strip, then the task roadmap */
+:root{
+  --bg:#f3f5f4; --surface:#ffffff; --fg:#1b2422; --muted:#5d6b67; --line:#d5dddb;
+  --you:#b86a00; --you-soft:#fdf1df;
+  --brain:#2f5d8a; --brain-soft:#e6eef7;
+  --team:#6b4fa0; --team-soft:#efeaf7;
+  --code:#1f7a5a; --code-soft:#e3f3ec;
+  --ignore:#8a9391; --ignore-soft:#eceeed;
+  --done:#1f7a5a; --next:#b86a00;
+  --f-body:"Vazirmatn",Tahoma,system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#131917; --surface:#1b2321; --fg:#e4ebe9; --muted:#98a6a2; --line:#2e3936;
+  --you:#f0a33c; --you-soft:#33260f; --brain:#7fb0e0; --brain-soft:#172536;
+  --team:#b49ae6; --team-soft:#251d36; --code:#5cc79c; --code-soft:#12291f;
+  --ignore:#7d8784; --ignore-soft:#202826; --done:#5cc79c; --next:#f0a33c; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#131917; --surface:#1b2321; --fg:#e4ebe9; --muted:#98a6a2; --line:#2e3936;
+  --you:#f0a33c; --you-soft:#33260f; --brain:#7fb0e0; --brain-soft:#172536;
+  --team:#b49ae6; --team-soft:#251d36; --code:#5cc79c; --code-soft:#12291f;
+  --ignore:#7d8784; --ignore-soft:#202826; --done:#5cc79c; --next:#f0a33c; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15.5px;line-height:1.8;padding-inline:16px;padding-block:28px 60px}
+.wrap{max-width:980px;margin-inline:auto;display:flex;flex-direction:column;gap:44px}
+h1,h2,h3{text-wrap:balance;line-height:1.35;margin:0}
+h1{font-size:2rem;font-weight:800}
+h2{font-size:1.3rem;font-weight:800;display:flex;gap:10px;align-items:baseline}
+h2 .n{font-family:var(--f-mono);font-size:.85rem;color:var(--muted);font-weight:600}
+p{margin:0}
+.lead{color:var(--muted);max-width:62ch}
+code,.f{font-family:var(--f-mono);font-size:.82em;direction:ltr;unicode-bidi:isolate;background:var(--ignore-soft);padding:1px 6px;border-radius:4px;white-space:nowrap}
+section{display:flex;flex-direction:column;gap:16px}
+
+/* hero callout */
+.start{background:var(--you-soft);border:2px solid var(--you);border-radius:14px;padding:18px 20px;display:flex;flex-direction:column;gap:6px}
+.start strong{color:var(--you)}
+
+/* zones */
+.zones{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.zone{background:var(--surface);border:1px solid var(--line);border-top:5px solid var(--c);border-radius:10px;padding:16px 16px 14px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.zone h3{font-size:1.05rem;color:var(--c)}
+.zone .who{font-size:.8rem;font-weight:700;color:var(--c);background:var(--cs);padding:2px 10px;border-radius:99px;align-self:flex-start}
+.zone ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.zone li{display:flex;flex-direction:column;gap:0;min-width:0}
+.zone li .f{align-self:flex-start;background:var(--cs);color:var(--fg)}
+.zone li span.d{color:var(--muted);font-size:.9rem}
+.z-you{--c:var(--you);--cs:var(--you-soft)} .z-brain{--c:var(--brain);--cs:var(--brain-soft)}
+.z-team{--c:var(--team);--cs:var(--team-soft)} .z-code{--c:var(--code);--cs:var(--code-soft)}
+.z-ign{--c:var(--ignore);--cs:var(--ignore-soft)}
+
+/* flow */
+.flow{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch}
+.step{flex:1 1 150px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:4px;position:relative;min-width:0}
+.step b{font-size:.95rem}
+.step .role{font-family:var(--f-mono);font-size:.75rem;color:var(--team);font-weight:600;direction:ltr;align-self:flex-start}
+.step .out{font-size:.85rem;color:var(--muted)}
+.step.done{border-color:var(--done)} .step.done::after{content:"انجام شد";position:absolute;top:8px;left:10px;font-size:.7rem;font-weight:700;color:var(--done)}
+.step.now{border:2px solid var(--next)} .step.now::after{content:"قدم بعدی";position:absolute;top:8px;left:10px;font-size:.7rem;font-weight:700;color:var(--next)}
+.arrow{align-self:center;color:var(--muted);font-size:1.2rem}
+@media (max-width:640px){.arrow{display:none}}
+
+/* roadmap */
+.tracks{display:flex;flex-direction:column;gap:10px}
+.track{display:grid;grid-template-columns:190px 1fr;gap:12px;align-items:center}
+.track .name{font-weight:700;font-size:.92rem}
+.track .name small{display:block;color:var(--muted);font-weight:400;font-size:.78rem;line-height:1.4}
+.track .name .en{font-family:var(--f-mono);font-size:.74rem;font-weight:600;color:var(--brain);direction:ltr;unicode-bidi:isolate}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-family:var(--f-mono);font-size:.74rem;padding:3px 8px;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--muted);direction:ltr;font-variant-numeric:tabular-nums}
+.chip.done{background:var(--code-soft);border-color:var(--done);color:var(--done);font-weight:600}
+.chip.next{background:var(--you-soft);border:2px solid var(--next);color:var(--next);font-weight:600}
+@media (max-width:560px){.track{grid-template-columns:1fr;gap:4px}}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:.85rem;color:var(--muted)}
+.legend span{display:inline-flex;gap:6px;align-items:center}
+
+/* reading order */
+ol.read{margin:0;padding-inline-start:22px;display:flex;flex-direction:column;gap:10px}
+ol.read li::marker{font-weight:800;color:var(--brain)}
+ol.read .t{color:var(--muted);font-size:.85rem}
+.checks{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.check{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.check h3{font-size:1rem}
+.check .when{font-size:.85rem;color:var(--muted)}
+.cmd{font-family:var(--f-mono);font-size:.85rem;direction:ltr;text-align:left;background:var(--ignore-soft);border-radius:6px;padding:8px 10px;overflow-x:auto;white-space:pre}
+.check ul{margin:0;padding-inline-start:18px;font-size:.9rem;color:var(--muted)}
+</style>
+</head>
+<body style="margin:0">
+
+<div class="wrap" dir="rtl" lang="fa">
+
+<header style="display:flex;flex-direction:column;gap:10px">
+  <h1>نقشه پروژه Vorchain</h1>
+  <p class="lead">حدود ۹۰ فایل داری، ولی همه‌شان به ۵ گروه تقسیم می‌شوند. فقط یک گروه مال توست. بقیه یا «مغز» پروژه‌اند، یا تیم Claude، یا خودِ کد، یا تنظیمات ابزارها که لازم نیست بازشان کنی.</p>
+</header>
+
+<div class="start">
+  <p><strong>قانون اصلی:</strong> برای کار روزانه فقط <span class="f">START_HERE.md</span> را باز کن.</p>
+  <p>برای «مسلط شدن»، ترتیب خواندن پایین صفحه را دنبال کن. همه‌اش حدود ۵۰۰ خط است.</p>
+</div>
+
+<section>
+  <h2><span class="n">۱</span> پنج گروه فایل</h2>
+  <div class="zones">
+
+    <div class="zone z-you">
+      <span class="who">مال تو</span>
+      <h3>دفترچه راهنما</h3>
+      <ul>
+        <li><span class="f">START_HERE.md</span><span class="d">کدام پیام را به Claude بدهی، به چه ترتیبی</span></li>
+        <li><span class="f">README.md</span><span class="d">ویترین پروژه روی GitHub، برای کسی که از بیرون نگاه می‌کند</span></li>
+      </ul>
+    </div>
+
+    <div class="zone z-brain">
+      <span class="who">مغز پروژه · تصمیم‌ها</span>
+      <h3>چه می‌سازیم و چرا</h3>
+      <ul>
+        <li><span class="f">docs/spec/phase-1-demo.md</span><span class="d">تنها فایل spec. <b>چه</b> می‌سازیم: سایت + دموی داخل مرورگر (۸۸ خط)</span></li>
+        <li><span class="f">docs/backlog.md</span><span class="d">لیست ۲۹ تسک به ترتیب. تیک «Done» اینجاست</span></li>
+        <li><span class="f">docs/architecture/</span><span class="d"><b>چطور</b> ساخته می‌شود: نمودارها + واژه‌نامه</span></li>
+        <li><span class="f">docs/adr/</span><span class="d">۱۲ تصمیم فنی، هر کدام یک فایل کوتاه (مثلاً «چرا Next.js»)</span></li>
+        <li><span class="f">docs/runbooks/</span><span class="d">دستورالعمل: راه‌اندازی مک، کار با CI</span></li>
+        <li><span class="f">AGENTS.md</span><span class="d">قانون‌نامه: تکنولوژی‌ها، قواعد کد، تست، git. هر عاملی اول این را می‌خواند</span></li>
+      </ul>
+    </div>
+
+    <div class="zone z-team">
+      <span class="who">تیم Claude</span>
+      <h3>کارمندهای هوش مصنوعی</h3>
+      <ul>
+        <li><span class="f">.claude/agents/architect.md</span><span class="d">برنامه‌ریز. کد نمی‌نویسد. backlog را ساخت</span></li>
+        <li><span class="f">.claude/agents/devops.md</span><span class="d">ابزارها، CI، انتشار سایت</span></li>
+        <li><span class="f">.claude/agents/builder.md</span><span class="d">برنامه‌نویس. هر بار یک تسک</span></li>
+        <li><span class="f">.claude/agents/qa.md</span><span class="d">بازبین و تست‌نویس</span></li>
+        <li><span class="f">CLAUDE.md</span><span class="d">فقط می‌گوید «AGENTS.md را بخوان»</span></li>
+        <li><span class="f">.claude/skills/push</span><span class="d">بعد از هر commit خودکار push کن</span></li>
+      </ul>
+    </div>
+
+    <div class="zone z-code">
+      <span class="who">محصول واقعی</span>
+      <h3>کد</h3>
+      <ul>
+        <li><span class="f">packages/engine</span><span class="d">قلب محصول: محاسبه کمبود مواد. الان خالی است</span></li>
+        <li><span class="f">packages/parsers</span><span class="d">خواندن فایل CSV/Excel مشتری</span></li>
+        <li><span class="f">packages/sample-data</span><span class="d">داده نمونه برای دمو</span></li>
+        <li><span class="f">apps/web</span><span class="d">وب‌سایت (Next.js). الان یک صفحه ساده</span></li>
+        <li><span class="f">reference/python-prototype</span><span class="d">نسخه پایتونی که قبلاً ساختی. کد TypeScript باید همان جواب‌ها را بدهد</span></li>
+      </ul>
+    </div>
+
+    <div class="zone z-ign">
+      <span class="who">نادیده بگیر</span>
+      <h3>تنظیمات ابزارها</h3>
+      <ul>
+        <li><span class="f">.github/agents/</span><span class="d">کپی همان ۴ عامل برای GitHub Copilot</span></li>
+        <li><span class="f">.github/workflows/</span><span class="d">چک‌های خودکار GitHub (CI)</span></li>
+        <li><span class="f">packages/config</span><span class="d">تنظیمات مشترک TypeScript/ESLint</span></li>
+        <li><span class="d">همه فایل‌های نقطه‌دار ریشه، <span class="f">*.config.js</span>، <span class="f">turbo.json</span>، <span class="f">pnpm-*.yaml</span>، <span class="f">lefthook.yml</span></span></li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<section>
+  <h2><span class="n">۲</span> این فایل‌ها چطور به هم وصل‌اند</h2>
+  <p class="lead">تو هدف را نوشتی، معمار آن را به تسک شکست، و حالا سازنده و بازبین تسک به تسک جلو می‌روند.</p>
+  <div class="flow">
+    <div class="step done"><b>تو</b><span class="out">spec و AGENTS.md</span></div>
+    <span class="arrow">←</span>
+    <div class="step done"><span class="role">architect</span><b>برنامه</b><span class="out">backlog + ADR + معماری</span></div>
+    <span class="arrow">←</span>
+    <div class="step done"><span class="role">devops</span><b>Task 0</b><span class="out">ابزارها و CI</span></div>
+    <span class="arrow">←</span>
+    <div class="step now"><span class="role">builder</span><b>P1-01 …</b><span class="out">کد یک تسک</span></div>
+    <span class="arrow">←</span>
+    <div class="step"><span class="role">qa</span><b>بررسی</b><span class="out">تست + تیک Done</span></div>
+  </div>
+  <p class="lead">دو قدم آخر برای هر تسک تکرار می‌شوند: <span class="f">Use the builder agent: Implement P1-01</span> و بعد <span class="f">Use the qa agent: Verify P1-01</span>.</p>
+</section>
+
+<section>
+  <h2><span class="n">۳</span> کجای کار هستی</h2>
+  <p class="lead">۲۹ تسک در ۷ مسیر. این بخش هر بار که <span class="f">docs/backlog.md</span> را commit کنی، خودکار از روی تیک‌های «Done» به‌روز می‌شود.</p>
+  <div class="legend">
+    <span><span class="chip done">■</span> تمام‌شده</span>
+    <span><span class="chip next">■</span> بعدی</span>
+    <span><span class="chip">■</span> مانده</span>
+  </div>
+  <!-- TASKS:START (generated by scripts/update-map.mjs, do not edit by hand) -->
+  <p class="lead"><b>۲ از ۲۹</b> تسک تمام شده · تسک بعدی: <span class="f">P1-02</span> · به‌روزرسانی: <span class="f">2026-09-29</span></p>
+  <div class="tracks">
+    <div class="track"><div class="name">پایه <span class="en">Foundation</span><small>ابزار و CI · <span class="en">Tooling &amp; CI</span></small></div><div class="chips"><span class="chip done">Task 0</span></div></div>
+    <div class="track"><div class="name">موتور <span class="en">Engine</span><small>منطق محصول · <span class="en">Product logic</span></small></div><div class="chips"><span class="chip done">P1-01</span><span class="chip next">P1-02</span><span class="chip">P1-03</span><span class="chip">P1-04</span><span class="chip">P1-05</span><span class="chip">P1-06</span></div></div>
+    <div class="track"><div class="name">خواندن فایل <span class="en">Parsers</span><small>CSV و Excel · <span class="en">CSV &amp; Excel</span></small></div><div class="chips"><span class="chip">P1-07</span><span class="chip">P1-08</span><span class="chip">P1-09</span><span class="chip">P1-10</span><span class="chip">P1-11</span></div></div>
+    <div class="track"><div class="name">اسکلت سایت <span class="en">Web shell</span><small>زبان، طراحی، انتشار · <span class="en">i18n, design, deploy</span></small></div><div class="chips"><span class="chip">P1-12</span><span class="chip">P1-13</span><span class="chip">P1-14</span></div></div>
+    <div class="track"><div class="name">دمو <span class="en">Demo</span><small>صفحه اصلی محصول · <span class="en">Interactive demo</span></small></div><div class="chips"><span class="chip">P1-15</span><span class="chip">P1-16</span><span class="chip">P1-17</span><span class="chip">P1-18</span><span class="chip">P1-19</span><span class="chip">P1-20</span></div></div>
+    <div class="track"><div class="name">صفحه معرفی <span class="en">Landing page</span><small>landing و SEO · <span class="en">Marketing &amp; SEO</span></small></div><div class="chips"><span class="chip">P1-21</span><span class="chip">P1-22</span><span class="chip">P1-23</span></div></div>
+    <div class="track"><div class="name">قانونی و انتشار <span class="en">Legal &amp; launch</span><small>تماس، امنیت، دامنه · <span class="en">Contact, security, domain</span></small></div><div class="chips"><span class="chip">P1-24</span><span class="chip">P1-25</span><span class="chip">P1-26</span><span class="chip">P1-27</span><span class="chip">P1-28</span></div></div>
+  </div>
+  <!-- TASKS:END -->
+</section>
+
+<section>
+  <h2><span class="n">۴</span> بعد از هر تسک: تست کن و ببین</h2>
+  <p class="lead">اول در ترمینال بروی پوشه پروژه: <span class="f">cd ~/my_real_project/vorchain</span></p>
+  <div class="checks">
+    <div class="check">
+      <h3>تست معمولی <span class="f">Quick check</span></h3>
+      <span class="when">بعد از هر تسک · حدود ۱ دقیقه</span>
+      <div class="cmd">pnpm check</div>
+      <ul><li>lint + typecheck + unit tests</li><li>آخرش باید همه سبز باشد، بدون ✗</li></ul>
+    </div>
+    <div class="check">
+      <h3>تست کامل <span class="f">Full check</span></h3>
+      <span class="when">قبل از merge یا آخر هر مسیر · چند دقیقه</span>
+      <div class="cmd">pnpm check:all</div>
+      <ul><li>همان چیزی که GitHub CI اجرا می‌کند: فرمت، lint، تایپ، تست، build و تست مرورگر (e2e)</li><li>بار اول یک‌بار لازم است: <span class="f">pnpm --filter @vorchain/web exec playwright install chromium</span></li></ul>
+    </div>
+    <div class="check">
+      <h3>دیدن سایت <span class="f">See it</span></h3>
+      <span class="when">از مسیر اسکلت سایت (P1-12) به بعد</span>
+      <div class="cmd">pnpm dev</div>
+      <ul><li>بعد در مرورگر: <span class="f">http://localhost:3000</span></li><li>برای بستن: <span class="f">Ctrl + C</span></li></ul>
+    </div>
+  </div>
+  <p class="lead">در مسیرهای موتور و خواندن فایل (P1-01 تا P1-11) چیزی روی صفحه عوض نمی‌شود. آنجا پیشرفت را فقط در تست‌ها می‌بینی: تعداد تست‌های سبز در <span class="f">pnpm check</span> بیشتر می‌شود.</p>
+</section>
+
+<section>
+  <h2><span class="n">۵</span> ترتیب خواندن برای مسلط شدن</h2>
+  <ol class="read">
+    <li><span class="f">docs/spec/phase-1-demo.md</span> · چه می‌سازیم <span class="t">(۸۸ خط، ۱۰ دقیقه)</span></li>
+    <li><span class="f">docs/backlog.md</span> · فقط جدول اول (Overview) <span class="t">(۳۰ خط)</span></li>
+    <li><span class="f">docs/architecture/README.md</span> · نمودارها را نگاه کن، متن را سریع رد شو</li>
+    <li><span class="f">AGENTS.md</span> · بخش ۱ و ۲ کافی است</li>
+    <li><span class="f">reference/python-prototype/shortage_radar.py</span> · منطق اصلی که خودت نوشتی</li>
+    <li><span class="f">docs/adr/</span> · فقط وقتی کنجکاوی «چرا این تکنولوژی؟»</li>
+  </ol>
+</section>
+
+</div>
+</body>
+</html>
