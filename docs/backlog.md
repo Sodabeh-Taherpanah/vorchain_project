@@ -180,20 +180,19 @@ order.
      interpolation; empty -> 0).
   2. `computeSupplierStats(history, { minReliableDeliveries = 3 })` returns `SupplierStats[]`
      (`supplierId`, `mean`, `p80 = max(0, pyRound(percentile(delays, 0.8)))`, `onTimeRate` (delay
-     <= 0), `deliveries`, `reliable`) sorted by `supplierId` in code point order (see note).
+     <= 0), `deliveries`, `reliable`) in order of first appearance (the prototype's dict order).
   3. Rows with a missing `promisedDate` or `actualDate` are skipped.
   4. A lookup helper `statsBySupplier(stats)` returns a `Map` for O(1) access.
 - **Test plan:** table tests: all on time -> p80 0, rate 1; delays `[0,1,2,3,10]` -> p80 4;
   early deliveries (negative delays) -> p80 clamped to 0; half-way rounding case where P80 is exactly
   `x.5` (ties to even); 2 deliveries -> `reliable: false`; skipped rows. fast-check: `0 <= onTimeRate <= 1`,
-  `p80 >= 0`, result independent of history row order.
+  `p80 >= 0`, values per supplier independent of history row order.
 - **Packages:** `packages/engine`
 - **Branch:** `feat/engine-supplier-stats`
 - **Commits:** `feat(engine): compute supplier delay statistics with p80 and on-time rate`
-- **Note (builder, P1-02):** the first draft of AC 2 said "order of first appearance" (the
-  prototype's dict order). The result is sorted by `supplierId` in code point order instead
-  (Python `sorted()`, `compareCodePoints`): the golden files use that order, no prototype output
-  depends on first appearance, and the result no longer depends on history row order. Field names
+- **Note (P1-02):** suppliers keep the order of their first complete history row, as AC 2 says
+  (the owner chose this over sorting by `supplierId`). The golden files sort by `supplierId`, so
+  the P1-06 parity test sorts with `compareCodePoints` before comparing. Field names
   follow the architecture §7 contract (`meanDelayDays`, `p80DelayDays`), not the draft's
   `mean`/`p80`. An exact `x.5` P80 cannot occur with whole-day delays (`(n - 1) * 0.8` has
   fractions of 0.2), so the tie case is tested on `percentile` with `p = 0.5` plus a property.

@@ -268,7 +268,7 @@ interface Report {
   asOf: IsoDate; horizonDays: number;
   summary: { critical: number; warning: number; hidden: number };
   exceptions: ShortageException[];       // sorted by score desc, stable
-  supplierStats: SupplierStats[];         // sorted by supplierId, code point order (Python sorted())
+  supplierStats: SupplierStats[];         // order of first complete history row (prototype dict order)
 }
 interface ShortageException {
   materialId: MaterialId; description: string; mainSupplierId: SupplierId | null;

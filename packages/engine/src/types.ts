@@ -171,11 +171,10 @@ export interface Report {
   /** Sorted by `score` descending; ties keep materials-file order (stable sort). */
   readonly exceptions: readonly ShortageException[];
   /**
-   * One entry per supplier with at least one complete history row, sorted by `supplierId` in code
-   * point order (Python `sorted()`, the order of the golden files), independent of history row
-   * order. The prototype's dict keeps first appearance, but no output depends on that: the golden
-   * files sort by ID and its Markdown table re-sorts by on-time rate (the UI sorts its own table).
-   * Suppliers without usable history are absent.
+   * One entry per supplier with at least one complete history row, in order of the supplier's
+   * first complete row (the prototype's dict order). The golden files sort by `supplierId`, so the
+   * parity test sorts before comparing, and the UI sorts its own table. Suppliers without usable
+   * history are absent.
    */
   readonly supplierStats: readonly SupplierStats[];
 }

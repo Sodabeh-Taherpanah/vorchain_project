@@ -3,7 +3,6 @@
  * `reference/python-prototype/shortage_radar.py`. Delays are signed working days from the promised
  * to the actual delivery date; the realistic view shifts each open PO by its supplier's P80 delay.
  */
-import { compareCodePoints } from './compare.ts';
 import { workdaysBetween } from './dates.ts';
 import type { SupplierId } from './ids.ts';
 import { pyRound } from './rounding.ts';
@@ -53,17 +52,16 @@ export function percentile(values: readonly number[], p: number): number {
  * - `onTimeRate` is the share of deliveries with delay `<= 0`.
  * - `reliable` is `deliveries >= minReliableDeliveries`.
  *
- * The result is sorted by `supplierId` in code point order (Python `sorted()`, as in the golden
- * files), so it does not depend on the order of the history rows.
+ * Suppliers appear in the order of their first complete history row, like the prototype's dict.
+ * The values per supplier do not depend on row order.
  */
 export function computeSupplierStats(
   history: readonly DeliveryRecord[],
   options: SupplierStatsOptions = {},
 ): SupplierStats[] {
   const minReliable = options.minReliableDeliveries ?? DEFAULT_MIN_RELIABLE_DELIVERIES;
-  return [...delaysBySupplier(history)]
-    .sort(([a], [b]) => compareCodePoints(a, b))
-    .map(([id, delays]) => summarise(id, delays, minReliable));
+  // Map iteration follows insertion order, which gives the first-appearance order.
+  return [...delaysBySupplier(history)].map(([id, delays]) => summarise(id, delays, minReliable));
 }
 
 /**
