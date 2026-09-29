@@ -13,6 +13,15 @@ const TEST_FILES = ['**/*.test.{ts,tsx}', '**/e2e/**'];
 const WEB_UI_FILES = ['apps/web/src/app/**/*.tsx', 'apps/web/src/components/**/*.tsx'];
 /** Separators that carry no language and may appear as JSX text without a message key. */
 const JSX_ALLOWED_PUNCTUATION = ['·', '–', '—', '/', '|', ':', ',', '.', '(', ')', '*', '&nbsp;'];
+/**
+ * JSX props whose value is read or announced to users. `react/jsx-no-literals` ignores props
+ * (so `className` stays allowed), so these get their own check. Values without letters, such as
+ * the empty `alt=""` of a decorative image, stay allowed.
+ */
+const USER_FACING_PROP = String.raw`JSXAttribute[name.name=/^(?:alt|title|placeholder|label|aria-(?:label|description|placeholder|roledescription|valuetext))$/]`;
+const HAS_LETTER = String.raw`/[A-Za-zÀ-ÖØ-öø-ÿ]/`;
+const USER_FACING_PROP_MESSAGE =
+  'User-facing prop text must come from next-intl messages, not a literal (AGENTS.md §2.4).';
 
 /**
  * Architecture elements (AGENTS.md §4), relative to `boundaries/root-path`. Only `src` counts:
@@ -152,7 +161,8 @@ export function createEslintConfig({ rootDir }) {
     },
     {
       // Every user-facing string goes through next-intl (AGENTS.md §2.4, P1-12). Props such as
-      // `className` stay allowed; only text children and string expressions in JSX are checked.
+      // `className` stay allowed; text children, string expressions and user-facing props such as
+      // `alt` or `aria-label` are checked.
       name: 'vorchain/web/no-jsx-literals',
       files: WEB_UI_FILES,
       ignores: TEST_FILES,
@@ -160,6 +170,21 @@ export function createEslintConfig({ rootDir }) {
         'react/jsx-no-literals': [
           'error',
           { noStrings: true, ignoreProps: true, allowedStrings: JSX_ALLOWED_PUNCTUATION },
+        ],
+        'no-restricted-syntax': [
+          'error',
+          {
+            selector: `${USER_FACING_PROP} > Literal[value=${HAS_LETTER}]`,
+            message: USER_FACING_PROP_MESSAGE,
+          },
+          {
+            selector: `${USER_FACING_PROP} > JSXExpressionContainer > Literal[value=${HAS_LETTER}]`,
+            message: USER_FACING_PROP_MESSAGE,
+          },
+          {
+            selector: `${USER_FACING_PROP} > JSXExpressionContainer > TemplateLiteral > TemplateElement[value.raw=${HAS_LETTER}]`,
+            message: USER_FACING_PROP_MESSAGE,
+          },
         ],
       },
     },
