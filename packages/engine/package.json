@@ -10,7 +10,7 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit && tsc --noEmit -p test",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.pure.json && tsc --noEmit -p test",
     "test": "vitest run",
     "coverage": "vitest run --coverage"
   },

@@ -5,8 +5,9 @@ projection in two views (ERP and realistic), shortage detection, scoring, rankin
 explanations. It ports `reference/python-prototype/shortage_radar.py` and must reproduce its
 results exactly (ADR-0005).
 
-- **Pure:** no React, DOM, Node or I/O. The package tsconfig has `types: []`, and ESLint rejects
-  npm and Node core imports in `src/` (ADR-0010).
+- **Pure:** no React, DOM, Node or I/O. `tsconfig.pure.json` type-checks the shipped `src/` code
+  (no tests, no Vitest/Vite types) with `types: []`, so Node globals like `process` fail to
+  compile; ESLint rejects npm and Node core imports in `src/` (ADR-0010).
 - **Deterministic:** `asOf` is an input. Nothing in `src/` reads the clock or draws random numbers
   (lint rules `no-restricted-properties` / `no-restricted-syntax`).
 - **No display text:** reasons and actions are codes with parameters; the web app renders them per
