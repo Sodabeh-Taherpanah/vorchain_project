@@ -9,6 +9,9 @@ export const routing = defineRouting({
   locales: ['de', 'en'],
   defaultLocale: 'de',
   localePrefix: 'always',
+  // No NEXT_LOCALE cookie: the URL prefix already carries the locale, and Phase 1 sets no cookies
+  // (AGENTS.md §5). `/` still picks the locale from Accept-Language.
+  localeCookie: false,
   pathnames: {
     '/': '/',
     '/demo': '/demo',

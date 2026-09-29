@@ -75,3 +75,40 @@ test('an internal German slug under /en redirects to the English slug', async ({
   await expect(page).toHaveURL(/\/en\/contact$/);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(en.contact.title);
 });
+
+test('sets no cookies on redirects or pages (no consent banner in Phase 1)', async ({
+  page,
+  context,
+}) => {
+  // `set-cookie` is only exposed asynchronously; collect the lookups and settle them before asserting.
+  const lookups: Promise<string | null>[] = [];
+  page.on('response', (response) => {
+    lookups.push(
+      response.headerValue('set-cookie').then((header) => header && `${response.url()}: ${header}`),
+    );
+  });
+
+  await page.goto('/');
+  for (const route of ROUTES) {
+    await page.goto(route.de);
+    await page.goto(route.en);
+  }
+
+  const setCookieHeaders = (await Promise.all(lookups)).filter((entry) => entry !== null);
+  expect(setCookieHeaders).toEqual([]);
+  expect(await context.cookies()).toEqual([]);
+});
+
+test('announces hreflang alternates for a localized slug in the Link header', async ({
+  request,
+  baseURL,
+}) => {
+  const response = await request.get('/en/contact', { maxRedirects: 0 });
+  const link = response.headers().link ?? '';
+  const origin = String(baseURL);
+
+  expect(response.status()).toBe(200);
+  expect(link).toContain(`<${origin}/de/kontakt>; rel="alternate"; hreflang="de"`);
+  expect(link).toContain(`<${origin}/en/contact>; rel="alternate"; hreflang="en"`);
+  expect(link).toContain(`<${origin}/kontakt>; rel="alternate"; hreflang="x-default"`);
+});

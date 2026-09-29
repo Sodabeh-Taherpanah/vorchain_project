@@ -9,6 +9,10 @@ describe('routing', () => {
     expect(routing.localePrefix).toBe('always');
   });
 
+  it('sets no locale cookie, because the URL prefix already carries the locale', () => {
+    expect(routing.localeCookie).toBe(false);
+  });
+
   it.each([
     ['/', '/', '/'],
     ['/demo', '/demo', '/demo'],
