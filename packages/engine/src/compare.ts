@@ -13,7 +13,7 @@ const SURROGATE_SHIFT = 0x2000;
 
 /**
  * Comparator that orders strings by Unicode code point, like Python's `sorted()` on `str`.
- * Use it wherever engine output order must equal the prototype's (e.g. `Report.supplierStats`).
+ * Use it wherever an order must equal Python's, e.g. to match the golden files' sorted suppliers.
  * Assumes well-formed UTF-16 (no lone surrogates), which the parsers' decoders guarantee.
  *
  * @returns a negative number if `a` sorts first, a positive number if `b` does, `0` if equal.

@@ -3992,19 +3992,19 @@
           "reliable": true
         },
         {
-          "supplierId": "S9",
-          "meanDelayDays": 1.5,
-          "p80DelayDays": 3,
-          "onTimeRate": 0.625,
-          "deliveries": 8,
-          "reliable": true
-        },
-        {
           "supplierId": "b",
           "meanDelayDays": 4.5,
           "p80DelayDays": 10,
           "onTimeRate": 0.3333333333333333,
           "deliveries": 12,
+          "reliable": true
+        },
+        {
+          "supplierId": "S9",
+          "meanDelayDays": 1.5,
+          "p80DelayDays": 3,
+          "onTimeRate": 0.625,
+          "deliveries": 8,
           "reliable": true
         }
       ]
@@ -4050,19 +4050,19 @@
           "reliable": true
         },
         {
-          "supplierId": "S01",
-          "meanDelayDays": 0.3333333333333333,
-          "p80DelayDays": 1,
-          "onTimeRate": 0.6666666666666666,
-          "deliveries": 6,
-          "reliable": true
-        },
-        {
           "supplierId": "S02",
           "meanDelayDays": 4.0,
           "p80DelayDays": 5,
           "onTimeRate": 0.0,
           "deliveries": 3,
+          "reliable": true
+        },
+        {
+          "supplierId": "\ud83d\ude00",
+          "meanDelayDays": 1.3333333333333333,
+          "p80DelayDays": 5,
+          "onTimeRate": 0.6666666666666666,
+          "deliveries": 6,
           "reliable": true
         },
         {
@@ -4074,9 +4074,9 @@
           "reliable": false
         },
         {
-          "supplierId": "\ud83d\ude00",
-          "meanDelayDays": 1.3333333333333333,
-          "p80DelayDays": 5,
+          "supplierId": "S01",
+          "meanDelayDays": 0.3333333333333333,
+          "p80DelayDays": 1,
           "onTimeRate": 0.6666666666666666,
           "deliveries": 6,
           "reliable": true
@@ -4206,19 +4206,19 @@
           "reliable": true
         },
         {
-          "supplierId": "S10",
-          "meanDelayDays": 2.2,
-          "p80DelayDays": 4,
-          "onTimeRate": 0.4,
-          "deliveries": 5,
-          "reliable": true
-        },
-        {
           "supplierId": "b",
           "meanDelayDays": 3.0,
           "p80DelayDays": 5,
           "onTimeRate": 0.375,
           "deliveries": 8,
+          "reliable": true
+        },
+        {
+          "supplierId": "S10",
+          "meanDelayDays": 2.2,
+          "p80DelayDays": 4,
+          "onTimeRate": 0.4,
+          "deliveries": 5,
           "reliable": true
         }
       ]
@@ -4257,19 +4257,11 @@
       ],
       "expected": [
         {
-          "supplierId": "S01",
-          "meanDelayDays": 5.0,
-          "p80DelayDays": 8,
-          "onTimeRate": 0.0,
-          "deliveries": 3,
-          "reliable": true
-        },
-        {
-          "supplierId": "S02",
-          "meanDelayDays": 2.3333333333333335,
-          "p80DelayDays": 4,
-          "onTimeRate": 0.6666666666666666,
-          "deliveries": 3,
+          "supplierId": "\uffff",
+          "meanDelayDays": 3.75,
+          "p80DelayDays": 7,
+          "onTimeRate": 0.5,
+          "deliveries": 4,
           "reliable": true
         },
         {
@@ -4281,11 +4273,19 @@
           "reliable": true
         },
         {
-          "supplierId": "\uffff",
-          "meanDelayDays": 3.75,
-          "p80DelayDays": 7,
-          "onTimeRate": 0.5,
-          "deliveries": 4,
+          "supplierId": "S02",
+          "meanDelayDays": 2.3333333333333335,
+          "p80DelayDays": 4,
+          "onTimeRate": 0.6666666666666666,
+          "deliveries": 3,
+          "reliable": true
+        },
+        {
+          "supplierId": "S01",
+          "meanDelayDays": 5.0,
+          "p80DelayDays": 8,
+          "onTimeRate": 0.0,
+          "deliveries": 3,
           "reliable": true
         },
         {
@@ -4444,6 +4444,14 @@
       ],
       "expected": [
         {
+          "supplierId": "\ud83d\ude00",
+          "meanDelayDays": 4.0,
+          "p80DelayDays": 8,
+          "onTimeRate": 0.2,
+          "deliveries": 5,
+          "reliable": true
+        },
+        {
           "supplierId": "S02",
           "meanDelayDays": 2.2,
           "p80DelayDays": 5,
@@ -4458,14 +4466,6 @@
           "onTimeRate": 0.0,
           "deliveries": 2,
           "reliable": false
-        },
-        {
-          "supplierId": "\ud83d\ude00",
-          "meanDelayDays": 4.0,
-          "p80DelayDays": 8,
-          "onTimeRate": 0.2,
-          "deliveries": 5,
-          "reliable": true
         }
       ]
     },
@@ -4485,19 +4485,19 @@
       ],
       "expected": [
         {
-          "supplierId": "A-7",
-          "meanDelayDays": 5.5,
-          "p80DelayDays": 9,
-          "onTimeRate": 0.5,
-          "deliveries": 2,
-          "reliable": true
-        },
-        {
           "supplierId": "\uffff",
           "meanDelayDays": 2.0,
           "p80DelayDays": 3,
           "onTimeRate": 0.5,
           "deliveries": 4,
+          "reliable": true
+        },
+        {
+          "supplierId": "A-7",
+          "meanDelayDays": 5.5,
+          "p80DelayDays": 9,
+          "onTimeRate": 0.5,
+          "deliveries": 2,
           "reliable": true
         },
         {
@@ -4524,19 +4524,19 @@
       ],
       "expected": [
         {
-          "supplierId": "A-7",
-          "meanDelayDays": 2.0,
-          "p80DelayDays": 2,
-          "onTimeRate": 0.0,
-          "deliveries": 1,
-          "reliable": false
-        },
-        {
           "supplierId": "S01",
           "meanDelayDays": 0.0,
           "p80DelayDays": 0,
           "onTimeRate": 1.0,
           "deliveries": 2,
+          "reliable": false
+        },
+        {
+          "supplierId": "A-7",
+          "meanDelayDays": 2.0,
+          "p80DelayDays": 2,
+          "onTimeRate": 0.0,
+          "deliveries": 1,
           "reliable": false
         },
         {
@@ -4651,6 +4651,30 @@
       ],
       "expected": [
         {
+          "supplierId": "\ud83d\ude00",
+          "meanDelayDays": 2.0,
+          "p80DelayDays": 3,
+          "onTimeRate": 0.5,
+          "deliveries": 6,
+          "reliable": true
+        },
+        {
+          "supplierId": "b",
+          "meanDelayDays": 1.1666666666666667,
+          "p80DelayDays": 3,
+          "onTimeRate": 0.5,
+          "deliveries": 6,
+          "reliable": true
+        },
+        {
+          "supplierId": "S10",
+          "meanDelayDays": 0.6666666666666666,
+          "p80DelayDays": 1,
+          "onTimeRate": 0.6666666666666666,
+          "deliveries": 3,
+          "reliable": true
+        },
+        {
           "supplierId": "S01",
           "meanDelayDays": 1.4,
           "p80DelayDays": 2,
@@ -4665,30 +4689,6 @@
           "onTimeRate": 1.0,
           "deliveries": 1,
           "reliable": false
-        },
-        {
-          "supplierId": "S10",
-          "meanDelayDays": 0.6666666666666666,
-          "p80DelayDays": 1,
-          "onTimeRate": 0.6666666666666666,
-          "deliveries": 3,
-          "reliable": true
-        },
-        {
-          "supplierId": "b",
-          "meanDelayDays": 1.1666666666666667,
-          "p80DelayDays": 3,
-          "onTimeRate": 0.5,
-          "deliveries": 6,
-          "reliable": true
-        },
-        {
-          "supplierId": "\ud83d\ude00",
-          "meanDelayDays": 2.0,
-          "p80DelayDays": 3,
-          "onTimeRate": 0.5,
-          "deliveries": 6,
-          "reliable": true
         }
       ]
     },
@@ -4808,14 +4808,6 @@
       ],
       "expected": [
         {
-          "supplierId": "A-7",
-          "meanDelayDays": 2.8333333333333335,
-          "p80DelayDays": 6,
-          "onTimeRate": 0.3333333333333333,
-          "deliveries": 6,
-          "reliable": true
-        },
-        {
           "supplierId": "S02",
           "meanDelayDays": 2.5,
           "p80DelayDays": 6,
@@ -4837,6 +4829,14 @@
           "p80DelayDays": 10,
           "onTimeRate": 0.4,
           "deliveries": 5,
+          "reliable": true
+        },
+        {
+          "supplierId": "A-7",
+          "meanDelayDays": 2.8333333333333335,
+          "p80DelayDays": 6,
+          "onTimeRate": 0.3333333333333333,
+          "deliveries": 6,
           "reliable": true
         }
       ]
@@ -4918,11 +4918,11 @@
       ],
       "expected": [
         {
-          "supplierId": "S01",
-          "meanDelayDays": 1.0,
-          "p80DelayDays": 2,
-          "onTimeRate": 0.5,
-          "deliveries": 4,
+          "supplierId": "S9",
+          "meanDelayDays": 3.142857142857143,
+          "p80DelayDays": 6,
+          "onTimeRate": 0.42857142857142855,
+          "deliveries": 7,
           "reliable": true
         },
         {
@@ -4934,11 +4934,11 @@
           "reliable": true
         },
         {
-          "supplierId": "S9",
-          "meanDelayDays": 3.142857142857143,
-          "p80DelayDays": 6,
-          "onTimeRate": 0.42857142857142855,
-          "deliveries": 7,
+          "supplierId": "S01",
+          "meanDelayDays": 1.0,
+          "p80DelayDays": 2,
+          "onTimeRate": 0.5,
+          "deliveries": 4,
           "reliable": true
         }
       ]
@@ -4965,14 +4965,6 @@
       ],
       "expected": [
         {
-          "supplierId": "S02",
-          "meanDelayDays": 0.0,
-          "p80DelayDays": 0,
-          "onTimeRate": 1.0,
-          "deliveries": 1,
-          "reliable": false
-        },
-        {
           "supplierId": "S10",
           "meanDelayDays": 4.666666666666667,
           "p80DelayDays": 8,
@@ -4989,7 +4981,7 @@
           "reliable": true
         },
         {
-          "supplierId": "b",
+          "supplierId": "S02",
           "meanDelayDays": 0.0,
           "p80DelayDays": 0,
           "onTimeRate": 1.0,
@@ -5003,6 +4995,14 @@
           "onTimeRate": 0.3333333333333333,
           "deliveries": 3,
           "reliable": true
+        },
+        {
+          "supplierId": "b",
+          "meanDelayDays": 0.0,
+          "p80DelayDays": 0,
+          "onTimeRate": 1.0,
+          "deliveries": 1,
+          "reliable": false
         }
       ]
     },
@@ -5084,11 +5084,11 @@
       ],
       "expected": [
         {
-          "supplierId": "A-7",
-          "meanDelayDays": 0.0,
-          "p80DelayDays": 0,
-          "onTimeRate": 1.0,
-          "deliveries": 1,
+          "supplierId": "S9",
+          "meanDelayDays": 4.666666666666667,
+          "p80DelayDays": 8,
+          "onTimeRate": 0.3333333333333333,
+          "deliveries": 3,
           "reliable": true
         },
         {
@@ -5100,11 +5100,11 @@
           "reliable": true
         },
         {
-          "supplierId": "S9",
-          "meanDelayDays": 4.666666666666667,
-          "p80DelayDays": 8,
-          "onTimeRate": 0.3333333333333333,
-          "deliveries": 3,
+          "supplierId": "\ud83d\ude00",
+          "meanDelayDays": 0.5,
+          "p80DelayDays": 1,
+          "onTimeRate": 0.5,
+          "deliveries": 2,
           "reliable": true
         },
         {
@@ -5116,11 +5116,11 @@
           "reliable": true
         },
         {
-          "supplierId": "\ud83d\ude00",
-          "meanDelayDays": 0.5,
-          "p80DelayDays": 1,
-          "onTimeRate": 0.5,
-          "deliveries": 2,
+          "supplierId": "A-7",
+          "meanDelayDays": 0.0,
+          "p80DelayDays": 0,
+          "onTimeRate": 1.0,
+          "deliveries": 1,
           "reliable": true
         }
       ]
@@ -5136,20 +5136,20 @@
       ],
       "expected": [
         {
-          "supplierId": "S01",
-          "meanDelayDays": -1.0,
-          "p80DelayDays": 0,
-          "onTimeRate": 1.0,
-          "deliveries": 1,
-          "reliable": false
-        },
-        {
           "supplierId": "b",
           "meanDelayDays": 0.0,
           "p80DelayDays": 1,
           "onTimeRate": 0.6666666666666666,
           "deliveries": 3,
           "reliable": true
+        },
+        {
+          "supplierId": "S01",
+          "meanDelayDays": -1.0,
+          "p80DelayDays": 0,
+          "onTimeRate": 1.0,
+          "deliveries": 1,
+          "reliable": false
         }
       ]
     },
@@ -5200,19 +5200,19 @@
       ],
       "expected": [
         {
-          "supplierId": "S02",
-          "meanDelayDays": 2.2857142857142856,
-          "p80DelayDays": 4,
-          "onTimeRate": 0.35714285714285715,
-          "deliveries": 14,
-          "reliable": true
-        },
-        {
           "supplierId": "S10",
           "meanDelayDays": 2.75,
           "p80DelayDays": 5,
           "onTimeRate": 0.5,
           "deliveries": 8,
+          "reliable": true
+        },
+        {
+          "supplierId": "\uffff",
+          "meanDelayDays": 2.5,
+          "p80DelayDays": 4,
+          "onTimeRate": 0.3,
+          "deliveries": 10,
           "reliable": true
         },
         {
@@ -5224,11 +5224,11 @@
           "reliable": true
         },
         {
-          "supplierId": "\uffff",
-          "meanDelayDays": 2.5,
+          "supplierId": "S02",
+          "meanDelayDays": 2.2857142857142856,
           "p80DelayDays": 4,
-          "onTimeRate": 0.3,
-          "deliveries": 10,
+          "onTimeRate": 0.35714285714285715,
+          "deliveries": 14,
           "reliable": true
         }
       ]
@@ -5278,19 +5278,19 @@
       ],
       "expected": [
         {
-          "supplierId": "S01",
-          "meanDelayDays": 3.9411764705882355,
-          "p80DelayDays": 10,
-          "onTimeRate": 0.17647058823529413,
-          "deliveries": 17,
-          "reliable": true
-        },
-        {
           "supplierId": "\uffff",
           "meanDelayDays": 1.9375,
           "p80DelayDays": 3,
           "onTimeRate": 0.5625,
           "deliveries": 16,
+          "reliable": true
+        },
+        {
+          "supplierId": "S01",
+          "meanDelayDays": 3.9411764705882355,
+          "p80DelayDays": 10,
+          "onTimeRate": 0.17647058823529413,
+          "deliveries": 17,
           "reliable": true
         }
       ]
@@ -5384,6 +5384,14 @@
       ],
       "expected": [
         {
+          "supplierId": "S9",
+          "meanDelayDays": 1.2727272727272727,
+          "p80DelayDays": 3,
+          "onTimeRate": 0.45454545454545453,
+          "deliveries": 11,
+          "reliable": true
+        },
+        {
           "supplierId": "A-7",
           "meanDelayDays": 6.333333333333333,
           "p80DelayDays": 11,
@@ -5397,14 +5405,6 @@
           "p80DelayDays": 4,
           "onTimeRate": 0.6666666666666666,
           "deliveries": 3,
-          "reliable": true
-        },
-        {
-          "supplierId": "S9",
-          "meanDelayDays": 1.2727272727272727,
-          "p80DelayDays": 3,
-          "onTimeRate": 0.45454545454545453,
-          "deliveries": 11,
           "reliable": true
         },
         {
@@ -5535,10 +5535,10 @@
       ],
       "expected": [
         {
-          "supplierId": "S01",
-          "meanDelayDays": -0.25,
-          "p80DelayDays": 0,
-          "onTimeRate": 1.0,
+          "supplierId": "\ud83d\ude00",
+          "meanDelayDays": 4.5,
+          "p80DelayDays": 8,
+          "onTimeRate": 0.25,
           "deliveries": 4,
           "reliable": true
         },
@@ -5551,10 +5551,10 @@
           "reliable": true
         },
         {
-          "supplierId": "\ud83d\ude00",
-          "meanDelayDays": 4.5,
-          "p80DelayDays": 8,
-          "onTimeRate": 0.25,
+          "supplierId": "S01",
+          "meanDelayDays": -0.25,
+          "p80DelayDays": 0,
+          "onTimeRate": 1.0,
           "deliveries": 4,
           "reliable": true
         }
@@ -5613,18 +5613,18 @@
       ],
       "expected": [
         {
-          "supplierId": "S9",
-          "meanDelayDays": 5.5,
-          "p80DelayDays": 9,
-          "onTimeRate": 0.5,
-          "deliveries": 2,
-          "reliable": false
-        },
-        {
           "supplierId": "\uffff",
           "meanDelayDays": 0.0,
           "p80DelayDays": 0,
           "onTimeRate": 1.0,
+          "deliveries": 2,
+          "reliable": false
+        },
+        {
+          "supplierId": "S9",
+          "meanDelayDays": 5.5,
+          "p80DelayDays": 9,
+          "onTimeRate": 0.5,
           "deliveries": 2,
           "reliable": false
         },
@@ -5675,19 +5675,19 @@
       ],
       "expected": [
         {
-          "supplierId": "S01",
-          "meanDelayDays": 1.6666666666666667,
-          "p80DelayDays": 3,
-          "onTimeRate": 0.5833333333333334,
-          "deliveries": 12,
-          "reliable": true
-        },
-        {
           "supplierId": "S9",
           "meanDelayDays": 1.1111111111111112,
           "p80DelayDays": 2,
           "onTimeRate": 0.4444444444444444,
           "deliveries": 9,
+          "reliable": true
+        },
+        {
+          "supplierId": "S01",
+          "meanDelayDays": 1.6666666666666667,
+          "p80DelayDays": 3,
+          "onTimeRate": 0.5833333333333334,
+          "deliveries": 12,
           "reliable": true
         },
         {
@@ -5796,19 +5796,19 @@
       ],
       "expected": [
         {
-          "supplierId": "A-7",
-          "meanDelayDays": 0.14285714285714285,
-          "p80DelayDays": 1,
-          "onTimeRate": 0.7142857142857143,
-          "deliveries": 7,
-          "reliable": true
-        },
-        {
           "supplierId": "S9",
           "meanDelayDays": 1.4444444444444444,
           "p80DelayDays": 3,
           "onTimeRate": 0.5555555555555556,
           "deliveries": 9,
+          "reliable": true
+        },
+        {
+          "supplierId": "A-7",
+          "meanDelayDays": 0.14285714285714285,
+          "p80DelayDays": 1,
+          "onTimeRate": 0.7142857142857143,
+          "deliveries": 7,
           "reliable": true
         },
         {
@@ -5901,18 +5901,18 @@
       ],
       "expected": [
         {
-          "supplierId": "A-7",
-          "meanDelayDays": 8.5,
-          "p80DelayDays": 9,
-          "onTimeRate": 0.0,
-          "deliveries": 2,
-          "reliable": false
-        },
-        {
           "supplierId": "S10",
           "meanDelayDays": 1.0,
           "p80DelayDays": 2,
           "onTimeRate": 0.5,
+          "deliveries": 2,
+          "reliable": false
+        },
+        {
+          "supplierId": "A-7",
+          "meanDelayDays": 8.5,
+          "p80DelayDays": 9,
+          "onTimeRate": 0.0,
           "deliveries": 2,
           "reliable": false
         }
@@ -5937,27 +5937,11 @@
       ],
       "expected": [
         {
-          "supplierId": "A-7",
-          "meanDelayDays": -2.0,
-          "p80DelayDays": 0,
-          "onTimeRate": 1.0,
-          "deliveries": 1,
-          "reliable": false
-        },
-        {
           "supplierId": "S01",
           "meanDelayDays": 3.5,
           "p80DelayDays": 5,
           "onTimeRate": 0.0,
           "deliveries": 2,
-          "reliable": false
-        },
-        {
-          "supplierId": "S10",
-          "meanDelayDays": 3.0,
-          "p80DelayDays": 3,
-          "onTimeRate": 0.0,
-          "deliveries": 1,
           "reliable": false
         },
         {
@@ -5969,10 +5953,26 @@
           "reliable": true
         },
         {
+          "supplierId": "S10",
+          "meanDelayDays": 3.0,
+          "p80DelayDays": 3,
+          "onTimeRate": 0.0,
+          "deliveries": 1,
+          "reliable": false
+        },
+        {
           "supplierId": "\ud83d\ude00",
           "meanDelayDays": 10.0,
           "p80DelayDays": 10,
           "onTimeRate": 0.0,
+          "deliveries": 1,
+          "reliable": false
+        },
+        {
+          "supplierId": "A-7",
+          "meanDelayDays": -2.0,
+          "p80DelayDays": 0,
+          "onTimeRate": 1.0,
           "deliveries": 1,
           "reliable": false
         }
@@ -6137,19 +6137,19 @@
           "reliable": true
         },
         {
-          "supplierId": "\uffff",
-          "meanDelayDays": 3.5,
-          "p80DelayDays": 5,
-          "onTimeRate": 0.16666666666666666,
-          "deliveries": 6,
-          "reliable": true
-        },
-        {
           "supplierId": "\ud83d\ude00",
           "meanDelayDays": 4.0,
           "p80DelayDays": 7,
           "onTimeRate": 0.3333333333333333,
           "deliveries": 3,
+          "reliable": true
+        },
+        {
+          "supplierId": "\uffff",
+          "meanDelayDays": 3.5,
+          "p80DelayDays": 5,
+          "onTimeRate": 0.16666666666666666,
+          "deliveries": 6,
           "reliable": true
         }
       ]
@@ -6189,28 +6189,28 @@
       ],
       "expected": [
         {
-          "supplierId": "A-7",
-          "meanDelayDays": 4.0,
-          "p80DelayDays": 6,
-          "onTimeRate": 0.0,
-          "deliveries": 2,
-          "reliable": false
-        },
-        {
-          "supplierId": "S10",
-          "meanDelayDays": 0.0,
-          "p80DelayDays": 0,
-          "onTimeRate": 1.0,
-          "deliveries": 2,
-          "reliable": false
-        },
-        {
           "supplierId": "S9",
           "meanDelayDays": 2.888888888888889,
           "p80DelayDays": 4,
           "onTimeRate": 0.2222222222222222,
           "deliveries": 9,
           "reliable": true
+        },
+        {
+          "supplierId": "\ud83d\ude00",
+          "meanDelayDays": 6.5,
+          "p80DelayDays": 11,
+          "onTimeRate": 0.3333333333333333,
+          "deliveries": 6,
+          "reliable": true
+        },
+        {
+          "supplierId": "A-7",
+          "meanDelayDays": 4.0,
+          "p80DelayDays": 6,
+          "onTimeRate": 0.0,
+          "deliveries": 2,
+          "reliable": false
         },
         {
           "supplierId": "b",
@@ -6221,12 +6221,12 @@
           "reliable": true
         },
         {
-          "supplierId": "\ud83d\ude00",
-          "meanDelayDays": 6.5,
-          "p80DelayDays": 11,
-          "onTimeRate": 0.3333333333333333,
-          "deliveries": 6,
-          "reliable": true
+          "supplierId": "S10",
+          "meanDelayDays": 0.0,
+          "p80DelayDays": 0,
+          "onTimeRate": 1.0,
+          "deliveries": 2,
+          "reliable": false
         }
       ]
     },
@@ -6255,9 +6255,17 @@
       ],
       "expected": [
         {
-          "supplierId": "A-7",
-          "meanDelayDays": 3.0,
-          "p80DelayDays": 5,
+          "supplierId": "\ud83d\ude00",
+          "meanDelayDays": 3.75,
+          "p80DelayDays": 6,
+          "onTimeRate": 0.25,
+          "deliveries": 4,
+          "reliable": true
+        },
+        {
+          "supplierId": "S10",
+          "meanDelayDays": 1.5,
+          "p80DelayDays": 2,
           "onTimeRate": 0.5,
           "deliveries": 2,
           "reliable": false
@@ -6271,9 +6279,9 @@
           "reliable": true
         },
         {
-          "supplierId": "S10",
-          "meanDelayDays": 1.5,
-          "p80DelayDays": 2,
+          "supplierId": "A-7",
+          "meanDelayDays": 3.0,
+          "p80DelayDays": 5,
           "onTimeRate": 0.5,
           "deliveries": 2,
           "reliable": false
@@ -6284,14 +6292,6 @@
           "p80DelayDays": 1,
           "onTimeRate": 0.6666666666666666,
           "deliveries": 3,
-          "reliable": true
-        },
-        {
-          "supplierId": "\ud83d\ude00",
-          "meanDelayDays": 3.75,
-          "p80DelayDays": 6,
-          "onTimeRate": 0.25,
-          "deliveries": 4,
           "reliable": true
         }
       ]
@@ -6493,19 +6493,19 @@
           "reliable": true
         },
         {
-          "supplierId": "S9",
-          "meanDelayDays": 2.25,
-          "p80DelayDays": 4,
-          "onTimeRate": 0.5,
-          "deliveries": 4,
-          "reliable": true
-        },
-        {
           "supplierId": "\ud83d\ude00",
           "meanDelayDays": 1.8333333333333333,
           "p80DelayDays": 6,
           "onTimeRate": 0.6666666666666666,
           "deliveries": 6,
+          "reliable": true
+        },
+        {
+          "supplierId": "S9",
+          "meanDelayDays": 2.25,
+          "p80DelayDays": 4,
+          "onTimeRate": 0.5,
+          "deliveries": 4,
           "reliable": true
         }
       ]
@@ -6574,27 +6574,11 @@
       ],
       "expected": [
         {
-          "supplierId": "A-7",
-          "meanDelayDays": 3.2857142857142856,
-          "p80DelayDays": 8,
-          "onTimeRate": 0.5714285714285714,
-          "deliveries": 7,
-          "reliable": true
-        },
-        {
           "supplierId": "S01",
           "meanDelayDays": 5.6,
           "p80DelayDays": 12,
           "onTimeRate": 0.2,
           "deliveries": 5,
-          "reliable": true
-        },
-        {
-          "supplierId": "S02",
-          "meanDelayDays": -0.5,
-          "p80DelayDays": 0,
-          "onTimeRate": 1.0,
-          "deliveries": 4,
           "reliable": true
         },
         {
@@ -6606,10 +6590,26 @@
           "reliable": true
         },
         {
+          "supplierId": "A-7",
+          "meanDelayDays": 3.2857142857142856,
+          "p80DelayDays": 8,
+          "onTimeRate": 0.5714285714285714,
+          "deliveries": 7,
+          "reliable": true
+        },
+        {
           "supplierId": "\ud83d\ude00",
           "meanDelayDays": 1.5,
           "p80DelayDays": 2,
           "onTimeRate": 0.0,
+          "deliveries": 4,
+          "reliable": true
+        },
+        {
+          "supplierId": "S02",
+          "meanDelayDays": -0.5,
+          "p80DelayDays": 0,
+          "onTimeRate": 1.0,
           "deliveries": 4,
           "reliable": true
         }
@@ -6650,19 +6650,19 @@
       ],
       "expected": [
         {
-          "supplierId": "S02",
-          "meanDelayDays": 1.6,
-          "p80DelayDays": 2,
-          "onTimeRate": 0.2,
-          "deliveries": 10,
-          "reliable": true
-        },
-        {
           "supplierId": "S9",
           "meanDelayDays": 1.0,
           "p80DelayDays": 2,
           "onTimeRate": 0.6153846153846154,
           "deliveries": 13,
+          "reliable": true
+        },
+        {
+          "supplierId": "S02",
+          "meanDelayDays": 1.6,
+          "p80DelayDays": 2,
+          "onTimeRate": 0.2,
+          "deliveries": 10,
           "reliable": true
         }
       ]
@@ -6792,6 +6792,14 @@
       ],
       "expected": [
         {
+          "supplierId": "\uffff",
+          "meanDelayDays": 2.2857142857142856,
+          "p80DelayDays": 3,
+          "onTimeRate": 0.2857142857142857,
+          "deliveries": 7,
+          "reliable": true
+        },
+        {
           "supplierId": "S9",
           "meanDelayDays": 4.166666666666667,
           "p80DelayDays": 11,
@@ -6805,14 +6813,6 @@
           "p80DelayDays": 7,
           "onTimeRate": 0.6666666666666666,
           "deliveries": 3,
-          "reliable": true
-        },
-        {
-          "supplierId": "\uffff",
-          "meanDelayDays": 2.2857142857142856,
-          "p80DelayDays": 3,
-          "onTimeRate": 0.2857142857142857,
-          "deliveries": 7,
           "reliable": true
         }
       ]
@@ -6860,14 +6860,6 @@
       ],
       "expected": [
         {
-          "supplierId": "A-7",
-          "meanDelayDays": 4.714285714285714,
-          "p80DelayDays": 7,
-          "onTimeRate": 0.2857142857142857,
-          "deliveries": 7,
-          "reliable": true
-        },
-        {
           "supplierId": "S02",
           "meanDelayDays": 1.5,
           "p80DelayDays": 4,
@@ -6876,19 +6868,27 @@
           "reliable": true
         },
         {
-          "supplierId": "S9",
-          "meanDelayDays": 0.25,
-          "p80DelayDays": 0,
-          "onTimeRate": 0.75,
-          "deliveries": 4,
-          "reliable": true
-        },
-        {
           "supplierId": "\ud83d\ude00",
           "meanDelayDays": 1.4,
           "p80DelayDays": 3,
           "onTimeRate": 0.4,
           "deliveries": 10,
+          "reliable": true
+        },
+        {
+          "supplierId": "A-7",
+          "meanDelayDays": 4.714285714285714,
+          "p80DelayDays": 7,
+          "onTimeRate": 0.2857142857142857,
+          "deliveries": 7,
+          "reliable": true
+        },
+        {
+          "supplierId": "S9",
+          "meanDelayDays": 0.25,
+          "p80DelayDays": 0,
+          "onTimeRate": 0.75,
+          "deliveries": 4,
           "reliable": true
         }
       ]

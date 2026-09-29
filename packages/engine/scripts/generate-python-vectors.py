@@ -137,10 +137,10 @@ def stats_payload(rows, min_n):
                 "actual_date": r["actualDate"] and date.fromisoformat(r["actualDate"])}
                for r in rows]
     stats = supplier_stats(history, min_n)
-    # Python `sorted` orders str by code point: the order the engine promises for supplierStats.
+    # Dict order is first appearance: the order the engine promises for supplierStats.
     return [{"supplierId": sid, "meanDelayDays": s["mean"], "p80DelayDays": s["p80"],
              "onTimeRate": s["on_time_rate"], "deliveries": s["n"],
-             "reliable": s["reliable_stats"]} for sid, s in sorted(stats.items())]
+             "reliable": s["reliable_stats"]} for sid, s in stats.items()]
 
 
 def supplier_stats_vectors():

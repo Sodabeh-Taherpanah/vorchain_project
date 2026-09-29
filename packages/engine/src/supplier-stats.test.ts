@@ -186,17 +186,21 @@ describe('computeSupplierStats', () => {
     expect(computeSupplierStats([])).toEqual([]);
   });
 
-  it('orders suppliers by supplierId (code point order), not by first appearance', () => {
-    const history = ['S9', 'S10', 'A-7', 'S01', '\u{1F600}', '￿'].map((s) =>
-      delivery(s, '2026-10-05', '2026-10-05'),
-    );
+  it('orders suppliers by their first complete history row, like the prototype dict', () => {
+    const history = [
+      delivery('S9', '2026-10-05', '2026-10-05'),
+      delivery('S10', '2026-10-05', null),
+      delivery('A-7', '2026-10-05', '2026-10-06'),
+      delivery('S9', '2026-10-06', '2026-10-06'),
+      delivery('S10', '2026-10-05', '2026-10-07'),
+      delivery('S01', '2026-10-05', '2026-10-05'),
+    ];
+    // S10's first row has no actual date, so its first complete row comes after A-7's.
     expect(computeSupplierStats(history).map((s) => s.supplierId)).toEqual([
-      'A-7',
-      'S01',
-      'S10',
       'S9',
-      '￿',
-      '\u{1F600}',
+      'A-7',
+      'S10',
+      'S01',
     ]);
   });
 
@@ -254,17 +258,24 @@ describe('computeSupplierStats properties', () => {
           fc.tuple(fc.constant(h), fc.shuffledSubarray(h, { minLength: h.length })),
         ),
         ([h, shuffled]) => {
-          expect(computeSupplierStats(shuffled)).toEqual(computeSupplierStats(h));
+          // Only the order of suppliers may change; each supplier's values must not.
+          const byId = (rows: typeof h) =>
+            computeSupplierStats(rows).sort((a, b) =>
+              compareCodePoints(a.supplierId, b.supplierId),
+            );
+          expect(byId(shuffled)).toEqual(byId(h));
         },
       ),
     );
   });
 
-  it('returns suppliers sorted by id, each once', () => {
+  it('returns each supplier once, in order of its first complete history row', () => {
     fc.assert(
       fc.property(history, (h) => {
-        const ids = computeSupplierStats(h).map((s) => s.supplierId);
-        expect(ids).toEqual([...new Set(ids)].sort(compareCodePoints));
+        const firstSeen = h
+          .filter((r) => r.promisedDate !== null && r.actualDate !== null)
+          .map((r) => r.supplierId);
+        expect(computeSupplierStats(h).map((s) => s.supplierId)).toEqual([...new Set(firstSeen)]);
       }),
     );
   });
