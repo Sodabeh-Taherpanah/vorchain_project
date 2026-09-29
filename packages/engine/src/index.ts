@@ -21,6 +21,8 @@ export type { Brand, MaterialId, PoId, SupplierId } from './ids.ts';
 export { err, ok } from './result.ts';
 export type { Err, Ok, Result } from './result.ts';
 export type { DailyQuantities } from './daily-quantities.ts';
+export { demandByMaterial, projectionSeries, projectStock } from './projection.ts';
+export type { StockProjection, StockProjectionInput } from './projection.ts';
 export { buildReceipts, realisticReceiptDate, receiptDelayDays } from './receipts.ts';
 export type { ReceiptSchedule, SupplierStatsMap } from './receipts.ts';
 export { pyRound } from './rounding.ts';
