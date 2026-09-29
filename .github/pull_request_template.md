@@ -10,6 +10,10 @@
 
 <!-- The problem this solves; link the task, spec section or ADR. -->
 
+## Deviations from backlog
+
+<!-- Decisions that depart from the task in docs/backlog.md, and why. Write "None" if there are none. -->
+
 ## How tested
 
 <!-- Commands run and what you checked by hand. -->
@@ -24,6 +28,7 @@
 ## Checklist
 
 - [ ] Task ID linked and its acceptance criteria met
+- [ ] Task ticked "Done" in `docs/backlog.md`
 - [ ] Tests added or updated; coverage gates hold
 - [ ] i18n keys added in both `de` and `en` (if UI text changed)
 - [ ] ADR added if a decision was made
