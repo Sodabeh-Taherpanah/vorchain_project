@@ -135,8 +135,10 @@ const roundVectors = vectors.round as RoundVector[];
 const percentileVectors = vectors.percentile as PercentileVector[];
 const supplierStatsVectors = vectors.supplierStats as SupplierStatsVector[];
 const projectVectors = vectors.project as ProjectVector[];
-const projectionVectors = vectors.projection as ProjectionVector[];
-const rankingVectors = vectors.ranking as RankingVector[];
+// TypeScript infers the JSON's datasets as a union of differently shaped rows (e.g. with and without
+// a main supplier), which a direct cast rejects; the shape is fixed by the generator script.
+const projectionVectors = vectors.projection as unknown as ProjectionVector[];
+const rankingVectors = vectors.ranking as unknown as RankingVector[];
 const analyseVectors: (ProjectionVector | RankingVector)[] = [
   ...projectionVectors,
   ...rankingVectors,

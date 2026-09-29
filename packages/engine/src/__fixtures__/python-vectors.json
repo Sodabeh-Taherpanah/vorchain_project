@@ -11137,36 +11137,61 @@
       "horizonDays": 28,
       "input": {
         "materials": [
-          { "materialId": "M0001", "onHand": 15.0, "safetyStock": 25.0 },
-          { "materialId": "M0002", "onHand": 560.0, "safetyStock": 320.0 },
-          { "materialId": "M0003", "onHand": 1600.0, "safetyStock": 240.0 },
-          { "materialId": "M0004", "onHand": 110.0, "safetyStock": 30.0 },
-          { "materialId": "M0005", "onHand": 160.0, "safetyStock": 80.0 },
-          { "materialId": "M0006", "onHand": 480.0, "safetyStock": 100.0 },
-          { "materialId": "M0007", "onHand": 1040.0, "safetyStock": 160.0 },
-          { "materialId": "M0008", "onHand": 80.0, "safetyStock": 50.0 },
-          { "materialId": "M0009", "onHand": 110.0, "safetyStock": 50.0 },
-          { "materialId": "M0010", "onHand": 800.0, "safetyStock": 120.0 },
-          { "materialId": "M0011", "onHand": 100.0, "safetyStock": 100.0 },
-          { "materialId": "M0012", "onHand": 120.0, "safetyStock": 40.0 },
-          { "materialId": "M0013", "onHand": 240.0, "safetyStock": 200.0 },
-          { "materialId": "M0014", "onHand": 360.0, "safetyStock": 160.0 },
-          { "materialId": "M0015", "onHand": 440.0, "safetyStock": 160.0 },
-          { "materialId": "M0016", "onHand": 500.0, "safetyStock": 60.0 },
-          { "materialId": "M0017", "onHand": 1280.0, "safetyStock": 320.0 },
-          { "materialId": "M0018", "onHand": 100.0, "safetyStock": 15.0 },
-          { "materialId": "M0019", "onHand": 1680.0, "safetyStock": 160.0 },
-          { "materialId": "M0020", "onHand": 260.0, "safetyStock": 40.0 },
-          { "materialId": "M0021", "onHand": 100.0, "safetyStock": 25.0 },
-          { "materialId": "M0022", "onHand": 420.0, "safetyStock": 100.0 },
-          { "materialId": "M0023", "onHand": 1680.0, "safetyStock": 320.0 },
-          { "materialId": "M0024", "onHand": 200.0, "safetyStock": 40.0 },
-          { "materialId": "M0025", "onHand": 340.0, "safetyStock": 80.0 },
-          { "materialId": "M0026", "onHand": 440.0, "safetyStock": 80.0 },
-          { "materialId": "M0027", "onHand": 140.0, "safetyStock": 40.0 },
-          { "materialId": "M0028", "onHand": 400.0, "safetyStock": 40.0 },
-          { "materialId": "M0029", "onHand": 200.0, "safetyStock": 30.0 },
-          { "materialId": "M0030", "onHand": 60.0, "safetyStock": 50.0 }
+          { "materialId": "M0001", "onHand": 15.0, "safetyStock": 25.0, "mainSupplierId": "S03" },
+          { "materialId": "M0002", "onHand": 560.0, "safetyStock": 320.0, "mainSupplierId": "S01" },
+          {
+            "materialId": "M0003",
+            "onHand": 1600.0,
+            "safetyStock": 240.0,
+            "mainSupplierId": "S03"
+          },
+          { "materialId": "M0004", "onHand": 110.0, "safetyStock": 30.0, "mainSupplierId": "S06" },
+          { "materialId": "M0005", "onHand": 160.0, "safetyStock": 80.0, "mainSupplierId": "S01" },
+          { "materialId": "M0006", "onHand": 480.0, "safetyStock": 100.0, "mainSupplierId": "S05" },
+          {
+            "materialId": "M0007",
+            "onHand": 1040.0,
+            "safetyStock": 160.0,
+            "mainSupplierId": "S05"
+          },
+          { "materialId": "M0008", "onHand": 80.0, "safetyStock": 50.0, "mainSupplierId": "S04" },
+          { "materialId": "M0009", "onHand": 110.0, "safetyStock": 50.0, "mainSupplierId": "S06" },
+          { "materialId": "M0010", "onHand": 800.0, "safetyStock": 120.0, "mainSupplierId": "S04" },
+          { "materialId": "M0011", "onHand": 100.0, "safetyStock": 100.0, "mainSupplierId": "S04" },
+          { "materialId": "M0012", "onHand": 120.0, "safetyStock": 40.0, "mainSupplierId": "S02" },
+          { "materialId": "M0013", "onHand": 240.0, "safetyStock": 200.0, "mainSupplierId": "S04" },
+          { "materialId": "M0014", "onHand": 360.0, "safetyStock": 160.0, "mainSupplierId": "S02" },
+          { "materialId": "M0015", "onHand": 440.0, "safetyStock": 160.0, "mainSupplierId": "S03" },
+          { "materialId": "M0016", "onHand": 500.0, "safetyStock": 60.0, "mainSupplierId": "S05" },
+          {
+            "materialId": "M0017",
+            "onHand": 1280.0,
+            "safetyStock": 320.0,
+            "mainSupplierId": "S03"
+          },
+          { "materialId": "M0018", "onHand": 100.0, "safetyStock": 15.0, "mainSupplierId": "S04" },
+          {
+            "materialId": "M0019",
+            "onHand": 1680.0,
+            "safetyStock": 160.0,
+            "mainSupplierId": "S02"
+          },
+          { "materialId": "M0020", "onHand": 260.0, "safetyStock": 40.0, "mainSupplierId": "S03" },
+          { "materialId": "M0021", "onHand": 100.0, "safetyStock": 25.0, "mainSupplierId": "S05" },
+          { "materialId": "M0022", "onHand": 420.0, "safetyStock": 100.0, "mainSupplierId": "S06" },
+          {
+            "materialId": "M0023",
+            "onHand": 1680.0,
+            "safetyStock": 320.0,
+            "mainSupplierId": "S02"
+          },
+          { "materialId": "M0024", "onHand": 200.0, "safetyStock": 40.0, "mainSupplierId": "S06" },
+          { "materialId": "M0025", "onHand": 340.0, "safetyStock": 80.0, "mainSupplierId": "S06" },
+          { "materialId": "M0026", "onHand": 440.0, "safetyStock": 80.0, "mainSupplierId": "S06" },
+          { "materialId": "M0027", "onHand": 140.0, "safetyStock": 40.0, "mainSupplierId": "S05" },
+          { "materialId": "M0028", "onHand": 400.0, "safetyStock": 40.0, "mainSupplierId": "S01" },
+          { "materialId": "M0029", "onHand": 200.0, "safetyStock": 30.0, "mainSupplierId": "S01" },
+          { "materialId": "M0030", "onHand": 60.0, "safetyStock": 50.0, "mainSupplierId": "S03" }
         ],
         "openPurchaseOrders": [
           {
@@ -12147,6 +12172,14 @@
           { "supplierId": "S06", "promisedDate": "2026-05-13", "actualDate": "2026-05-14" },
           { "supplierId": "S06", "promisedDate": "2026-03-07", "actualDate": "2026-03-13" },
           { "supplierId": "S06", "promisedDate": "2026-02-03", "actualDate": "2026-02-09" }
+        ],
+        "suppliers": [
+          { "supplierId": "S01", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S02", "name": "Elektronik Weber AG" },
+          { "supplierId": "S03", "name": "Kunststoff Nord KG" },
+          { "supplierId": "S04", "name": "Asia Components Ltd" },
+          { "supplierId": "S05", "name": "Schrauben Meyer" },
+          { "supplierId": "S06", "name": "Kabel & Draht GmbH" }
         ]
       },
       "expected": [
@@ -13996,7 +14029,69 @@
         ["M0005", "CRITICAL", "2026-10-29", "2026-10-29", 24, false, -40, 80, 52.0],
         ["M0010", "WARNING", "2026-10-28", null, 23, true, 0, 120, 40.0],
         ["M0019", "WARNING", "2026-10-28", null, 23, true, 0, 160, 40.0]
-      ]
+      ],
+      "explanations": [
+        ["no open purchase order covers the demand", "Place an order now with Asia Components Ltd"],
+        [
+          "PO00001 is promised for 2026-10-15, already AFTER the critical date",
+          "Ask Kunststoff Nord KG to pull PO00001 forward before 2026-10-08, or source elsewhere"
+        ],
+        [
+          "PO00032 promised 2026-10-12, but Kunststoff Nord KG is typically 3 working day(s) late (on-time rate 44%); ERP view (promised dates) shows the problem only from 2026-10-23: hidden risk",
+          "Expedite PO00032 / ask for partial delivery before 2026-10-13"
+        ],
+        ["no open purchase order covers the demand", "Place an order now with Elektronik Weber AG"],
+        [
+          "PO00011 is promised for 2026-10-17, already AFTER the critical date; PO00012 is promised for 2026-10-22, already AFTER the critical date",
+          "Ask Asia Components Ltd to pull PO00011 forward before 2026-10-13, or source elsewhere; Ask Asia Components Ltd to pull PO00012 forward before 2026-10-13, or source elsewhere"
+        ],
+        [
+          "PO00026 promised 2026-10-14, but Kabel & Draht GmbH is typically 3 working day(s) late (on-time rate 36%); ERP view (promised dates) shows no problem at all: hidden risk",
+          "Expedite PO00026 / ask for partial delivery before 2026-10-15"
+        ],
+        [
+          "PO00002 is promised for 2026-10-24, already AFTER the critical date",
+          "Ask Metallbau Kr\u00fcger GmbH to pull PO00002 forward before 2026-10-14, or source elsewhere"
+        ],
+        [
+          "PO00013 is promised for 2026-10-24, already AFTER the critical date; PO00014 is promised for 2026-10-20, already AFTER the critical date",
+          "Ask Elektronik Weber AG to pull PO00013 forward before 2026-10-14, or source elsewhere; Ask Elektronik Weber AG to pull PO00014 forward before 2026-10-14, or source elsewhere"
+        ],
+        [
+          "PO00006 is promised for 2026-10-23, already AFTER the critical date",
+          "Ask Asia Components Ltd to pull PO00006 forward before 2026-10-15, or source elsewhere"
+        ],
+        [
+          "PO00027 is promised for 2026-10-21, already AFTER the critical date",
+          "Ask Kabel & Draht GmbH to pull PO00027 forward before 2026-10-16, or source elsewhere"
+        ],
+        ["no open purchase order covers the demand", "Place an order now with Kabel & Draht GmbH"],
+        ["no open purchase order covers the demand", "Place an order now with Schrauben Meyer"],
+        ["no open purchase order covers the demand", "Place an order now with Kunststoff Nord KG"],
+        [
+          "PO00007 is promised for 2026-10-22, already AFTER the critical date; PO00008 promised 2026-10-18, but Kabel & Draht GmbH is typically 3 working day(s) late (on-time rate 36%); ERP view (promised dates) shows no problem at all: hidden risk",
+          "Ask Kabel & Draht GmbH to pull PO00007 forward before 2026-10-20, or source elsewhere; Expedite PO00008 / ask for partial delivery before 2026-10-20"
+        ],
+        [
+          "PO00017 is promised for 2026-10-25, already AFTER the critical date",
+          "Ask Kunststoff Nord KG to pull PO00017 forward before 2026-10-23, or source elsewhere"
+        ],
+        ["no open purchase order covers the demand", "Place an order now with Kabel & Draht GmbH"],
+        ["no open purchase order covers the demand", "Place an order now with Asia Components Ltd"],
+        [
+          "PO00004 promised 2026-10-10, but Metallbau Kr\u00fcger GmbH is typically 1 working day(s) late (on-time rate 76%)",
+          "Increase order quantity or check the demand plan"
+        ],
+        [
+          "PO00009 promised 2026-10-17, but Asia Components Ltd is typically 12 working day(s) late (on-time rate 4%); PO00010 promised 2026-10-19, but Asia Components Ltd is typically 12 working day(s) late (on-time rate 4%); ERP view (promised dates) shows no problem at all: hidden risk",
+          "Expedite PO00009 / ask for partial delivery before 2026-10-28; Expedite PO00010 / ask for partial delivery before 2026-10-28"
+        ],
+        [
+          "PO00018 promised 2026-10-24, but Elektronik Weber AG is typically 7 working day(s) late (on-time rate 12%); PO00019 promised 2026-10-21, but Elektronik Weber AG is typically 7 working day(s) late (on-time rate 12%); ERP view (promised dates) shows no problem at all: hidden risk",
+          "Expedite PO00018 / ask for partial delivery before 2026-10-28; Expedite PO00019 / ask for partial delivery before 2026-10-28"
+        ]
+      ],
+      "overduePurchaseOrders": []
     },
     {
       "name": "random-0",
@@ -14004,8 +14099,8 @@
       "horizonDays": 28,
       "input": {
         "materials": [
-          { "materialId": "M2", "onHand": 0.0, "safetyStock": 0.0 },
-          { "materialId": "M1", "onHand": 0.0, "safetyStock": 30.0 }
+          { "materialId": "M2", "onHand": 0.0, "safetyStock": 0.0, "mainSupplierId": "SX" },
+          { "materialId": "M1", "onHand": 0.0, "safetyStock": 30.0, "mainSupplierId": "S1" }
         ],
         "openPurchaseOrders": [
           {
@@ -14076,6 +14171,10 @@
           { "supplierId": "S2", "promisedDate": "2024-12-06", "actualDate": "2024-12-06" },
           { "supplierId": "S3", "promisedDate": "2030-09-22", "actualDate": "2030-09-20" },
           { "supplierId": "S3", "promisedDate": "2029-01-27", "actualDate": "2029-02-08" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "expected": [
@@ -14189,7 +14288,15 @@
       "exceptions": [
         ["M1", "CRITICAL", "2026-10-06", "2026-10-06", 1, false, -244, 30, 136],
         ["M2", "CRITICAL", "2026-10-13", "2026-10-13", 8, false, -337, 0, 115]
-      ]
+      ],
+      "explanations": [
+        [
+          "P0 is promised for 2026-10-10, already AFTER the critical date",
+          "Ask SX to pull P0 forward before 2026-10-06, or source elsewhere"
+        ],
+        ["no open purchase order covers the demand", "Place an order now with SX"]
+      ],
+      "overduePurchaseOrders": []
     },
     {
       "name": "random-1",
@@ -14197,8 +14304,13 @@
       "horizonDays": 1,
       "input": {
         "materials": [
-          { "materialId": "\u00c4-4", "onHand": 59.0, "safetyStock": 135.0 },
-          { "materialId": "M10", "onHand": 216.0, "safetyStock": 0.0 }
+          {
+            "materialId": "\u00c4-4",
+            "onHand": 59.0,
+            "safetyStock": 135.0,
+            "mainSupplierId": "S3"
+          },
+          { "materialId": "M10", "onHand": 216.0, "safetyStock": 0.0, "mainSupplierId": "S3" }
         ],
         "openPurchaseOrders": [
           {
@@ -14271,6 +14383,10 @@
           { "supplierId": "S3", "promisedDate": "2028-04-18", "actualDate": "2028-04-18" },
           { "supplierId": "S1", "promisedDate": "2026-09-20", "actualDate": "2026-09-27" },
           { "supplierId": "S2", "promisedDate": "2028-02-29", "actualDate": "2028-02-27" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "expected": [
@@ -14305,7 +14421,20 @@
           "points": [["2026-10-06", 56.821, 0, 0, 159.179, 159.179]]
         }
       ],
-      "exceptions": [["\u00c4-4", "WARNING", "2026-10-06", "2026-10-06", 0, false, 17, 135, 11.7]]
+      "exceptions": [["\u00c4-4", "WARNING", "2026-10-06", "2026-10-06", 0, false, 17, 135, 11.7]],
+      "explanations": [["", "Increase order quantity or check the demand plan"]],
+      "overduePurchaseOrders": [
+        {
+          "poId": "P3",
+          "materialId": "\u00c4-4",
+          "supplierId": "S2",
+          "qty": 20.0,
+          "promisedDate": "2026-09-26",
+          "realisticDate": "2026-09-26",
+          "countedInRealisticView": false,
+          "hasException": true
+        }
+      ]
     },
     {
       "name": "random-2",
@@ -14313,10 +14442,10 @@
       "horizonDays": 17,
       "input": {
         "materials": [
-          { "materialId": "\u00c4-4", "onHand": 0.0, "safetyStock": 109.0 },
-          { "materialId": "M2", "onHand": 0.0, "safetyStock": 0.0 },
-          { "materialId": "M3", "onHand": 0.0, "safetyStock": 12.5 },
-          { "materialId": "M10", "onHand": 0.0, "safetyStock": 12.5 }
+          { "materialId": "\u00c4-4", "onHand": 0.0, "safetyStock": 109.0, "mainSupplierId": null },
+          { "materialId": "M2", "onHand": 0.0, "safetyStock": 0.0, "mainSupplierId": "S2" },
+          { "materialId": "M3", "onHand": 0.0, "safetyStock": 12.5, "mainSupplierId": null },
+          { "materialId": "M10", "onHand": 0.0, "safetyStock": 12.5, "mainSupplierId": "S2" }
         ],
         "openPurchaseOrders": [
           {
@@ -14464,6 +14593,10 @@
           { "supplierId": "S3", "promisedDate": "2029-12-10", "actualDate": "2029-12-08" },
           { "supplierId": "S3", "promisedDate": "2030-11-07", "actualDate": "2030-11-19" },
           { "supplierId": "S3", "promisedDate": "2024-03-09", "actualDate": "2024-03-16" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "expected": [
@@ -14648,7 +14781,23 @@
         ["M3", "CRITICAL", "2026-10-11", "2026-10-11", 1, false, -166, 12, 103],
         ["M2", "CRITICAL", "2026-10-14", "2026-10-14", 4, false, -211, 0, 94],
         ["\u00c4-4", "CRITICAL", "2026-10-12", "2026-10-12", 2, false, -107, 109, 89.8]
-      ]
+      ],
+      "explanations": [
+        ["no open purchase order covers the demand", "Place an order now with S2"],
+        [
+          "P3 is promised for 2026-10-28, already AFTER the critical date; P5 is promised for 2026-10-22, already AFTER the critical date; P9 is promised for 2026-10-14, already AFTER the critical date; P10 is promised for 2026-11-01, already AFTER the critical date",
+          "Ask Kunststoff Nord KG to pull P3 forward before 2026-10-11, or source elsewhere; Ask Kunststoff Nord KG to pull P5 forward before 2026-10-11, or source elsewhere; Ask Metallbau Kr\u00fcger GmbH to pull P9 forward before 2026-10-11, or source elsewhere; Ask S2 to pull P10 forward before 2026-10-11, or source elsewhere"
+        ],
+        [
+          "P2 is promised for 2026-10-23, already AFTER the critical date",
+          "Ask S2 to pull P2 forward before 2026-10-14, or source elsewhere"
+        ],
+        [
+          "P0 is promised for 2026-10-27, already AFTER the critical date; P6 is promised for 2026-10-23, already AFTER the critical date; P7 is promised for 2026-11-05, already AFTER the critical date; P8 is promised for 2026-11-06, already AFTER the critical date",
+          "Ask Metallbau Kr\u00fcger GmbH to pull P0 forward before 2026-10-12, or source elsewhere; Ask Metallbau Kr\u00fcger GmbH to pull P6 forward before 2026-10-12, or source elsewhere; Ask S2 to pull P7 forward before 2026-10-12, or source elsewhere; Ask SX to pull P8 forward before 2026-10-12, or source elsewhere"
+        ]
+      ],
+      "overduePurchaseOrders": []
     },
     {
       "name": "random-3",
@@ -14656,10 +14805,10 @@
       "horizonDays": 1,
       "input": {
         "materials": [
-          { "materialId": "M3", "onHand": 378.0, "safetyStock": 12.5 },
-          { "materialId": "M2", "onHand": 0.0, "safetyStock": 98.0 },
-          { "materialId": "M1", "onHand": 255.0, "safetyStock": 0.0 },
-          { "materialId": "M3", "onHand": 59.0, "safetyStock": 12.5 }
+          { "materialId": "M3", "onHand": 378.0, "safetyStock": 12.5, "mainSupplierId": null },
+          { "materialId": "M2", "onHand": 0.0, "safetyStock": 98.0, "mainSupplierId": null },
+          { "materialId": "M1", "onHand": 255.0, "safetyStock": 0.0, "mainSupplierId": null },
+          { "materialId": "M3", "onHand": 59.0, "safetyStock": 12.5, "mainSupplierId": "S1" }
         ],
         "openPurchaseOrders": [],
         "demand": [
@@ -14693,6 +14842,10 @@
           { "supplierId": "S2", "promisedDate": "2030-09-07", "actualDate": "2030-09-07" },
           { "supplierId": "S3", "promisedDate": "2025-11-16", "actualDate": "2025-11-23" },
           { "supplierId": "S3", "promisedDate": "2029-10-20", "actualDate": "2029-10-23" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "expected": [
@@ -14757,7 +14910,9 @@
           "points": [["2026-10-11", 0, 0, 0, 59.0, 59.0]]
         }
       ],
-      "exceptions": [["M2", "WARNING", "2026-10-11", "2026-10-11", 0, false, 0, 98, 13.0]]
+      "exceptions": [["M2", "WARNING", "2026-10-11", "2026-10-11", 0, false, 0, 98, 13.0]],
+      "explanations": [["no open purchase order covers the demand", "Place an order now with ?"]],
+      "overduePurchaseOrders": []
     },
     {
       "name": "random-4",
@@ -14765,10 +14920,10 @@
       "horizonDays": 10,
       "input": {
         "materials": [
-          { "materialId": "M2", "onHand": 0.0, "safetyStock": 0.0 },
-          { "materialId": "M1", "onHand": 0.0, "safetyStock": 12.5 },
-          { "materialId": "M3", "onHand": 0.0, "safetyStock": 0.0 },
-          { "materialId": "M10", "onHand": 76.0, "safetyStock": 0.0 }
+          { "materialId": "M2", "onHand": 0.0, "safetyStock": 0.0, "mainSupplierId": "S1" },
+          { "materialId": "M1", "onHand": 0.0, "safetyStock": 12.5, "mainSupplierId": "S1" },
+          { "materialId": "M3", "onHand": 0.0, "safetyStock": 0.0, "mainSupplierId": "S2" },
+          { "materialId": "M10", "onHand": 76.0, "safetyStock": 0.0, "mainSupplierId": "S1" }
         ],
         "openPurchaseOrders": [
           {
@@ -14852,6 +15007,10 @@
           { "supplierId": "S1", "promisedDate": "2025-08-05", "actualDate": "2025-08-17" },
           { "supplierId": "S3", "promisedDate": "2029-05-12", "actualDate": "2029-05-16" },
           { "supplierId": "S1", "promisedDate": "2023-01-10", "actualDate": "2023-01-13" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "expected": [
@@ -14957,6 +15116,38 @@
       "exceptions": [
         ["M3", "CRITICAL", "2026-10-08", "2026-10-08", 0, false, -52, 0, 85],
         ["M1", "WARNING", "2026-10-08", "2026-10-08", 0, false, 0, 12, 40.0]
+      ],
+      "explanations": [
+        [
+          "P0 is promised for 2026-10-16, already AFTER the critical date; P1 is promised for 2026-10-12, already AFTER the critical date; P5 is promised for 2026-10-16, already AFTER the critical date; P8 is promised for 2026-10-26, already AFTER the critical date",
+          "Ask S2 to pull P0 forward before 2026-10-08, or source elsewhere; Ask Kunststoff Nord KG to pull P1 forward before 2026-10-08, or source elsewhere; Ask S2 to pull P5 forward before 2026-10-08, or source elsewhere; Ask Metallbau Kr\u00fcger GmbH to pull P8 forward before 2026-10-08, or source elsewhere"
+        ],
+        [
+          "P6 is promised for 2026-10-10, already AFTER the critical date; P7 is promised for 2026-10-18, already AFTER the critical date",
+          "Ask Kunststoff Nord KG to pull P6 forward before 2026-10-08, or source elsewhere; Ask S2 to pull P7 forward before 2026-10-08, or source elsewhere"
+        ]
+      ],
+      "overduePurchaseOrders": [
+        {
+          "poId": "P3",
+          "materialId": "M1",
+          "supplierId": "SX",
+          "qty": 15.094,
+          "promisedDate": "2026-10-05",
+          "realisticDate": "2026-10-05",
+          "countedInRealisticView": false,
+          "hasException": true
+        },
+        {
+          "poId": "P4",
+          "materialId": "M-orphan",
+          "supplierId": "S3",
+          "qty": 15.82,
+          "promisedDate": "2026-10-01",
+          "realisticDate": "2026-10-08",
+          "countedInRealisticView": true,
+          "hasException": false
+        }
       ]
     },
     {
@@ -14964,7 +15155,9 @@
       "asOf": "2026-10-10",
       "horizonDays": 25,
       "input": {
-        "materials": [{ "materialId": "M2", "onHand": 0.0, "safetyStock": 14.0 }],
+        "materials": [
+          { "materialId": "M2", "onHand": 0.0, "safetyStock": 14.0, "mainSupplierId": "S1" }
+        ],
         "openPurchaseOrders": [
           {
             "poId": "P0",
@@ -15057,6 +15250,10 @@
           { "supplierId": "S3", "promisedDate": "2025-12-23", "actualDate": "2025-12-23" },
           { "supplierId": "S3", "promisedDate": "2028-08-25", "actualDate": "2028-08-25" },
           { "supplierId": "S2", "promisedDate": "2025-09-18", "actualDate": "2025-09-18" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "expected": [
@@ -15126,14 +15323,34 @@
           ]
         }
       ],
-      "exceptions": [["M2", "CRITICAL", "2026-10-10", "2026-10-10", 0, false, -515, 14, 130]]
+      "exceptions": [["M2", "CRITICAL", "2026-10-10", "2026-10-10", 0, false, -515, 14, 130]],
+      "explanations": [
+        [
+          "P1 is promised for 2026-10-24, already AFTER the critical date",
+          "Ask SX to pull P1 forward before 2026-10-10, or source elsewhere"
+        ]
+      ],
+      "overduePurchaseOrders": [
+        {
+          "poId": "P0",
+          "materialId": "M2",
+          "supplierId": "S2",
+          "qty": 20.847,
+          "promisedDate": "2026-10-05",
+          "realisticDate": "2026-10-05",
+          "countedInRealisticView": false,
+          "hasException": true
+        }
+      ]
     },
     {
       "name": "random-6",
       "asOf": "2026-10-11",
       "horizonDays": 10,
       "input": {
-        "materials": [{ "materialId": "M2", "onHand": 0.0, "safetyStock": 12.5 }],
+        "materials": [
+          { "materialId": "M2", "onHand": 0.0, "safetyStock": 12.5, "mainSupplierId": "S3" }
+        ],
         "openPurchaseOrders": [
           {
             "poId": "P0",
@@ -15187,6 +15404,10 @@
           { "supplierId": "S3", "promisedDate": "2023-12-27", "actualDate": "2023-12-30" },
           { "supplierId": "S2", "promisedDate": "2030-05-28", "actualDate": "2030-06-09" },
           { "supplierId": "S3", "promisedDate": "2029-01-04", "actualDate": "2029-01-04" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "expected": [
@@ -15226,7 +15447,25 @@
           ]
         }
       ],
-      "exceptions": [["M2", "CRITICAL", "2026-10-15", "2026-10-15", 4, false, -52, 12, 73]]
+      "exceptions": [["M2", "CRITICAL", "2026-10-15", "2026-10-15", 4, false, -52, 12, 73]],
+      "explanations": [
+        [
+          "P1 promised 2026-10-03, but S2 is typically 8 working day(s) late (on-time rate 0%) (only 1 past deliveries, low confidence); P2 is promised for 2026-10-16, already AFTER the critical date; P3 is promised for 2026-10-31, already AFTER the critical date",
+          "Ask S2 to pull P2 forward before 2026-10-15, or source elsewhere; Ask Kunststoff Nord KG to pull P3 forward before 2026-10-15, or source elsewhere"
+        ]
+      ],
+      "overduePurchaseOrders": [
+        {
+          "poId": "P1",
+          "materialId": "M2",
+          "supplierId": "S2",
+          "qty": 17.58,
+          "promisedDate": "2026-10-03",
+          "realisticDate": "2026-10-14",
+          "countedInRealisticView": true,
+          "hasException": true
+        }
+      ]
     },
     {
       "name": "random-7",
@@ -15234,11 +15473,11 @@
       "horizonDays": 1,
       "input": {
         "materials": [
-          { "materialId": "M2", "onHand": 0.0, "safetyStock": 42.0 },
-          { "materialId": "M3", "onHand": 0.0, "safetyStock": 0.0 },
-          { "materialId": "M1", "onHand": 0.0, "safetyStock": 42.0 },
-          { "materialId": "M10", "onHand": 372.0, "safetyStock": 12.5 },
-          { "materialId": "M2", "onHand": 141.0, "safetyStock": 42.0 }
+          { "materialId": "M2", "onHand": 0.0, "safetyStock": 42.0, "mainSupplierId": "SX" },
+          { "materialId": "M3", "onHand": 0.0, "safetyStock": 0.0, "mainSupplierId": null },
+          { "materialId": "M1", "onHand": 0.0, "safetyStock": 42.0, "mainSupplierId": "SX" },
+          { "materialId": "M10", "onHand": 372.0, "safetyStock": 12.5, "mainSupplierId": "S3" },
+          { "materialId": "M2", "onHand": 141.0, "safetyStock": 42.0, "mainSupplierId": "S2" }
         ],
         "openPurchaseOrders": [
           {
@@ -15314,6 +15553,10 @@
           { "supplierId": "S1", "promisedDate": "2023-04-09", "actualDate": "2023-04-07" },
           { "supplierId": "S2", "promisedDate": "2024-04-01", "actualDate": "2024-04-02" },
           { "supplierId": "S3", "promisedDate": "2023-03-06", "actualDate": "2023-03-04" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "expected": [
@@ -15405,7 +15648,12 @@
       "exceptions": [
         ["M2", "CRITICAL", "2026-10-11", "2026-10-11", 0, false, -56, 42, 51.3],
         ["M1", "WARNING", "2026-10-11", "2026-10-11", 0, false, 0, 42, 13.0]
-      ]
+      ],
+      "explanations": [
+        ["no open purchase order covers the demand", "Place an order now with SX"],
+        ["no open purchase order covers the demand", "Place an order now with SX"]
+      ],
+      "overduePurchaseOrders": []
     },
     {
       "name": "random-8",
@@ -15413,8 +15661,8 @@
       "horizonDays": 17,
       "input": {
         "materials": [
-          { "materialId": "M2", "onHand": 207.0, "safetyStock": 0.0 },
-          { "materialId": "M2", "onHand": 154.0, "safetyStock": 0.0 }
+          { "materialId": "M2", "onHand": 207.0, "safetyStock": 0.0, "mainSupplierId": "S1" },
+          { "materialId": "M2", "onHand": 154.0, "safetyStock": 0.0, "mainSupplierId": "S1" }
         ],
         "openPurchaseOrders": [
           {
@@ -15445,6 +15693,10 @@
           { "supplierId": "S3", "promisedDate": "2023-01-13", "actualDate": "2023-01-16" },
           { "supplierId": "S3", "promisedDate": "2027-09-25", "actualDate": "2027-10-02" },
           { "supplierId": "S3", "promisedDate": "2029-01-27", "actualDate": "2029-01-28" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "expected": [
@@ -15513,7 +15765,9 @@
           ]
         }
       ],
-      "exceptions": []
+      "exceptions": [],
+      "explanations": [],
+      "overduePurchaseOrders": []
     },
     {
       "name": "random-9",
@@ -15521,8 +15775,8 @@
       "horizonDays": 1,
       "input": {
         "materials": [
-          { "materialId": "\u00c4-4", "onHand": 100.0, "safetyStock": 0.0 },
-          { "materialId": "M1", "onHand": 0.0, "safetyStock": 41.0 }
+          { "materialId": "\u00c4-4", "onHand": 100.0, "safetyStock": 0.0, "mainSupplierId": "S2" },
+          { "materialId": "M1", "onHand": 0.0, "safetyStock": 41.0, "mainSupplierId": "SX" }
         ],
         "openPurchaseOrders": [
           {
@@ -15646,6 +15900,10 @@
           { "supplierId": "S1", "promisedDate": "2025-05-13", "actualDate": "2025-05-16" },
           { "supplierId": "S3", "promisedDate": "2023-02-10", "actualDate": "2023-02-10" },
           { "supplierId": "S1", "promisedDate": "2022-09-07", "actualDate": "2022-09-08" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "expected": [
@@ -15704,7 +15962,40 @@
           "points": [["2026-10-08", 28.1, 0, 0, -28.1, -28.1]]
         }
       ],
-      "exceptions": [["M1", "CRITICAL", "2026-10-08", "2026-10-08", 0, false, -28, 41, 44.9]]
+      "exceptions": [["M1", "CRITICAL", "2026-10-08", "2026-10-08", 0, false, -28, 41, 44.9]],
+      "explanations": [["no open purchase order covers the demand", "Place an order now with SX"]],
+      "overduePurchaseOrders": [
+        {
+          "poId": "P0",
+          "materialId": "M-orphan",
+          "supplierId": "S3",
+          "qty": 34.6,
+          "promisedDate": "2026-09-29",
+          "realisticDate": "2026-10-06",
+          "countedInRealisticView": false,
+          "hasException": false
+        },
+        {
+          "poId": "P5",
+          "materialId": "\u00c4-4",
+          "supplierId": "SX",
+          "qty": 37.1,
+          "promisedDate": "2026-09-29",
+          "realisticDate": "2026-09-29",
+          "countedInRealisticView": false,
+          "hasException": false
+        },
+        {
+          "poId": "P7",
+          "materialId": "M-orphan",
+          "supplierId": "S3",
+          "qty": 29.0,
+          "promisedDate": "2026-10-03",
+          "realisticDate": "2026-10-09",
+          "countedInRealisticView": false,
+          "hasException": false
+        }
+      ]
     },
     {
       "name": "random-10",
@@ -15712,8 +16003,8 @@
       "horizonDays": 45,
       "input": {
         "materials": [
-          { "materialId": "M3", "onHand": 0.0, "safetyStock": 0.0 },
-          { "materialId": "\u00c4-4", "onHand": 0.0, "safetyStock": 129.0 }
+          { "materialId": "M3", "onHand": 0.0, "safetyStock": 0.0, "mainSupplierId": "S2" },
+          { "materialId": "\u00c4-4", "onHand": 0.0, "safetyStock": 129.0, "mainSupplierId": "S2" }
         ],
         "openPurchaseOrders": [
           {
@@ -15771,6 +16062,10 @@
           { "supplierId": "S3", "promisedDate": "2023-10-28", "actualDate": "2023-11-01" },
           { "supplierId": "S3", "promisedDate": "2026-03-27", "actualDate": "2026-04-03" },
           { "supplierId": "S3", "promisedDate": "2025-08-30", "actualDate": "2025-08-30" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "expected": [
@@ -15908,6 +16203,25 @@
       "exceptions": [
         ["M3", "CRITICAL", "2026-10-20", "2026-10-20", 9, false, -235, 0, 163],
         ["\u00c4-4", "CRITICAL", "2026-10-19", "2026-10-19", 8, false, -101, 129, 153.9]
+      ],
+      "explanations": [
+        [
+          "P0 promised 2026-10-03, but Kunststoff Nord KG is typically 7 working day(s) late (on-time rate 25%)",
+          "Increase order quantity or check the demand plan"
+        ],
+        ["no open purchase order covers the demand", "Place an order now with S2"]
+      ],
+      "overduePurchaseOrders": [
+        {
+          "poId": "P0",
+          "materialId": "M3",
+          "supplierId": "S3",
+          "qty": 24.83,
+          "promisedDate": "2026-10-03",
+          "realisticDate": "2026-10-13",
+          "countedInRealisticView": true,
+          "hasException": true
+        }
       ]
     },
     {
@@ -15915,7 +16229,9 @@
       "asOf": "2026-10-05",
       "horizonDays": 1,
       "input": {
-        "materials": [{ "materialId": "\u00c4-4", "onHand": 245.0, "safetyStock": 12.5 }],
+        "materials": [
+          { "materialId": "\u00c4-4", "onHand": 245.0, "safetyStock": 12.5, "mainSupplierId": "S2" }
+        ],
         "openPurchaseOrders": [
           {
             "poId": "P0",
@@ -15963,6 +16279,10 @@
           { "supplierId": "S3", "promisedDate": "2028-03-31", "actualDate": "2028-03-29" },
           { "supplierId": "S1", "promisedDate": "2026-01-22", "actualDate": "2026-02-03" },
           { "supplierId": "S3", "promisedDate": "2023-03-01", "actualDate": "2023-03-05" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "expected": [
@@ -15988,7 +16308,9 @@
           "points": [["2026-10-05", 45.0, 0, 0, 200.0, 200.0]]
         }
       ],
-      "exceptions": []
+      "exceptions": [],
+      "explanations": [],
+      "overduePurchaseOrders": []
     },
     {
       "name": "random-12",
@@ -15996,8 +16318,8 @@
       "horizonDays": 7,
       "input": {
         "materials": [
-          { "materialId": "M10", "onHand": 341.0, "safetyStock": 0.0 },
-          { "materialId": "M1", "onHand": 223.0, "safetyStock": 47.0 }
+          { "materialId": "M10", "onHand": 341.0, "safetyStock": 0.0, "mainSupplierId": "S2" },
+          { "materialId": "M1", "onHand": 223.0, "safetyStock": 47.0, "mainSupplierId": "SX" }
         ],
         "openPurchaseOrders": [
           {
@@ -16060,6 +16382,10 @@
           { "supplierId": "S1", "promisedDate": "2025-10-26", "actualDate": "2025-11-07" },
           { "supplierId": "S3", "promisedDate": "2029-09-08", "actualDate": "2029-09-12" },
           { "supplierId": "S2", "promisedDate": "2027-10-17", "actualDate": "2027-10-20" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "expected": [
@@ -16112,14 +16438,29 @@
           ]
         }
       ],
-      "exceptions": []
+      "exceptions": [],
+      "explanations": [],
+      "overduePurchaseOrders": [
+        {
+          "poId": "P1",
+          "materialId": "M10",
+          "supplierId": "SX",
+          "qty": 24.0,
+          "promisedDate": "2026-10-07",
+          "realisticDate": "2026-10-07",
+          "countedInRealisticView": false,
+          "hasException": false
+        }
+      ]
     },
     {
       "name": "random-13",
       "asOf": "2026-10-08",
       "horizonDays": 28,
       "input": {
-        "materials": [{ "materialId": "\u00c4-4", "onHand": 0.0, "safetyStock": 72.0 }],
+        "materials": [
+          { "materialId": "\u00c4-4", "onHand": 0.0, "safetyStock": 72.0, "mainSupplierId": "S1" }
+        ],
         "openPurchaseOrders": [
           {
             "poId": "P0",
@@ -16240,6 +16581,10 @@
           { "supplierId": "S1", "promisedDate": "2026-09-02", "actualDate": "2026-09-03" },
           { "supplierId": "S3", "promisedDate": "2024-12-28", "actualDate": "2024-12-31" },
           { "supplierId": "S1", "promisedDate": "2030-08-18", "actualDate": "2030-08-18" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "expected": [
@@ -16312,7 +16657,45 @@
           ]
         }
       ],
-      "exceptions": [["\u00c4-4", "CRITICAL", "2026-10-08", "2026-10-08", 0, false, -519, 72, 139]]
+      "exceptions": [["\u00c4-4", "CRITICAL", "2026-10-08", "2026-10-08", 0, false, -519, 72, 139]],
+      "explanations": [
+        [
+          "P0 is promised for 2026-11-05, already AFTER the critical date; P2 is promised for 2026-11-01, already AFTER the critical date; P3 promised 2026-10-07, but Kunststoff Nord KG is typically 3 working day(s) late (on-time rate 20%); P6 is promised for 2026-11-05, already AFTER the critical date",
+          "Ask Metallbau Kr\u00fcger GmbH to pull P0 forward before 2026-10-08, or source elsewhere; Ask Kunststoff Nord KG to pull P2 forward before 2026-10-08, or source elsewhere; Expedite P3 / ask for partial delivery before 2026-10-08; Ask Kunststoff Nord KG to pull P6 forward before 2026-10-08, or source elsewhere"
+        ]
+      ],
+      "overduePurchaseOrders": [
+        {
+          "poId": "P1",
+          "materialId": "M-orphan",
+          "supplierId": "S1",
+          "qty": 11.0,
+          "promisedDate": "2026-10-05",
+          "realisticDate": "2026-10-06",
+          "countedInRealisticView": false,
+          "hasException": false
+        },
+        {
+          "poId": "P3",
+          "materialId": "\u00c4-4",
+          "supplierId": "S3",
+          "qty": 29.346,
+          "promisedDate": "2026-10-07",
+          "realisticDate": "2026-10-12",
+          "countedInRealisticView": true,
+          "hasException": true
+        },
+        {
+          "poId": "P4",
+          "materialId": "M-orphan",
+          "supplierId": "S2",
+          "qty": 25.0,
+          "promisedDate": "2026-10-01",
+          "realisticDate": "2026-10-01",
+          "countedInRealisticView": false,
+          "hasException": false
+        }
+      ]
     },
     {
       "name": "random-14",
@@ -16320,10 +16703,10 @@
       "horizonDays": 1,
       "input": {
         "materials": [
-          { "materialId": "M2", "onHand": 0.0, "safetyStock": 48.0 },
-          { "materialId": "M10", "onHand": 33.0, "safetyStock": 0.0 },
-          { "materialId": "M3", "onHand": 0.0, "safetyStock": 0.0 },
-          { "materialId": "\u00c4-4", "onHand": 0.0, "safetyStock": 13.0 }
+          { "materialId": "M2", "onHand": 0.0, "safetyStock": 48.0, "mainSupplierId": "S1" },
+          { "materialId": "M10", "onHand": 33.0, "safetyStock": 0.0, "mainSupplierId": "S1" },
+          { "materialId": "M3", "onHand": 0.0, "safetyStock": 0.0, "mainSupplierId": "SX" },
+          { "materialId": "\u00c4-4", "onHand": 0.0, "safetyStock": 13.0, "mainSupplierId": "S1" }
         ],
         "openPurchaseOrders": [
           {
@@ -16386,6 +16769,10 @@
           { "supplierId": "S2", "promisedDate": "2026-04-19", "actualDate": "2026-04-19" },
           { "supplierId": "S3", "promisedDate": "2028-12-11", "actualDate": "2028-12-18" },
           { "supplierId": "S3", "promisedDate": "2023-09-01", "actualDate": "2023-09-05" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "expected": [
@@ -16458,6 +16845,48 @@
       "exceptions": [
         ["M2", "WARNING", "2026-10-06", "2026-10-06", 0, false, 0, 48, 13.0],
         ["\u00c4-4", "WARNING", "2026-10-06", "2026-10-06", 0, false, 0, 13, 13.0]
+      ],
+      "explanations": [
+        [
+          "P2 is promised for 2026-10-16, already AFTER the critical date",
+          "Ask Metallbau Kr\u00fcger GmbH to pull P2 forward before 2026-10-06, or source elsewhere"
+        ],
+        [
+          "no open purchase order covers the demand",
+          "Place an order now with Metallbau Kr\u00fcger GmbH"
+        ]
+      ],
+      "overduePurchaseOrders": [
+        {
+          "poId": "P0",
+          "materialId": "M-orphan",
+          "supplierId": "S3",
+          "qty": 39.0,
+          "promisedDate": "2026-09-30",
+          "realisticDate": "2026-10-07",
+          "countedInRealisticView": false,
+          "hasException": false
+        },
+        {
+          "poId": "P1",
+          "materialId": "M2",
+          "supplierId": "SX",
+          "qty": 40.0,
+          "promisedDate": "2026-09-27",
+          "realisticDate": "2026-09-27",
+          "countedInRealisticView": false,
+          "hasException": true
+        },
+        {
+          "poId": "P3",
+          "materialId": "M2",
+          "supplierId": "S1",
+          "qty": 9.0,
+          "promisedDate": "2026-10-02",
+          "realisticDate": "2026-10-02",
+          "countedInRealisticView": false,
+          "hasException": true
+        }
       ]
     },
     {
@@ -16465,7 +16894,9 @@
       "asOf": "2026-10-06",
       "horizonDays": 28,
       "input": {
-        "materials": [{ "materialId": "M10", "onHand": 0.0, "safetyStock": 0.0 }],
+        "materials": [
+          { "materialId": "M10", "onHand": 0.0, "safetyStock": 0.0, "mainSupplierId": "S2" }
+        ],
         "openPurchaseOrders": [
           {
             "poId": "P0",
@@ -16570,6 +17001,10 @@
           { "supplierId": "S3", "promisedDate": "2027-08-31", "actualDate": "2027-09-01" },
           { "supplierId": "S2", "promisedDate": "2030-02-02", "actualDate": "2030-02-02" },
           { "supplierId": "S3", "promisedDate": "2024-03-14", "actualDate": "2024-03-26" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "expected": [
@@ -16634,7 +17069,35 @@
           ]
         }
       ],
-      "exceptions": [["M10", "CRITICAL", "2026-10-06", "2026-10-06", 0, false, -126, 0, 139]]
+      "exceptions": [["M10", "CRITICAL", "2026-10-06", "2026-10-06", 0, false, -126, 0, 139]],
+      "explanations": [
+        [
+          "P2 is promised for 2026-10-25, already AFTER the critical date; P4 is promised for 2026-10-06, already AFTER the critical date; P5 promised 2026-09-29, but Metallbau Kr\u00fcger GmbH is typically 1 working day(s) late (on-time rate 67%); P7 is promised for 2026-11-07, already AFTER the critical date; P8 is promised for 2026-11-02, already AFTER the critical date",
+          "Ask SX to pull P2 forward before 2026-10-06, or source elsewhere; Ask S2 to pull P4 forward before 2026-10-06, or source elsewhere; Ask S2 to pull P7 forward before 2026-10-06, or source elsewhere; Ask SX to pull P8 forward before 2026-10-06, or source elsewhere"
+        ]
+      ],
+      "overduePurchaseOrders": [
+        {
+          "poId": "P1",
+          "materialId": "M-orphan",
+          "supplierId": "SX",
+          "qty": 23.0,
+          "promisedDate": "2026-09-28",
+          "realisticDate": "2026-09-28",
+          "countedInRealisticView": false,
+          "hasException": false
+        },
+        {
+          "poId": "P5",
+          "materialId": "M10",
+          "supplierId": "S1",
+          "qty": 24.0,
+          "promisedDate": "2026-09-29",
+          "realisticDate": "2026-09-30",
+          "countedInRealisticView": false,
+          "hasException": true
+        }
+      ]
     },
     {
       "name": "random-16",
@@ -16642,8 +17105,8 @@
       "horizonDays": 10,
       "input": {
         "materials": [
-          { "materialId": "\u00c4-4", "onHand": 0.0, "safetyStock": 12.5 },
-          { "materialId": "M1", "onHand": 263.0, "safetyStock": 12.5 }
+          { "materialId": "\u00c4-4", "onHand": 0.0, "safetyStock": 12.5, "mainSupplierId": "S3" },
+          { "materialId": "M1", "onHand": 263.0, "safetyStock": 12.5, "mainSupplierId": "S1" }
         ],
         "openPurchaseOrders": [
           {
@@ -16721,6 +17184,10 @@
           { "supplierId": "S3", "promisedDate": "2027-01-14", "actualDate": "2027-01-12" },
           { "supplierId": "S3", "promisedDate": "2025-07-18", "actualDate": "2025-07-16" },
           { "supplierId": "S3", "promisedDate": "2029-07-06", "actualDate": "2029-07-10" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "expected": [
@@ -16789,7 +17256,32 @@
           ]
         }
       ],
-      "exceptions": [["\u00c4-4", "CRITICAL", "2026-10-05", "2026-10-05", 0, false, -333, 12, 85]]
+      "exceptions": [["\u00c4-4", "CRITICAL", "2026-10-05", "2026-10-05", 0, false, -333, 12, 85]],
+      "explanations": [
+        ["no open purchase order covers the demand", "Place an order now with Kunststoff Nord KG"]
+      ],
+      "overduePurchaseOrders": [
+        {
+          "poId": "P0",
+          "materialId": "M-orphan",
+          "supplierId": "S3",
+          "qty": 8.0,
+          "promisedDate": "2026-09-28",
+          "realisticDate": "2026-10-01",
+          "countedInRealisticView": false,
+          "hasException": false
+        },
+        {
+          "poId": "P1",
+          "materialId": "M-orphan",
+          "supplierId": "S2",
+          "qty": 29.397,
+          "promisedDate": "2026-09-28",
+          "realisticDate": "2026-09-28",
+          "countedInRealisticView": false,
+          "hasException": false
+        }
+      ]
     },
     {
       "name": "random-17",
@@ -16797,8 +17289,8 @@
       "horizonDays": 1,
       "input": {
         "materials": [
-          { "materialId": "M10", "onHand": 282.0, "safetyStock": 12.5 },
-          { "materialId": "M3", "onHand": 18.0, "safetyStock": 0.0 }
+          { "materialId": "M10", "onHand": 282.0, "safetyStock": 12.5, "mainSupplierId": "SX" },
+          { "materialId": "M3", "onHand": 18.0, "safetyStock": 0.0, "mainSupplierId": "SX" }
         ],
         "openPurchaseOrders": [
           {
@@ -16901,6 +17393,10 @@
           { "supplierId": "S3", "promisedDate": "2030-03-01", "actualDate": "2030-03-01" },
           { "supplierId": "S3", "promisedDate": "2025-11-16", "actualDate": "2025-11-17" },
           { "supplierId": "S2", "promisedDate": "2029-07-07", "actualDate": "2029-07-07" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "expected": [
@@ -16959,7 +17455,50 @@
           "points": [["2026-10-09", 7.0, 0, 0, 11.0, 11.0]]
         }
       ],
-      "exceptions": []
+      "exceptions": [],
+      "explanations": [],
+      "overduePurchaseOrders": [
+        {
+          "poId": "P1",
+          "materialId": "M10",
+          "supplierId": "SX",
+          "qty": 23.8,
+          "promisedDate": "2026-10-08",
+          "realisticDate": "2026-10-08",
+          "countedInRealisticView": false,
+          "hasException": false
+        },
+        {
+          "poId": "P2",
+          "materialId": "M-orphan",
+          "supplierId": "S3",
+          "qty": 0.7,
+          "promisedDate": "2026-10-02",
+          "realisticDate": "2026-10-06",
+          "countedInRealisticView": false,
+          "hasException": false
+        },
+        {
+          "poId": "P4",
+          "materialId": "M3",
+          "supplierId": "S2",
+          "qty": 39.56,
+          "promisedDate": "2026-10-04",
+          "realisticDate": "2026-10-06",
+          "countedInRealisticView": false,
+          "hasException": false
+        },
+        {
+          "poId": "P7",
+          "materialId": "M-orphan",
+          "supplierId": "SX",
+          "qty": 21.65,
+          "promisedDate": "2026-10-06",
+          "realisticDate": "2026-10-06",
+          "countedInRealisticView": false,
+          "hasException": false
+        }
+      ]
     },
     {
       "name": "random-18",
@@ -16967,10 +17506,10 @@
       "horizonDays": 10,
       "input": {
         "materials": [
-          { "materialId": "M10", "onHand": 319.0, "safetyStock": 109.0 },
-          { "materialId": "M2", "onHand": 299.0, "safetyStock": 0.0 },
-          { "materialId": "M1", "onHand": 0.0, "safetyStock": 0.0 },
-          { "materialId": "M10", "onHand": 327.0, "safetyStock": 109.0 }
+          { "materialId": "M10", "onHand": 319.0, "safetyStock": 109.0, "mainSupplierId": "S2" },
+          { "materialId": "M2", "onHand": 299.0, "safetyStock": 0.0, "mainSupplierId": "S2" },
+          { "materialId": "M1", "onHand": 0.0, "safetyStock": 0.0, "mainSupplierId": "S3" },
+          { "materialId": "M10", "onHand": 327.0, "safetyStock": 109.0, "mainSupplierId": "S2" }
         ],
         "openPurchaseOrders": [
           {
@@ -17060,6 +17599,10 @@
           { "supplierId": "S3", "promisedDate": "2026-12-01", "actualDate": "2026-12-13" },
           { "supplierId": "S3", "promisedDate": "2026-04-13", "actualDate": "2026-04-14" },
           { "supplierId": "S2", "promisedDate": "2030-07-08", "actualDate": "2030-07-11" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "expected": [
@@ -17192,7 +17735,25 @@
           ]
         }
       ],
-      "exceptions": [["M1", "CRITICAL", "2026-10-05", "2026-10-05", 0, false, -198, 0, 85]]
+      "exceptions": [["M1", "CRITICAL", "2026-10-05", "2026-10-05", 0, false, -198, 0, 85]],
+      "explanations": [
+        [
+          "P1 promised 2026-10-03, but Metallbau Kr\u00fcger GmbH is typically 1 working day(s) late (on-time rate 0%) (only 1 past deliveries, low confidence)",
+          "Expedite P1 / ask for partial delivery before 2026-10-05"
+        ]
+      ],
+      "overduePurchaseOrders": [
+        {
+          "poId": "P1",
+          "materialId": "M1",
+          "supplierId": "S1",
+          "qty": 44.0,
+          "promisedDate": "2026-10-03",
+          "realisticDate": "2026-10-05",
+          "countedInRealisticView": true,
+          "hasException": true
+        }
+      ]
     },
     {
       "name": "random-19",
@@ -17200,10 +17761,15 @@
       "horizonDays": 28,
       "input": {
         "materials": [
-          { "materialId": "\u00c4-4", "onHand": 328.0, "safetyStock": 141.0 },
-          { "materialId": "M1", "onHand": 0.0, "safetyStock": 0.0 },
-          { "materialId": "M2", "onHand": 0.0, "safetyStock": 12.5 },
-          { "materialId": "M3", "onHand": 301.0, "safetyStock": 0.0 }
+          {
+            "materialId": "\u00c4-4",
+            "onHand": 328.0,
+            "safetyStock": 141.0,
+            "mainSupplierId": "S1"
+          },
+          { "materialId": "M1", "onHand": 0.0, "safetyStock": 0.0, "mainSupplierId": null },
+          { "materialId": "M2", "onHand": 0.0, "safetyStock": 12.5, "mainSupplierId": "SX" },
+          { "materialId": "M3", "onHand": 301.0, "safetyStock": 0.0, "mainSupplierId": "S1" }
         ],
         "openPurchaseOrders": [
           {
@@ -17284,6 +17850,10 @@
           { "supplierId": "S2", "promisedDate": "2030-07-22", "actualDate": "2030-07-25" },
           { "supplierId": "S3", "promisedDate": "2022-09-14", "actualDate": "2022-09-14" },
           { "supplierId": "S3", "promisedDate": "2028-08-27", "actualDate": "2028-08-27" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "expected": [
@@ -17490,6 +18060,25 @@
       "exceptions": [
         ["M2", "CRITICAL", "2026-10-13", "2026-10-13", 2, false, -189, 12, 133],
         ["M1", "CRITICAL", "2026-10-15", "2026-10-15", 4, false, -242, 0, 127]
+      ],
+      "explanations": [
+        [
+          "P1 is promised for 2026-10-15, already AFTER the critical date",
+          "Ask Kunststoff Nord KG to pull P1 forward before 2026-10-13, or source elsewhere"
+        ],
+        ["no open purchase order covers the demand", "Place an order now with ?"]
+      ],
+      "overduePurchaseOrders": [
+        {
+          "poId": "P2",
+          "materialId": "M2",
+          "supplierId": "SX",
+          "qty": 48.0,
+          "promisedDate": "2026-10-10",
+          "realisticDate": "2026-10-10",
+          "countedInRealisticView": false,
+          "hasException": true
+        }
       ]
     },
     {
@@ -17497,7 +18086,9 @@
       "asOf": "2026-10-07",
       "horizonDays": 10,
       "input": {
-        "materials": [{ "materialId": "\u00c4-4", "onHand": 0.0, "safetyStock": 0.0 }],
+        "materials": [
+          { "materialId": "\u00c4-4", "onHand": 0.0, "safetyStock": 0.0, "mainSupplierId": "S2" }
+        ],
         "openPurchaseOrders": [
           {
             "poId": "P0",
@@ -17574,6 +18165,10 @@
           { "supplierId": "S3", "promisedDate": "2026-07-29", "actualDate": "2026-08-02" },
           { "supplierId": "S1", "promisedDate": "2026-11-14", "actualDate": "2026-11-12" },
           { "supplierId": "S3", "promisedDate": "2026-10-07", "actualDate": "2026-10-07" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "expected": [
@@ -17615,14 +18210,23 @@
           ]
         }
       ],
-      "exceptions": [["\u00c4-4", "CRITICAL", "2026-10-07", "2026-10-07", 0, false, -455, 0, 85]]
+      "exceptions": [["\u00c4-4", "CRITICAL", "2026-10-07", "2026-10-07", 0, false, -455, 0, 85]],
+      "explanations": [
+        [
+          "P0 is promised for 2026-10-15, already AFTER the critical date",
+          "Ask Kunststoff Nord KG to pull P0 forward before 2026-10-07, or source elsewhere"
+        ]
+      ],
+      "overduePurchaseOrders": []
     },
     {
       "name": "random-21",
       "asOf": "2026-10-10",
       "horizonDays": 39,
       "input": {
-        "materials": [{ "materialId": "M1", "onHand": 293.0, "safetyStock": 12.5 }],
+        "materials": [
+          { "materialId": "M1", "onHand": 293.0, "safetyStock": 12.5, "mainSupplierId": "S2" }
+        ],
         "openPurchaseOrders": [
           {
             "poId": "P0",
@@ -17724,6 +18328,10 @@
           { "supplierId": "S3", "promisedDate": "2024-02-03", "actualDate": "2024-02-03" },
           { "supplierId": "S3", "promisedDate": "2027-01-31", "actualDate": "2027-02-01" },
           { "supplierId": "S3", "promisedDate": "2024-08-14", "actualDate": "2024-08-12" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "expected": [
@@ -17795,7 +18403,40 @@
           ]
         }
       ],
-      "exceptions": []
+      "exceptions": [],
+      "explanations": [],
+      "overduePurchaseOrders": [
+        {
+          "poId": "P6",
+          "materialId": "M-orphan",
+          "supplierId": "SX",
+          "qty": 35.8,
+          "promisedDate": "2026-10-08",
+          "realisticDate": "2026-10-08",
+          "countedInRealisticView": false,
+          "hasException": false
+        },
+        {
+          "poId": "P7",
+          "materialId": "M1",
+          "supplierId": "SX",
+          "qty": 39.41,
+          "promisedDate": "2026-10-07",
+          "realisticDate": "2026-10-07",
+          "countedInRealisticView": false,
+          "hasException": false
+        },
+        {
+          "poId": "P8",
+          "materialId": "M1",
+          "supplierId": "S3",
+          "qty": 35.5,
+          "promisedDate": "2026-10-07",
+          "realisticDate": "2026-10-12",
+          "countedInRealisticView": true,
+          "hasException": false
+        }
+      ]
     },
     {
       "name": "random-22",
@@ -17803,9 +18444,9 @@
       "horizonDays": 10,
       "input": {
         "materials": [
-          { "materialId": "M10", "onHand": 0.0, "safetyStock": 12.5 },
-          { "materialId": "M1", "onHand": 349.0, "safetyStock": 11.0 },
-          { "materialId": "M10", "onHand": 110.0, "safetyStock": 12.5 }
+          { "materialId": "M10", "onHand": 0.0, "safetyStock": 12.5, "mainSupplierId": "S1" },
+          { "materialId": "M1", "onHand": 349.0, "safetyStock": 11.0, "mainSupplierId": "S1" },
+          { "materialId": "M10", "onHand": 110.0, "safetyStock": 12.5, "mainSupplierId": "S1" }
         ],
         "openPurchaseOrders": [
           {
@@ -17897,6 +18538,10 @@
           { "supplierId": "S1", "promisedDate": "2025-10-14", "actualDate": "2025-10-18" },
           { "supplierId": "S1", "promisedDate": "2027-08-11", "actualDate": "2027-08-18" },
           { "supplierId": "S1", "promisedDate": "2024-11-10", "actualDate": "2024-11-10" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "expected": [
@@ -18014,6 +18659,48 @@
       "exceptions": [
         ["M10", "CRITICAL", "2026-10-09", "2026-10-09", 1, false, -234, 12, 82],
         ["M10", "CRITICAL", "2026-10-15", "2026-10-12", 7, false, -124, 12, 64]
+      ],
+      "explanations": [
+        [
+          "P0 promised 2026-10-07, but Kunststoff Nord KG is typically 5 working day(s) late (on-time rate 25%); P2 promised 2026-10-06, but Metallbau Kr\u00fcger GmbH is typically 2 working day(s) late (on-time rate 71%)",
+          "Expedite P0 / ask for partial delivery before 2026-10-09"
+        ],
+        [
+          "P0 promised 2026-10-07, but Kunststoff Nord KG is typically 5 working day(s) late (on-time rate 25%); P2 promised 2026-10-06, but Metallbau Kr\u00fcger GmbH is typically 2 working day(s) late (on-time rate 71%)",
+          "Increase order quantity or check the demand plan"
+        ]
+      ],
+      "overduePurchaseOrders": [
+        {
+          "poId": "P0",
+          "materialId": "M10",
+          "supplierId": "S3",
+          "qty": 27.91,
+          "promisedDate": "2026-10-07",
+          "realisticDate": "2026-10-14",
+          "countedInRealisticView": true,
+          "hasException": true
+        },
+        {
+          "poId": "P1",
+          "materialId": "M-orphan",
+          "supplierId": "S3",
+          "qty": 26.0,
+          "promisedDate": "2026-10-02",
+          "realisticDate": "2026-10-09",
+          "countedInRealisticView": true,
+          "hasException": false
+        },
+        {
+          "poId": "P2",
+          "materialId": "M10",
+          "supplierId": "S1",
+          "qty": 24.0,
+          "promisedDate": "2026-10-06",
+          "realisticDate": "2026-10-08",
+          "countedInRealisticView": true,
+          "hasException": true
+        }
       ]
     },
     {
@@ -18022,10 +18709,10 @@
       "horizonDays": 28,
       "input": {
         "materials": [
-          { "materialId": "M3", "onHand": 0.0, "safetyStock": 0.0 },
-          { "materialId": "M2", "onHand": 359.0, "safetyStock": 123.0 },
-          { "materialId": "M10", "onHand": 103.0, "safetyStock": 12.5 },
-          { "materialId": "\u00c4-4", "onHand": 0.0, "safetyStock": 12.5 }
+          { "materialId": "M3", "onHand": 0.0, "safetyStock": 0.0, "mainSupplierId": "SX" },
+          { "materialId": "M2", "onHand": 359.0, "safetyStock": 123.0, "mainSupplierId": "SX" },
+          { "materialId": "M10", "onHand": 103.0, "safetyStock": 12.5, "mainSupplierId": "S2" },
+          { "materialId": "\u00c4-4", "onHand": 0.0, "safetyStock": 12.5, "mainSupplierId": "S1" }
         ],
         "openPurchaseOrders": [
           {
@@ -18113,6 +18800,10 @@
           { "supplierId": "S2", "promisedDate": "2023-05-30", "actualDate": "2023-06-03" },
           { "supplierId": "S1", "promisedDate": "2023-04-04", "actualDate": "2023-04-02" },
           { "supplierId": "S2", "promisedDate": "2025-03-12", "actualDate": "2025-03-15" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "expected": [
@@ -18317,6 +19008,29 @@
         ["\u00c4-4", "CRITICAL", "2026-10-09", "2026-10-09", 1, false, -177, 12, 136],
         ["M3", "CRITICAL", "2026-10-10", "2026-10-10", 2, false, -342, 0, 133],
         ["M10", "CRITICAL", "2026-10-25", "2026-10-25", 17, false, -96, 12, 88]
+      ],
+      "explanations": [
+        [
+          "P0 is promised for 2026-11-04, already AFTER the critical date",
+          "Ask Metallbau Kr\u00fcger GmbH to pull P0 forward before 2026-10-09, or source elsewhere"
+        ],
+        [
+          "P2 is promised for 2026-10-20, already AFTER the critical date",
+          "Ask SX to pull P2 forward before 2026-10-10, or source elsewhere"
+        ],
+        ["no open purchase order covers the demand", "Place an order now with S2"]
+      ],
+      "overduePurchaseOrders": [
+        {
+          "poId": "P3",
+          "materialId": "\u00c4-4",
+          "supplierId": "SX",
+          "qty": 40.0,
+          "promisedDate": "2026-09-29",
+          "realisticDate": "2026-09-29",
+          "countedInRealisticView": false,
+          "hasException": true
+        }
       ]
     },
     {
@@ -18325,10 +19039,10 @@
       "horizonDays": 10,
       "input": {
         "materials": [
-          { "materialId": "M10", "onHand": 30.0, "safetyStock": 12.5 },
-          { "materialId": "M3", "onHand": 315.0, "safetyStock": 12.5 },
-          { "materialId": "M1", "onHand": 0.0, "safetyStock": 0.0 },
-          { "materialId": "M2", "onHand": 52.0, "safetyStock": 12.5 }
+          { "materialId": "M10", "onHand": 30.0, "safetyStock": 12.5, "mainSupplierId": "SX" },
+          { "materialId": "M3", "onHand": 315.0, "safetyStock": 12.5, "mainSupplierId": null },
+          { "materialId": "M1", "onHand": 0.0, "safetyStock": 0.0, "mainSupplierId": "S3" },
+          { "materialId": "M2", "onHand": 52.0, "safetyStock": 12.5, "mainSupplierId": "S1" }
         ],
         "openPurchaseOrders": [],
         "demand": [
@@ -18366,6 +19080,10 @@
           { "supplierId": "S3", "promisedDate": "2027-06-20", "actualDate": "2027-06-21" },
           { "supplierId": "S1", "promisedDate": "2030-05-26", "actualDate": "2030-05-24" },
           { "supplierId": "S2", "promisedDate": "2026-01-01", "actualDate": "2026-01-02" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "expected": [
@@ -18471,7 +19189,15 @@
       "exceptions": [
         ["M2", "CRITICAL", "2026-10-11", "2026-10-11", 3, false, -52, 12, 76],
         ["M1", "CRITICAL", "2026-10-15", "2026-10-15", 7, false, -55, 0, 64]
-      ]
+      ],
+      "explanations": [
+        [
+          "no open purchase order covers the demand",
+          "Place an order now with Metallbau Kr\u00fcger GmbH"
+        ],
+        ["no open purchase order covers the demand", "Place an order now with Kunststoff Nord KG"]
+      ],
+      "overduePurchaseOrders": []
     },
     {
       "name": "random-25",
@@ -18479,9 +19205,9 @@
       "horizonDays": 28,
       "input": {
         "materials": [
-          { "materialId": "M2", "onHand": 0.0, "safetyStock": 12.5 },
-          { "materialId": "\u00c4-4", "onHand": 0.0, "safetyStock": 12.5 },
-          { "materialId": "M10", "onHand": 0.0, "safetyStock": 0.0 }
+          { "materialId": "M2", "onHand": 0.0, "safetyStock": 12.5, "mainSupplierId": null },
+          { "materialId": "\u00c4-4", "onHand": 0.0, "safetyStock": 12.5, "mainSupplierId": "S3" },
+          { "materialId": "M10", "onHand": 0.0, "safetyStock": 0.0, "mainSupplierId": null }
         ],
         "openPurchaseOrders": [
           {
@@ -18577,6 +19303,10 @@
           { "supplierId": "S3", "promisedDate": "2029-11-30", "actualDate": "2029-12-03" },
           { "supplierId": "S3", "promisedDate": "2027-05-12", "actualDate": "2027-05-24" },
           { "supplierId": "S1", "promisedDate": "2025-03-19", "actualDate": "2025-03-19" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "expected": [
@@ -18742,7 +19472,19 @@
         ["M2", "CRITICAL", "2026-10-14", "2026-10-14", 3, false, -218, 12, 130],
         ["M10", "CRITICAL", "2026-10-16", "2026-10-16", 5, false, -324, 0, 124],
         ["\u00c4-4", "CRITICAL", "2026-10-17", "2026-10-17", 6, false, -181, 12, 121]
-      ]
+      ],
+      "explanations": [
+        [
+          "P1 is promised for 2026-11-05, already AFTER the critical date",
+          "Ask SX to pull P1 forward before 2026-10-14, or source elsewhere"
+        ],
+        [
+          "P0 is promised for 2026-11-11, already AFTER the critical date",
+          "Ask Kunststoff Nord KG to pull P0 forward before 2026-10-16, or source elsewhere"
+        ],
+        ["no open purchase order covers the demand", "Place an order now with Kunststoff Nord KG"]
+      ],
+      "overduePurchaseOrders": []
     },
     {
       "name": "random-26",
@@ -18750,9 +19492,9 @@
       "horizonDays": 1,
       "input": {
         "materials": [
-          { "materialId": "\u00c4-4", "onHand": 33.0, "safetyStock": 11.0 },
-          { "materialId": "M2", "onHand": 0.0, "safetyStock": 12.5 },
-          { "materialId": "M1", "onHand": 124.0, "safetyStock": 68.0 }
+          { "materialId": "\u00c4-4", "onHand": 33.0, "safetyStock": 11.0, "mainSupplierId": "S1" },
+          { "materialId": "M2", "onHand": 0.0, "safetyStock": 12.5, "mainSupplierId": "S3" },
+          { "materialId": "M1", "onHand": 124.0, "safetyStock": 68.0, "mainSupplierId": "S3" }
         ],
         "openPurchaseOrders": [
           {
@@ -18908,6 +19650,10 @@
           { "supplierId": "S1", "promisedDate": "2030-06-11", "actualDate": "2030-06-18" },
           { "supplierId": "S2", "promisedDate": "2029-02-14", "actualDate": "2029-02-14" },
           { "supplierId": "S3", "promisedDate": "2026-02-22", "actualDate": "2026-03-06" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "expected": [
@@ -18983,7 +19729,85 @@
           "points": [["2026-10-05", 0, 0, 0, 124.0, 124.0]]
         }
       ],
-      "exceptions": [["M2", "WARNING", "2026-10-05", "2026-10-05", 0, false, 0, 12, 13.0]]
+      "exceptions": [["M2", "WARNING", "2026-10-05", "2026-10-05", 0, false, 0, 12, 13.0]],
+      "explanations": [
+        [
+          "P6 is promised for 2026-10-05, already AFTER the critical date",
+          "Ask S2 to pull P6 forward before 2026-10-05, or source elsewhere"
+        ]
+      ],
+      "overduePurchaseOrders": [
+        {
+          "poId": "P0",
+          "materialId": "\u00c4-4",
+          "supplierId": "SX",
+          "qty": 1.73,
+          "promisedDate": "2026-09-27",
+          "realisticDate": "2026-09-27",
+          "countedInRealisticView": false,
+          "hasException": false
+        },
+        {
+          "poId": "P1",
+          "materialId": "M-orphan",
+          "supplierId": "S3",
+          "qty": 42.0,
+          "promisedDate": "2026-09-30",
+          "realisticDate": "2026-10-13",
+          "countedInRealisticView": false,
+          "hasException": false
+        },
+        {
+          "poId": "P3",
+          "materialId": "M1",
+          "supplierId": "S2",
+          "qty": 47.0,
+          "promisedDate": "2026-09-25",
+          "realisticDate": "2026-09-25",
+          "countedInRealisticView": false,
+          "hasException": false
+        },
+        {
+          "poId": "P4",
+          "materialId": "\u00c4-4",
+          "supplierId": "S2",
+          "qty": 26.0,
+          "promisedDate": "2026-10-03",
+          "realisticDate": "2026-10-03",
+          "countedInRealisticView": false,
+          "hasException": false
+        },
+        {
+          "poId": "P8",
+          "materialId": "M1",
+          "supplierId": "S1",
+          "qty": 17.15,
+          "promisedDate": "2026-10-01",
+          "realisticDate": "2026-10-08",
+          "countedInRealisticView": false,
+          "hasException": false
+        },
+        {
+          "poId": "P9",
+          "materialId": "M1",
+          "supplierId": "S2",
+          "qty": 25.2,
+          "promisedDate": "2026-09-28",
+          "realisticDate": "2026-09-28",
+          "countedInRealisticView": false,
+          "hasException": false
+        },
+        {
+          "poId": "P11",
+          "materialId": "M1",
+          "supplierId": "S1",
+          "qty": 31.311,
+          "promisedDate": "2026-10-02",
+          "realisticDate": "2026-10-09",
+          "countedInRealisticView": false,
+          "hasException": false
+        }
+      ]
     },
     {
       "name": "random-27",
@@ -18991,9 +19815,9 @@
       "horizonDays": 1,
       "input": {
         "materials": [
-          { "materialId": "M10", "onHand": 291.0, "safetyStock": 12.5 },
-          { "materialId": "M2", "onHand": 0.0, "safetyStock": 47.0 },
-          { "materialId": "M1", "onHand": 0.0, "safetyStock": 128.0 }
+          { "materialId": "M10", "onHand": 291.0, "safetyStock": 12.5, "mainSupplierId": "SX" },
+          { "materialId": "M2", "onHand": 0.0, "safetyStock": 47.0, "mainSupplierId": "S2" },
+          { "materialId": "M1", "onHand": 0.0, "safetyStock": 128.0, "mainSupplierId": null }
         ],
         "openPurchaseOrders": [
           {
@@ -19091,6 +19915,10 @@
           { "supplierId": "S1", "promisedDate": "2026-01-10", "actualDate": "2026-01-10" },
           { "supplierId": "S2", "promisedDate": "2025-04-04", "actualDate": "2025-04-07" },
           { "supplierId": "S3", "promisedDate": "2028-04-12", "actualDate": "2028-04-19" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "expected": [
@@ -19152,6 +19980,78 @@
       "exceptions": [
         ["M1", "CRITICAL", "2026-10-08", "2026-10-08", 0, false, -38, 128, 40.9],
         ["M2", "CRITICAL", "2026-10-08", "2026-10-08", 0, false, -9, 47, 39.8]
+      ],
+      "explanations": [
+        [
+          "P1 promised 2026-10-05, but S2 is typically 1 working day(s) late (on-time rate 50%) (only 2 past deliveries, low confidence); P4 is promised for 2026-10-09, already AFTER the critical date",
+          "Ask Kunststoff Nord KG to pull P4 forward before 2026-10-08, or source elsewhere"
+        ],
+        [
+          "P6 promised 2026-10-04, but S2 is typically 1 working day(s) late (on-time rate 50%) (only 2 past deliveries, low confidence)",
+          "Increase order quantity or check the demand plan"
+        ]
+      ],
+      "overduePurchaseOrders": [
+        {
+          "poId": "P0",
+          "materialId": "M-orphan",
+          "supplierId": "SX",
+          "qty": 10.54,
+          "promisedDate": "2026-10-07",
+          "realisticDate": "2026-10-07",
+          "countedInRealisticView": false,
+          "hasException": false
+        },
+        {
+          "poId": "P1",
+          "materialId": "M1",
+          "supplierId": "S2",
+          "qty": 2.0,
+          "promisedDate": "2026-10-05",
+          "realisticDate": "2026-10-06",
+          "countedInRealisticView": false,
+          "hasException": true
+        },
+        {
+          "poId": "P3",
+          "materialId": "M-orphan",
+          "supplierId": "S2",
+          "qty": 7.0,
+          "promisedDate": "2026-10-04",
+          "realisticDate": "2026-10-05",
+          "countedInRealisticView": false,
+          "hasException": false
+        },
+        {
+          "poId": "P5",
+          "materialId": "M10",
+          "supplierId": "SX",
+          "qty": 22.67,
+          "promisedDate": "2026-09-29",
+          "realisticDate": "2026-09-29",
+          "countedInRealisticView": false,
+          "hasException": false
+        },
+        {
+          "poId": "P6",
+          "materialId": "M2",
+          "supplierId": "S2",
+          "qty": 34.28,
+          "promisedDate": "2026-10-04",
+          "realisticDate": "2026-10-05",
+          "countedInRealisticView": false,
+          "hasException": true
+        },
+        {
+          "poId": "P8",
+          "materialId": "M-orphan",
+          "supplierId": "S3",
+          "qty": 34.91,
+          "promisedDate": "2026-09-28",
+          "realisticDate": "2026-10-05",
+          "countedInRealisticView": false,
+          "hasException": false
+        }
       ]
     },
     {
@@ -19159,7 +20059,9 @@
       "asOf": "2026-10-07",
       "horizonDays": 28,
       "input": {
-        "materials": [{ "materialId": "M2", "onHand": 0.0, "safetyStock": 12.5 }],
+        "materials": [
+          { "materialId": "M2", "onHand": 0.0, "safetyStock": 12.5, "mainSupplierId": "SX" }
+        ],
         "openPurchaseOrders": [
           {
             "poId": "P0",
@@ -19273,6 +20175,10 @@
           { "supplierId": "S2", "promisedDate": "2025-09-08", "actualDate": "2025-09-09" },
           { "supplierId": "S3", "promisedDate": "2026-11-27", "actualDate": "2026-11-25" },
           { "supplierId": "S3", "promisedDate": "2030-10-30", "actualDate": "2030-10-28" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "expected": [
@@ -19337,14 +20243,34 @@
           ]
         }
       ],
-      "exceptions": [["M2", "CRITICAL", "2026-10-08", "2026-10-08", 1, false, -224, 12, 136]]
+      "exceptions": [["M2", "CRITICAL", "2026-10-08", "2026-10-08", 1, false, -224, 12, 136]],
+      "explanations": [
+        [
+          "P0 is promised for 2026-11-09, already AFTER the critical date; P2 is promised for 2026-11-05, already AFTER the critical date; P6 promised 2026-10-01, but Kunststoff Nord KG is typically 2 working day(s) late (on-time rate 60%); P10 is promised for 2026-10-19, already AFTER the critical date",
+          "Ask Metallbau Kr\u00fcger GmbH to pull P0 forward before 2026-10-08, or source elsewhere; Ask Metallbau Kr\u00fcger GmbH to pull P2 forward before 2026-10-08, or source elsewhere; Ask Kunststoff Nord KG to pull P10 forward before 2026-10-08, or source elsewhere"
+        ]
+      ],
+      "overduePurchaseOrders": [
+        {
+          "poId": "P6",
+          "materialId": "M2",
+          "supplierId": "S3",
+          "qty": 18.0,
+          "promisedDate": "2026-10-01",
+          "realisticDate": "2026-10-05",
+          "countedInRealisticView": false,
+          "hasException": true
+        }
+      ]
     },
     {
       "name": "random-29",
       "asOf": "2026-10-08",
       "horizonDays": 1,
       "input": {
-        "materials": [{ "materialId": "M2", "onHand": 0.0, "safetyStock": 0.0 }],
+        "materials": [
+          { "materialId": "M2", "onHand": 0.0, "safetyStock": 0.0, "mainSupplierId": "S2" }
+        ],
         "openPurchaseOrders": [
           {
             "poId": "P0",
@@ -19428,6 +20354,10 @@
           { "supplierId": "S3", "promisedDate": "2024-04-27", "actualDate": "2024-04-25" },
           { "supplierId": "S3", "promisedDate": "2022-12-17", "actualDate": "2022-12-17" },
           { "supplierId": "S1", "promisedDate": "2030-06-18", "actualDate": "2030-06-25" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "expected": [
@@ -19454,7 +20384,40 @@
           "points": [["2026-10-08", 0, 0, 0, 0.0, 0.0]]
         }
       ],
-      "exceptions": []
+      "exceptions": [],
+      "explanations": [],
+      "overduePurchaseOrders": [
+        {
+          "poId": "P0",
+          "materialId": "M-orphan",
+          "supplierId": "S1",
+          "qty": 29.03,
+          "promisedDate": "2026-10-04",
+          "realisticDate": "2026-10-09",
+          "countedInRealisticView": false,
+          "hasException": false
+        },
+        {
+          "poId": "P1",
+          "materialId": "M-orphan",
+          "supplierId": "S2",
+          "qty": 6.0,
+          "promisedDate": "2026-10-04",
+          "realisticDate": "2026-10-14",
+          "countedInRealisticView": false,
+          "hasException": false
+        },
+        {
+          "poId": "P2",
+          "materialId": "M-orphan",
+          "supplierId": "S2",
+          "qty": 10.955,
+          "promisedDate": "2026-10-01",
+          "realisticDate": "2026-10-13",
+          "countedInRealisticView": false,
+          "hasException": false
+        }
+      ]
     },
     {
       "name": "random-30",
@@ -19462,9 +20425,9 @@
       "horizonDays": 10,
       "input": {
         "materials": [
-          { "materialId": "\u00c4-4", "onHand": 33.0, "safetyStock": 12.5 },
-          { "materialId": "M1", "onHand": 0.0, "safetyStock": 0.0 },
-          { "materialId": "\u00c4-4", "onHand": 266.0, "safetyStock": 12.5 }
+          { "materialId": "\u00c4-4", "onHand": 33.0, "safetyStock": 12.5, "mainSupplierId": null },
+          { "materialId": "M1", "onHand": 0.0, "safetyStock": 0.0, "mainSupplierId": "S1" },
+          { "materialId": "\u00c4-4", "onHand": 266.0, "safetyStock": 12.5, "mainSupplierId": "S2" }
         ],
         "openPurchaseOrders": [
           {
@@ -19537,6 +20500,10 @@
           { "supplierId": "S2", "promisedDate": "2029-06-23", "actualDate": "2029-06-21" },
           { "supplierId": "S3", "promisedDate": "2022-10-31", "actualDate": "2022-11-04" },
           { "supplierId": "S1", "promisedDate": "2027-07-07", "actualDate": "2027-07-07" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "expected": [
@@ -19643,7 +20610,16 @@
         ["\u00c4-4", "CRITICAL", "2026-10-10", "2026-10-10", 1, false, -308, 12, 82],
         ["M1", "CRITICAL", "2026-10-10", "2026-10-10", 1, false, -104, 0, 82],
         ["\u00c4-4", "CRITICAL", "2026-10-16", "2026-10-16", 7, false, -75, 12, 64]
-      ]
+      ],
+      "explanations": [
+        ["no open purchase order covers the demand", "Place an order now with ?"],
+        [
+          "no open purchase order covers the demand",
+          "Place an order now with Metallbau Kr\u00fcger GmbH"
+        ],
+        ["no open purchase order covers the demand", "Place an order now with S2"]
+      ],
+      "overduePurchaseOrders": []
     },
     {
       "name": "random-31",
@@ -19651,10 +20627,10 @@
       "horizonDays": 28,
       "input": {
         "materials": [
-          { "materialId": "M1", "onHand": 183.0, "safetyStock": 32.0 },
-          { "materialId": "M10", "onHand": 0.0, "safetyStock": 0.0 },
-          { "materialId": "M2", "onHand": 0.0, "safetyStock": 0.0 },
-          { "materialId": "M3", "onHand": 334.0, "safetyStock": 0.0 }
+          { "materialId": "M1", "onHand": 183.0, "safetyStock": 32.0, "mainSupplierId": "S1" },
+          { "materialId": "M10", "onHand": 0.0, "safetyStock": 0.0, "mainSupplierId": "SX" },
+          { "materialId": "M2", "onHand": 0.0, "safetyStock": 0.0, "mainSupplierId": "S1" },
+          { "materialId": "M3", "onHand": 334.0, "safetyStock": 0.0, "mainSupplierId": null }
         ],
         "openPurchaseOrders": [
           {
@@ -19712,6 +20688,10 @@
           { "supplierId": "S3", "promisedDate": "2022-12-01", "actualDate": "2022-12-01" },
           { "supplierId": "S2", "promisedDate": "2028-09-21", "actualDate": "2028-09-21" },
           { "supplierId": "S3", "promisedDate": "2029-02-26", "actualDate": "2029-02-27" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "expected": [
@@ -19874,7 +20854,20 @@
           ]
         }
       ],
-      "exceptions": []
+      "exceptions": [],
+      "explanations": [],
+      "overduePurchaseOrders": [
+        {
+          "poId": "P5",
+          "materialId": "M1",
+          "supplierId": "S1",
+          "qty": 35.06,
+          "promisedDate": "2026-10-03",
+          "realisticDate": "2026-10-05",
+          "countedInRealisticView": false,
+          "hasException": false
+        }
+      ]
     },
     {
       "name": "random-32",
@@ -19882,8 +20875,8 @@
       "horizonDays": 44,
       "input": {
         "materials": [
-          { "materialId": "M2", "onHand": 105.0, "safetyStock": 0.0 },
-          { "materialId": "\u00c4-4", "onHand": 0.0, "safetyStock": 102.0 }
+          { "materialId": "M2", "onHand": 105.0, "safetyStock": 0.0, "mainSupplierId": "S1" },
+          { "materialId": "\u00c4-4", "onHand": 0.0, "safetyStock": 102.0, "mainSupplierId": "SX" }
         ],
         "openPurchaseOrders": [
           {
@@ -19956,6 +20949,10 @@
           { "supplierId": "S1", "promisedDate": "2028-09-13", "actualDate": "2028-09-16" },
           { "supplierId": "S3", "promisedDate": "2025-10-22", "actualDate": "2025-10-25" },
           { "supplierId": "S3", "promisedDate": "2029-08-21", "actualDate": "2029-08-24" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "expected": [
@@ -20087,6 +21084,34 @@
       ],
       "exceptions": [
         ["\u00c4-4", "CRITICAL", "2026-11-04", "2026-11-04", 26, false, -61, 102, 95.0]
+      ],
+      "explanations": [
+        [
+          "P0 is promised for 2026-11-19, already AFTER the critical date",
+          "Ask Kunststoff Nord KG to pull P0 forward before 2026-11-04, or source elsewhere"
+        ]
+      ],
+      "overduePurchaseOrders": [
+        {
+          "poId": "P2",
+          "materialId": "M2",
+          "supplierId": "SX",
+          "qty": 23.1,
+          "promisedDate": "2026-10-05",
+          "realisticDate": "2026-10-05",
+          "countedInRealisticView": false,
+          "hasException": false
+        },
+        {
+          "poId": "P4",
+          "materialId": "M-orphan",
+          "supplierId": "SX",
+          "qty": 39.0,
+          "promisedDate": "2026-10-01",
+          "realisticDate": "2026-10-01",
+          "countedInRealisticView": false,
+          "hasException": false
+        }
       ]
     },
     {
@@ -20095,9 +21120,9 @@
       "horizonDays": 10,
       "input": {
         "materials": [
-          { "materialId": "\u00c4-4", "onHand": 0.0, "safetyStock": 0.0 },
-          { "materialId": "M2", "onHand": 0.0, "safetyStock": 0.0 },
-          { "materialId": "M1", "onHand": 323.0, "safetyStock": 142.0 }
+          { "materialId": "\u00c4-4", "onHand": 0.0, "safetyStock": 0.0, "mainSupplierId": "S2" },
+          { "materialId": "M2", "onHand": 0.0, "safetyStock": 0.0, "mainSupplierId": "SX" },
+          { "materialId": "M1", "onHand": 323.0, "safetyStock": 142.0, "mainSupplierId": "S3" }
         ],
         "openPurchaseOrders": [
           {
@@ -20144,6 +21169,10 @@
           { "supplierId": "S3", "promisedDate": "2026-10-19", "actualDate": "2026-10-19" },
           { "supplierId": "S2", "promisedDate": "2026-04-29", "actualDate": "2026-05-06" },
           { "supplierId": "S3", "promisedDate": "2022-10-05", "actualDate": "2022-10-09" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "expected": [
@@ -20220,7 +21249,25 @@
           ]
         }
       ],
-      "exceptions": [["M2", "CRITICAL", "2026-10-16", "2026-10-16", 9, false, -35, 0, 58]]
+      "exceptions": [["M2", "CRITICAL", "2026-10-16", "2026-10-16", 9, false, -35, 0, 58]],
+      "explanations": [
+        [
+          "P1 is promised for 2026-10-18, already AFTER the critical date; P2 is promised for 2026-10-16, already AFTER the critical date",
+          "Ask Metallbau Kr\u00fcger GmbH to pull P1 forward before 2026-10-16, or source elsewhere; Ask S2 to pull P2 forward before 2026-10-16, or source elsewhere"
+        ]
+      ],
+      "overduePurchaseOrders": [
+        {
+          "poId": "P3",
+          "materialId": "\u00c4-4",
+          "supplierId": "S2",
+          "qty": 53.0,
+          "promisedDate": "2026-10-04",
+          "realisticDate": "2026-10-09",
+          "countedInRealisticView": true,
+          "hasException": false
+        }
+      ]
     },
     {
       "name": "random-34",
@@ -20228,8 +21275,8 @@
       "horizonDays": 1,
       "input": {
         "materials": [
-          { "materialId": "M3", "onHand": 223.0, "safetyStock": 33.0 },
-          { "materialId": "\u00c4-4", "onHand": 0.0, "safetyStock": 12.5 }
+          { "materialId": "M3", "onHand": 223.0, "safetyStock": 33.0, "mainSupplierId": "S2" },
+          { "materialId": "\u00c4-4", "onHand": 0.0, "safetyStock": 12.5, "mainSupplierId": null }
         ],
         "openPurchaseOrders": [
           {
@@ -20307,6 +21354,10 @@
           { "supplierId": "S2", "promisedDate": "2023-11-27", "actualDate": "2023-12-01" },
           { "supplierId": "S3", "promisedDate": "2023-02-05", "actualDate": "2023-02-17" },
           { "supplierId": "S3", "promisedDate": "2027-08-31", "actualDate": "2027-08-31" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "expected": [
@@ -20350,7 +21401,14 @@
           "points": [["2026-10-09", 30.28, 0, 0, -30.28, -30.28]]
         }
       ],
-      "exceptions": [["\u00c4-4", "CRITICAL", "2026-10-09", "2026-10-09", 0, false, -30, 12, 58]]
+      "exceptions": [["\u00c4-4", "CRITICAL", "2026-10-09", "2026-10-09", 0, false, -30, 12, 58]],
+      "explanations": [
+        [
+          "P0 is promised for 2026-10-16, already AFTER the critical date",
+          "Ask SX to pull P0 forward before 2026-10-09, or source elsewhere"
+        ]
+      ],
+      "overduePurchaseOrders": []
     },
     {
       "name": "random-35",
@@ -20358,9 +21416,9 @@
       "horizonDays": 28,
       "input": {
         "materials": [
-          { "materialId": "\u00c4-4", "onHand": 0.0, "safetyStock": 0.0 },
-          { "materialId": "M10", "onHand": 0.0, "safetyStock": 12.5 },
-          { "materialId": "M2", "onHand": 0.0, "safetyStock": 0.0 }
+          { "materialId": "\u00c4-4", "onHand": 0.0, "safetyStock": 0.0, "mainSupplierId": "S1" },
+          { "materialId": "M10", "onHand": 0.0, "safetyStock": 12.5, "mainSupplierId": "S1" },
+          { "materialId": "M2", "onHand": 0.0, "safetyStock": 0.0, "mainSupplierId": "S1" }
         ],
         "openPurchaseOrders": [
           {
@@ -20406,6 +21464,10 @@
           { "supplierId": "S3", "promisedDate": "2028-09-28", "actualDate": "2028-09-26" },
           { "supplierId": "S1", "promisedDate": "2023-08-17", "actualDate": "2023-08-15" },
           { "supplierId": "S3", "promisedDate": "2024-12-21", "actualDate": "2024-12-28" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "expected": [
@@ -20537,7 +21599,22 @@
         ["\u00c4-4", "CRITICAL", "2026-10-14", "2026-10-14", 6, false, -35, 0, 121],
         ["M2", "CRITICAL", "2026-10-16", "2026-10-16", 8, false, -6, 0, 115],
         ["M10", "CRITICAL", "2026-10-18", "2026-10-18", 10, false, -33, 12, 109]
-      ]
+      ],
+      "explanations": [
+        [
+          "no open purchase order covers the demand",
+          "Place an order now with Metallbau Kr\u00fcger GmbH"
+        ],
+        [
+          "P0 is promised for 2026-11-02, already AFTER the critical date",
+          "Ask Metallbau Kr\u00fcger GmbH to pull P0 forward before 2026-10-16, or source elsewhere"
+        ],
+        [
+          "P1 is promised for 2026-10-27, already AFTER the critical date",
+          "Ask SX to pull P1 forward before 2026-10-18, or source elsewhere"
+        ]
+      ],
+      "overduePurchaseOrders": []
     },
     {
       "name": "random-36",
@@ -20545,10 +21622,10 @@
       "horizonDays": 1,
       "input": {
         "materials": [
-          { "materialId": "M10", "onHand": 0.0, "safetyStock": 0.0 },
-          { "materialId": "M2", "onHand": 0.0, "safetyStock": 0.0 },
-          { "materialId": "M1", "onHand": 273.0, "safetyStock": 12.5 },
-          { "materialId": "M3", "onHand": 395.0, "safetyStock": 12.5 }
+          { "materialId": "M10", "onHand": 0.0, "safetyStock": 0.0, "mainSupplierId": "SX" },
+          { "materialId": "M2", "onHand": 0.0, "safetyStock": 0.0, "mainSupplierId": null },
+          { "materialId": "M1", "onHand": 273.0, "safetyStock": 12.5, "mainSupplierId": null },
+          { "materialId": "M3", "onHand": 395.0, "safetyStock": 12.5, "mainSupplierId": "S1" }
         ],
         "openPurchaseOrders": [
           {
@@ -20626,6 +21703,10 @@
           { "supplierId": "S1", "promisedDate": "2028-07-22", "actualDate": "2028-07-25" },
           { "supplierId": "S1", "promisedDate": "2025-10-31", "actualDate": "2025-11-04" },
           { "supplierId": "S3", "promisedDate": "2026-07-18", "actualDate": "2026-07-18" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "expected": [
@@ -20684,7 +21765,40 @@
           "points": [["2026-10-09", 0, 0, 0, 395.0, 395.0]]
         }
       ],
-      "exceptions": []
+      "exceptions": [],
+      "explanations": [],
+      "overduePurchaseOrders": [
+        {
+          "poId": "P0",
+          "materialId": "M3",
+          "supplierId": "S2",
+          "qty": 32.0,
+          "promisedDate": "2026-09-30",
+          "realisticDate": "2026-09-30",
+          "countedInRealisticView": false,
+          "hasException": false
+        },
+        {
+          "poId": "P3",
+          "materialId": "M2",
+          "supplierId": "S3",
+          "qty": 12.0,
+          "promisedDate": "2026-10-08",
+          "realisticDate": "2026-10-15",
+          "countedInRealisticView": false,
+          "hasException": false
+        },
+        {
+          "poId": "P4",
+          "materialId": "M3",
+          "supplierId": "S2",
+          "qty": 12.646,
+          "promisedDate": "2026-10-03",
+          "realisticDate": "2026-10-03",
+          "countedInRealisticView": false,
+          "hasException": false
+        }
+      ]
     },
     {
       "name": "random-37",
@@ -20692,9 +21806,9 @@
       "horizonDays": 21,
       "input": {
         "materials": [
-          { "materialId": "M2", "onHand": 0.0, "safetyStock": 113.0 },
-          { "materialId": "M10", "onHand": 3.0, "safetyStock": 0.0 },
-          { "materialId": "M1", "onHand": 273.0, "safetyStock": 27.0 }
+          { "materialId": "M2", "onHand": 0.0, "safetyStock": 113.0, "mainSupplierId": "SX" },
+          { "materialId": "M10", "onHand": 3.0, "safetyStock": 0.0, "mainSupplierId": "S2" },
+          { "materialId": "M1", "onHand": 273.0, "safetyStock": 27.0, "mainSupplierId": "S2" }
         ],
         "openPurchaseOrders": [
           {
@@ -20809,6 +21923,10 @@
           { "supplierId": "S3", "promisedDate": "2025-10-06", "actualDate": "2025-10-09" },
           { "supplierId": "S3", "promisedDate": "2024-01-18", "actualDate": "2024-01-30" },
           { "supplierId": "S3", "promisedDate": "2028-03-19", "actualDate": "2028-03-26" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "expected": [
@@ -20950,6 +22068,25 @@
       "exceptions": [
         ["M2", "CRITICAL", "2026-10-11", "2026-10-11", 0, false, -288, 113, 118],
         ["M10", "CRITICAL", "2026-10-12", "2026-10-12", 1, false, -117, 0, 115]
+      ],
+      "explanations": [
+        ["no open purchase order covers the demand", "Place an order now with SX"],
+        [
+          "P0 is promised for 2026-11-01, already AFTER the critical date",
+          "Ask SX to pull P0 forward before 2026-10-12, or source elsewhere"
+        ]
+      ],
+      "overduePurchaseOrders": [
+        {
+          "poId": "P3",
+          "materialId": "M1",
+          "supplierId": "S3",
+          "qty": 21.707,
+          "promisedDate": "2026-10-02",
+          "realisticDate": "2026-10-12",
+          "countedInRealisticView": true,
+          "hasException": false
+        }
       ]
     },
     {
@@ -20958,9 +22095,9 @@
       "horizonDays": 10,
       "input": {
         "materials": [
-          { "materialId": "\u00c4-4", "onHand": 159.0, "safetyStock": 2.0 },
-          { "materialId": "M3", "onHand": 288.0, "safetyStock": 122.0 },
-          { "materialId": "\u00c4-4", "onHand": 52.0, "safetyStock": 2.0 }
+          { "materialId": "\u00c4-4", "onHand": 159.0, "safetyStock": 2.0, "mainSupplierId": null },
+          { "materialId": "M3", "onHand": 288.0, "safetyStock": 122.0, "mainSupplierId": "S3" },
+          { "materialId": "\u00c4-4", "onHand": 52.0, "safetyStock": 2.0, "mainSupplierId": "S1" }
         ],
         "openPurchaseOrders": [
           {
@@ -21036,6 +22173,10 @@
           { "supplierId": "S1", "promisedDate": "2029-03-19", "actualDate": "2029-03-20" },
           { "supplierId": "S1", "promisedDate": "2028-06-05", "actualDate": "2028-06-03" },
           { "supplierId": "S1", "promisedDate": "2022-11-15", "actualDate": "2022-11-18" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "expected": [
@@ -21123,7 +22264,30 @@
           ]
         }
       ],
-      "exceptions": []
+      "exceptions": [],
+      "explanations": [],
+      "overduePurchaseOrders": [
+        {
+          "poId": "P3",
+          "materialId": "M3",
+          "supplierId": "SX",
+          "qty": 32.75,
+          "promisedDate": "2026-09-30",
+          "realisticDate": "2026-09-30",
+          "countedInRealisticView": false,
+          "hasException": false
+        },
+        {
+          "poId": "P4",
+          "materialId": "M3",
+          "supplierId": "S2",
+          "qty": 28.0,
+          "promisedDate": "2026-10-06",
+          "realisticDate": "2026-10-16",
+          "countedInRealisticView": true,
+          "hasException": false
+        }
+      ]
     },
     {
       "name": "random-39",
@@ -21131,9 +22295,9 @@
       "horizonDays": 1,
       "input": {
         "materials": [
-          { "materialId": "M1", "onHand": 0.0, "safetyStock": 17.0 },
-          { "materialId": "M2", "onHand": 0.0, "safetyStock": 141.0 },
-          { "materialId": "M10", "onHand": 232.0, "safetyStock": 38.0 }
+          { "materialId": "M1", "onHand": 0.0, "safetyStock": 17.0, "mainSupplierId": null },
+          { "materialId": "M2", "onHand": 0.0, "safetyStock": 141.0, "mainSupplierId": null },
+          { "materialId": "M10", "onHand": 232.0, "safetyStock": 38.0, "mainSupplierId": null }
         ],
         "openPurchaseOrders": [],
         "demand": [
@@ -21189,6 +22353,10 @@
           { "supplierId": "S1", "promisedDate": "2028-02-18", "actualDate": "2028-02-16" },
           { "supplierId": "S3", "promisedDate": "2023-11-02", "actualDate": "2023-10-31" },
           { "supplierId": "S3", "promisedDate": "2025-08-12", "actualDate": "2025-08-15" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "expected": [
@@ -21247,7 +22415,12 @@
       "exceptions": [
         ["M1", "WARNING", "2026-10-09", "2026-10-09", 0, false, 0, 17, 13.0],
         ["M2", "WARNING", "2026-10-09", "2026-10-09", 0, false, 0, 141, 13.0]
-      ]
+      ],
+      "explanations": [
+        ["no open purchase order covers the demand", "Place an order now with ?"],
+        ["no open purchase order covers the demand", "Place an order now with ?"]
+      ],
+      "overduePurchaseOrders": []
     }
   ],
   "ranking": [
@@ -21257,9 +22430,9 @@
       "horizonDays": 14,
       "input": {
         "materials": [
-          { "materialId": "M3", "onHand": 50.0, "safetyStock": 10.0 },
-          { "materialId": "M5", "onHand": 125.0, "safetyStock": 12.5 },
-          { "materialId": "M5", "onHand": 125.0, "safetyStock": 12.5 }
+          { "materialId": "M3", "onHand": 50.0, "safetyStock": 10.0, "mainSupplierId": "S1" },
+          { "materialId": "M5", "onHand": 125.0, "safetyStock": 12.5, "mainSupplierId": "SX" },
+          { "materialId": "M5", "onHand": 125.0, "safetyStock": 12.5, "mainSupplierId": "S2" }
         ],
         "openPurchaseOrders": [
           {
@@ -21311,13 +22484,32 @@
           { "supplierId": "S3", "promisedDate": "2026-03-31", "actualDate": "2026-03-30" },
           { "supplierId": "S3", "promisedDate": "2025-06-14", "actualDate": "2025-06-18" },
           { "supplierId": "S3", "promisedDate": "2027-09-25", "actualDate": "2027-09-24" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "exceptions": [
         ["M3", "CRITICAL", "2026-10-19", null, 8, true, -40, 10, 88],
         ["M5", "WARNING", "2026-10-16", null, 5, true, 0, 12, 52.0],
         ["M5", "WARNING", "2026-10-16", null, 5, true, 0, 12, 52.0]
-      ]
+      ],
+      "explanations": [
+        [
+          "P0 promised 2026-10-17, but S2 is typically 5 working day(s) late (on-time rate 0%); ERP view (promised dates) shows no problem at all: hidden risk",
+          "Expedite P0 / ask for partial delivery before 2026-10-19"
+        ],
+        [
+          "P1 is promised for 2026-10-16, already AFTER the critical date; ERP view (promised dates) shows no problem at all: hidden risk",
+          "Ask Metallbau Kr\u00fcger GmbH to pull P1 forward before 2026-10-16, or source elsewhere"
+        ],
+        [
+          "P1 is promised for 2026-10-16, already AFTER the critical date; ERP view (promised dates) shows no problem at all: hidden risk",
+          "Ask Metallbau Kr\u00fcger GmbH to pull P1 forward before 2026-10-16, or source elsewhere"
+        ]
+      ],
+      "overduePurchaseOrders": []
     },
     {
       "name": "ranking-1",
@@ -21325,8 +22517,8 @@
       "horizonDays": 10,
       "input": {
         "materials": [
-          { "materialId": "M3", "onHand": 80.0, "safetyStock": 32.0 },
-          { "materialId": "M5", "onHand": 145.0, "safetyStock": 0.0 }
+          { "materialId": "M3", "onHand": 80.0, "safetyStock": 32.0, "mainSupplierId": "S1" },
+          { "materialId": "M5", "onHand": 145.0, "safetyStock": 0.0, "mainSupplierId": "SX" }
         ],
         "openPurchaseOrders": [
           {
@@ -21366,12 +22558,24 @@
           { "supplierId": "S3", "promisedDate": "2024-12-05", "actualDate": "2024-12-17" },
           { "supplierId": "S3", "promisedDate": "2025-03-25", "actualDate": "2025-03-25" },
           { "supplierId": "S3", "promisedDate": "2028-01-25", "actualDate": "2028-01-25" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "exceptions": [
         ["M3", "CRITICAL", "2026-10-19", null, 8, true, -32, 32, 66.0],
         ["M5", "CRITICAL", "2026-10-19", "2026-10-19", 8, false, -58, 0, 61]
-      ]
+      ],
+      "explanations": [
+        [
+          "P0 promised 2026-10-16, but S2 is typically 4 working day(s) late (on-time rate 0%); ERP view (promised dates) shows no problem at all: hidden risk",
+          "Expedite P0 / ask for partial delivery before 2026-10-19"
+        ],
+        ["no open purchase order covers the demand", "Place an order now with SX"]
+      ],
+      "overduePurchaseOrders": []
     },
     {
       "name": "ranking-2",
@@ -21379,11 +22583,11 @@
       "horizonDays": 19,
       "input": {
         "materials": [
-          { "materialId": "M1", "onHand": 7.5, "safetyStock": 12.5 },
-          { "materialId": "M2", "onHand": 223.5, "safetyStock": 36.0 },
-          { "materialId": "M5", "onHand": 134.0, "safetyStock": 12.5 },
-          { "materialId": "M3", "onHand": 175.5, "safetyStock": 12.5 },
-          { "materialId": "M3", "onHand": 175.5, "safetyStock": 12.5 }
+          { "materialId": "M1", "onHand": 7.5, "safetyStock": 12.5, "mainSupplierId": "S1" },
+          { "materialId": "M2", "onHand": 223.5, "safetyStock": 36.0, "mainSupplierId": "SX" },
+          { "materialId": "M5", "onHand": 134.0, "safetyStock": 12.5, "mainSupplierId": "S1" },
+          { "materialId": "M3", "onHand": 175.5, "safetyStock": 12.5, "mainSupplierId": "S3" },
+          { "materialId": "M3", "onHand": 175.5, "safetyStock": 12.5, "mainSupplierId": "S1" }
         ],
         "openPurchaseOrders": [
           {
@@ -21496,6 +22700,10 @@
           { "supplierId": "S3", "promisedDate": "2026-06-27", "actualDate": "2026-07-06" },
           { "supplierId": "S3", "promisedDate": "2029-08-30", "actualDate": "2029-08-30" },
           { "supplierId": "S3", "promisedDate": "2024-11-29", "actualDate": "2024-11-28" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "exceptions": [
@@ -21504,6 +22712,37 @@
         ["M2", "CRITICAL", "2026-10-28", "2026-10-28", 17, false, -28, 36, 48.9],
         ["M3", "WARNING", "2026-10-27", "2026-10-27", 16, false, 8, 12, 13.0],
         ["M3", "WARNING", "2026-10-27", "2026-10-27", 16, false, 8, 12, 13.0]
+      ],
+      "explanations": [
+        ["", "Increase order quantity or check the demand plan"],
+        [
+          "P2 is promised for 2026-10-27, already AFTER the critical date; P3 promised 2026-10-24, but S2 is typically 5 working day(s) late (on-time rate 0%); ERP view (promised dates) shows no problem at all: hidden risk",
+          "Ask S2 to pull P2 forward before 2026-10-27, or source elsewhere; Expedite P3 / ask for partial delivery before 2026-10-27"
+        ],
+        [
+          "P1 is promised for 2026-10-29, already AFTER the critical date",
+          "Ask S2 to pull P1 forward before 2026-10-28, or source elsewhere"
+        ],
+        [
+          "P4 is promised for 2026-10-28, already AFTER the critical date; P5 is promised for 2026-10-28, already AFTER the critical date",
+          "Ask S2 to pull P4 forward before 2026-10-27, or source elsewhere; Ask SX to pull P5 forward before 2026-10-27, or source elsewhere"
+        ],
+        [
+          "P4 is promised for 2026-10-28, already AFTER the critical date; P5 is promised for 2026-10-28, already AFTER the critical date",
+          "Ask S2 to pull P4 forward before 2026-10-27, or source elsewhere; Ask SX to pull P5 forward before 2026-10-27, or source elsewhere"
+        ]
+      ],
+      "overduePurchaseOrders": [
+        {
+          "poId": "P0",
+          "materialId": "M1",
+          "supplierId": "SX",
+          "qty": 84.0,
+          "promisedDate": "2026-10-08",
+          "realisticDate": "2026-10-08",
+          "countedInRealisticView": false,
+          "hasException": true
+        }
       ]
     },
     {
@@ -21512,10 +22751,15 @@
       "horizonDays": 7,
       "input": {
         "materials": [
-          { "materialId": "M1", "onHand": 125.0, "safetyStock": 0.5 },
-          { "materialId": "M2", "onHand": 45.0, "safetyStock": 0.0 },
-          { "materialId": "M3", "onHand": 52.800000000000004, "safetyStock": 12.5 },
-          { "materialId": "M4", "onHand": 13.0, "safetyStock": 0.5 }
+          { "materialId": "M1", "onHand": 125.0, "safetyStock": 0.5, "mainSupplierId": "SX" },
+          { "materialId": "M2", "onHand": 45.0, "safetyStock": 0.0, "mainSupplierId": null },
+          {
+            "materialId": "M3",
+            "onHand": 52.800000000000004,
+            "safetyStock": 12.5,
+            "mainSupplierId": "S1"
+          },
+          { "materialId": "M4", "onHand": 13.0, "safetyStock": 0.5, "mainSupplierId": "SX" }
         ],
         "openPurchaseOrders": [
           {
@@ -21566,13 +22810,29 @@
           { "supplierId": "S3", "promisedDate": "2023-09-25", "actualDate": "2023-10-04" },
           { "supplierId": "S3", "promisedDate": "2029-06-24", "actualDate": "2029-07-06" },
           { "supplierId": "S3", "promisedDate": "2028-02-24", "actualDate": "2028-02-24" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "exceptions": [
         ["M4", "CRITICAL", "2026-10-06", "2026-10-08", 1, true, -52, 0, 88],
         ["M3", "CRITICAL", "2026-10-08", "2026-10-08", 3, false, -35, 12, 67],
         ["M1", "WARNING", "2026-10-09", "2026-10-09", 4, false, 0, 0, 14.0]
-      ]
+      ],
+      "explanations": [
+        [
+          "P1 promised 2026-10-05, but Kunststoff Nord KG is typically 9 working day(s) late (on-time rate 33%); ERP view (promised dates) shows the problem only from 2026-10-08: hidden risk",
+          "Expedite P1 / ask for partial delivery before 2026-10-06"
+        ],
+        [
+          "no open purchase order covers the demand",
+          "Place an order now with Metallbau Kr\u00fcger GmbH"
+        ],
+        ["no open purchase order covers the demand", "Place an order now with SX"]
+      ],
+      "overduePurchaseOrders": []
     },
     {
       "name": "ranking-4",
@@ -21580,9 +22840,9 @@
       "horizonDays": 10,
       "input": {
         "materials": [
-          { "materialId": "M3", "onHand": 162.0, "safetyStock": 54.0 },
-          { "materialId": "M5", "onHand": 83.5, "safetyStock": 19.0 },
-          { "materialId": "M5", "onHand": 83.5, "safetyStock": 19.0 }
+          { "materialId": "M3", "onHand": 162.0, "safetyStock": 54.0, "mainSupplierId": "S2" },
+          { "materialId": "M5", "onHand": 83.5, "safetyStock": 19.0, "mainSupplierId": "S3" },
+          { "materialId": "M5", "onHand": 83.5, "safetyStock": 19.0, "mainSupplierId": "SX" }
         ],
         "openPurchaseOrders": [
           {
@@ -21622,13 +22882,29 @@
           { "supplierId": "S3", "promisedDate": "2026-09-19", "actualDate": "2026-09-23" },
           { "supplierId": "S3", "promisedDate": "2025-09-11", "actualDate": "2025-09-11" },
           { "supplierId": "S3", "promisedDate": "2030-03-18", "actualDate": "2030-03-22" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "exceptions": [
         ["M5", "CRITICAL", "2026-10-13", null, 6, true, -68, 19, 82],
         ["M5", "CRITICAL", "2026-10-13", null, 6, true, -68, 19, 82],
         ["M3", "CRITICAL", "2026-10-15", "2026-10-15", 8, false, -54, 54, 51.0]
-      ]
+      ],
+      "explanations": [
+        [
+          "P0 promised 2026-10-12, but S2 is typically 5 working day(s) late (on-time rate 0%); ERP view (promised dates) shows no problem at all: hidden risk",
+          "Expedite P0 / ask for partial delivery before 2026-10-13"
+        ],
+        [
+          "P0 promised 2026-10-12, but S2 is typically 5 working day(s) late (on-time rate 0%); ERP view (promised dates) shows no problem at all: hidden risk",
+          "Expedite P0 / ask for partial delivery before 2026-10-13"
+        ],
+        ["no open purchase order covers the demand", "Place an order now with S2"]
+      ],
+      "overduePurchaseOrders": []
     },
     {
       "name": "ranking-5",
@@ -21636,9 +22912,9 @@
       "horizonDays": 14,
       "input": {
         "materials": [
-          { "materialId": "M2", "onHand": 60.0, "safetyStock": 0.5 },
-          { "materialId": "M2", "onHand": 60.0, "safetyStock": 0.5 },
-          { "materialId": "M3", "onHand": 33.0, "safetyStock": 5.5 }
+          { "materialId": "M2", "onHand": 60.0, "safetyStock": 0.5, "mainSupplierId": "S2" },
+          { "materialId": "M2", "onHand": 60.0, "safetyStock": 0.5, "mainSupplierId": null },
+          { "materialId": "M3", "onHand": 33.0, "safetyStock": 5.5, "mainSupplierId": "S1" }
         ],
         "openPurchaseOrders": [
           {
@@ -21689,9 +22965,20 @@
           { "supplierId": "S3", "promisedDate": "2027-10-03", "actualDate": "2027-10-07" },
           { "supplierId": "S3", "promisedDate": "2025-04-06", "actualDate": "2025-04-15" },
           { "supplierId": "S3", "promisedDate": "2030-06-20", "actualDate": "2030-06-20" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
-      "exceptions": [["M3", "CRITICAL", "2026-10-19", "2026-10-19", 10, false, -22, 6, 67]]
+      "exceptions": [["M3", "CRITICAL", "2026-10-19", "2026-10-19", 10, false, -22, 6, 67]],
+      "explanations": [
+        [
+          "no open purchase order covers the demand",
+          "Place an order now with Metallbau Kr\u00fcger GmbH"
+        ]
+      ],
+      "overduePurchaseOrders": []
     },
     {
       "name": "ranking-6",
@@ -21699,9 +22986,9 @@
       "horizonDays": 10,
       "input": {
         "materials": [
-          { "materialId": "M2", "onHand": 7.5, "safetyStock": 12.5 },
-          { "materialId": "M5", "onHand": 23.0, "safetyStock": 0.0 },
-          { "materialId": "M3", "onHand": 1.7, "safetyStock": 12.5 }
+          { "materialId": "M2", "onHand": 7.5, "safetyStock": 12.5, "mainSupplierId": "SX" },
+          { "materialId": "M5", "onHand": 23.0, "safetyStock": 0.0, "mainSupplierId": "SX" },
+          { "materialId": "M3", "onHand": 1.7, "safetyStock": 12.5, "mainSupplierId": null }
         ],
         "openPurchaseOrders": [
           {
@@ -21764,13 +23051,29 @@
           { "supplierId": "S3", "promisedDate": "2027-03-30", "actualDate": "2027-04-08" },
           { "supplierId": "S3", "promisedDate": "2028-01-29", "actualDate": "2028-01-29" },
           { "supplierId": "S3", "promisedDate": "2029-11-02", "actualDate": "2029-11-01" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "exceptions": [
         ["M5", "CRITICAL", "2026-10-13", "2026-10-13", 2, false, -115, 0, 79],
         ["M3", "CRITICAL", "2026-10-13", "2026-10-13", 2, false, -10, 12, 67.2],
         ["M2", "WARNING", "2026-10-11", null, 0, true, 2, 12, 53.8]
-      ]
+      ],
+      "explanations": [
+        [
+          "P2 is promised for 2026-10-14, already AFTER the critical date",
+          "Ask S2 to pull P2 forward before 2026-10-13, or source elsewhere"
+        ],
+        ["no open purchase order covers the demand", "Place an order now with ?"],
+        [
+          "P0 is promised for 2026-10-13, already AFTER the critical date; P1 is promised for 2026-10-11, already AFTER the critical date; ERP view (promised dates) shows no problem at all: hidden risk",
+          "Ask Metallbau Kr\u00fcger GmbH to pull P0 forward before 2026-10-11, or source elsewhere; Ask S2 to pull P1 forward before 2026-10-11, or source elsewhere"
+        ]
+      ],
+      "overduePurchaseOrders": []
     },
     {
       "name": "ranking-7",
@@ -21778,9 +23081,9 @@
       "horizonDays": 14,
       "input": {
         "materials": [
-          { "materialId": "M2", "onHand": 162.9, "safetyStock": 0.5 },
-          { "materialId": "M2", "onHand": 162.9, "safetyStock": 0.5 },
-          { "materialId": "M4", "onHand": 25.0, "safetyStock": 0.5 }
+          { "materialId": "M2", "onHand": 162.9, "safetyStock": 0.5, "mainSupplierId": null },
+          { "materialId": "M2", "onHand": 162.9, "safetyStock": 0.5, "mainSupplierId": null },
+          { "materialId": "M4", "onHand": 25.0, "safetyStock": 0.5, "mainSupplierId": "SX" }
         ],
         "openPurchaseOrders": [
           {
@@ -21826,12 +23129,36 @@
           { "supplierId": "S3", "promisedDate": "2030-02-03", "actualDate": "2030-02-02" },
           { "supplierId": "S3", "promisedDate": "2024-10-16", "actualDate": "2024-10-28" },
           { "supplierId": "S3", "promisedDate": "2023-09-30", "actualDate": "2023-10-04" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "exceptions": [
         ["M4", "CRITICAL", "2026-10-07", "2026-10-07", 1, false, -75, 0, 94],
         ["M2", "CRITICAL", "2026-10-19", "2026-10-19", 13, false, -18, 0, 58],
         ["M2", "CRITICAL", "2026-10-19", "2026-10-19", 13, false, -18, 0, 58]
+      ],
+      "explanations": [
+        [
+          "P0 promised 2026-10-04, but S2 is typically 6 working day(s) late (on-time rate 0%)",
+          "Expedite P0 / ask for partial delivery before 2026-10-07"
+        ],
+        ["no open purchase order covers the demand", "Place an order now with ?"],
+        ["no open purchase order covers the demand", "Place an order now with ?"]
+      ],
+      "overduePurchaseOrders": [
+        {
+          "poId": "P0",
+          "materialId": "M4",
+          "supplierId": "S2",
+          "qty": 200.0,
+          "promisedDate": "2026-10-04",
+          "realisticDate": "2026-10-12",
+          "countedInRealisticView": true,
+          "hasException": true
+        }
       ]
     },
     {
@@ -21840,8 +23167,8 @@
       "horizonDays": 7,
       "input": {
         "materials": [
-          { "materialId": "M4", "onHand": 120.0, "safetyStock": 0.5 },
-          { "materialId": "M2", "onHand": 52.3, "safetyStock": 11.2 }
+          { "materialId": "M4", "onHand": 120.0, "safetyStock": 0.5, "mainSupplierId": "S3" },
+          { "materialId": "M2", "onHand": 52.3, "safetyStock": 11.2, "mainSupplierId": "S1" }
         ],
         "openPurchaseOrders": [
           {
@@ -21880,9 +23207,17 @@
           { "supplierId": "S3", "promisedDate": "2030-06-20", "actualDate": "2030-06-24" },
           { "supplierId": "S3", "promisedDate": "2025-04-03", "actualDate": "2025-04-07" },
           { "supplierId": "S3", "promisedDate": "2029-01-28", "actualDate": "2029-01-28" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
-      "exceptions": [["M4", "CRITICAL", "2026-10-15", "2026-10-15", 6, false, -30, 0, 58]]
+      "exceptions": [["M4", "CRITICAL", "2026-10-15", "2026-10-15", 6, false, -30, 0, 58]],
+      "explanations": [
+        ["no open purchase order covers the demand", "Place an order now with Kunststoff Nord KG"]
+      ],
+      "overduePurchaseOrders": []
     },
     {
       "name": "ranking-9",
@@ -21890,8 +23225,13 @@
       "horizonDays": 14,
       "input": {
         "materials": [
-          { "materialId": "M3", "onHand": 26.0, "safetyStock": 26.0 },
-          { "materialId": "M4", "onHand": 114.60000000000001, "safetyStock": 0.5 }
+          { "materialId": "M3", "onHand": 26.0, "safetyStock": 26.0, "mainSupplierId": "S3" },
+          {
+            "materialId": "M4",
+            "onHand": 114.60000000000001,
+            "safetyStock": 0.5,
+            "mainSupplierId": "SX"
+          }
         ],
         "openPurchaseOrders": [
           {
@@ -21948,12 +23288,24 @@
           { "supplierId": "S3", "promisedDate": "2027-03-03", "actualDate": "2027-03-15" },
           { "supplierId": "S3", "promisedDate": "2026-03-07", "actualDate": "2026-03-06" },
           { "supplierId": "S3", "promisedDate": "2027-09-09", "actualDate": "2027-09-13" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "exceptions": [
         ["M3", "CRITICAL", "2026-10-13", null, 4, true, -65, 26, 100],
         ["M4", "CRITICAL", "2026-10-21", "2026-10-21", 12, false, -38, 0, 61]
-      ]
+      ],
+      "explanations": [
+        [
+          "P0 is promised for 2026-10-13, already AFTER the critical date; P1 promised 2026-10-12, but S2 is typically 6 working day(s) late (on-time rate 0%); ERP view (promised dates) shows no problem at all: hidden risk",
+          "Ask S2 to pull P0 forward before 2026-10-13, or source elsewhere; Expedite P1 / ask for partial delivery before 2026-10-13"
+        ],
+        ["", "Increase order quantity or check the demand plan"]
+      ],
+      "overduePurchaseOrders": []
     },
     {
       "name": "ranking-10",
@@ -21961,9 +23313,9 @@
       "horizonDays": 7,
       "input": {
         "materials": [
-          { "materialId": "M5", "onHand": 18.5, "safetyStock": 11.0 },
-          { "materialId": "M3", "onHand": 7.5, "safetyStock": 12.5 },
-          { "materialId": "M4", "onHand": 18.0, "safetyStock": 0.5 }
+          { "materialId": "M5", "onHand": 18.5, "safetyStock": 11.0, "mainSupplierId": "S1" },
+          { "materialId": "M3", "onHand": 7.5, "safetyStock": 12.5, "mainSupplierId": "S2" },
+          { "materialId": "M4", "onHand": 18.0, "safetyStock": 0.5, "mainSupplierId": "SX" }
         ],
         "openPurchaseOrders": [
           {
@@ -22013,12 +23365,59 @@
           { "supplierId": "S3", "promisedDate": "2027-04-24", "actualDate": "2027-04-23" },
           { "supplierId": "S3", "promisedDate": "2024-01-29", "actualDate": "2024-02-10" },
           { "supplierId": "S3", "promisedDate": "2029-07-06", "actualDate": "2029-07-10" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "exceptions": [
         ["M3", "CRITICAL", "2026-10-08", "2026-10-08", 0, false, -80, 12, 76],
         ["M4", "CRITICAL", "2026-10-09", "2026-10-09", 1, false, -18, 0, 73],
         ["M5", "WARNING", "2026-10-08", "2026-10-08", 0, false, 8, 11, 24.2]
+      ],
+      "explanations": [
+        ["no open purchase order covers the demand", "Place an order now with S2"],
+        [
+          "P2 promised 2026-10-07, but S2 is typically 3 working day(s) late (on-time rate 0%) (only 1 past deliveries, low confidence)",
+          "Expedite P2 / ask for partial delivery before 2026-10-09"
+        ],
+        [
+          "P0 promised 2026-10-06, but S2 is typically 3 working day(s) late (on-time rate 0%) (only 1 past deliveries, low confidence)",
+          "Expedite P0 / ask for partial delivery before 2026-10-08"
+        ]
+      ],
+      "overduePurchaseOrders": [
+        {
+          "poId": "P0",
+          "materialId": "M5",
+          "supplierId": "S2",
+          "qty": 55.0,
+          "promisedDate": "2026-10-06",
+          "realisticDate": "2026-10-09",
+          "countedInRealisticView": true,
+          "hasException": true
+        },
+        {
+          "poId": "P1",
+          "materialId": "M5",
+          "supplierId": "SX",
+          "qty": 55.0,
+          "promisedDate": "2026-10-06",
+          "realisticDate": "2026-10-06",
+          "countedInRealisticView": false,
+          "hasException": true
+        },
+        {
+          "poId": "P2",
+          "materialId": "M4",
+          "supplierId": "S2",
+          "qty": 90.0,
+          "promisedDate": "2026-10-07",
+          "realisticDate": "2026-10-12",
+          "countedInRealisticView": true,
+          "hasException": true
+        }
       ]
     },
     {
@@ -22027,9 +23426,9 @@
       "horizonDays": 1,
       "input": {
         "materials": [
-          { "materialId": "M1", "onHand": 20.9, "safetyStock": 0.0 },
-          { "materialId": "M2", "onHand": 0.0, "safetyStock": 16.0 },
-          { "materialId": "M3", "onHand": 0.0, "safetyStock": 0.5 }
+          { "materialId": "M1", "onHand": 20.9, "safetyStock": 0.0, "mainSupplierId": "S1" },
+          { "materialId": "M2", "onHand": 0.0, "safetyStock": 16.0, "mainSupplierId": null },
+          { "materialId": "M3", "onHand": 0.0, "safetyStock": 0.5, "mainSupplierId": null }
         ],
         "openPurchaseOrders": [
           {
@@ -22078,11 +23477,44 @@
           { "supplierId": "S2", "promisedDate": "2023-01-21", "actualDate": "2023-01-29" },
           { "supplierId": "S2", "promisedDate": "2023-10-07", "actualDate": "2023-10-15" },
           { "supplierId": "S3", "promisedDate": "2029-02-16", "actualDate": "2029-02-25" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "exceptions": [
         ["M3", "CRITICAL", "2026-10-06", "2026-10-06", 0, false, -6, 0, 58],
         ["M2", "CRITICAL", "2026-10-06", "2026-10-06", 0, false, -16, 16, 48.0]
+      ],
+      "explanations": [
+        [
+          "P2 promised 2026-10-03, but Metallbau Kr\u00fcger GmbH is typically 1 working day(s) late (on-time rate 60%); P3 promised 2026-10-04, but Metallbau Kr\u00fcger GmbH is typically 1 working day(s) late (on-time rate 60%)",
+          "Increase order quantity or check the demand plan"
+        ],
+        ["no open purchase order covers the demand", "Place an order now with ?"]
+      ],
+      "overduePurchaseOrders": [
+        {
+          "poId": "P2",
+          "materialId": "M3",
+          "supplierId": "S1",
+          "qty": 12.0,
+          "promisedDate": "2026-10-03",
+          "realisticDate": "2026-10-05",
+          "countedInRealisticView": false,
+          "hasException": true
+        },
+        {
+          "poId": "P3",
+          "materialId": "M3",
+          "supplierId": "S1",
+          "qty": 60.0,
+          "promisedDate": "2026-10-04",
+          "realisticDate": "2026-10-05",
+          "countedInRealisticView": false,
+          "hasException": true
+        }
       ]
     },
     {
@@ -22091,12 +23523,12 @@
       "horizonDays": 7,
       "input": {
         "materials": [
-          { "materialId": "M3", "onHand": 22.4, "safetyStock": 12.5 },
-          { "materialId": "M3", "onHand": 22.4, "safetyStock": 12.5 },
-          { "materialId": "M2", "onHand": 4.4, "safetyStock": 0.5 },
-          { "materialId": "M2", "onHand": 4.4, "safetyStock": 0.5 },
-          { "materialId": "M4", "onHand": 42.0, "safetyStock": 12.5 },
-          { "materialId": "M4", "onHand": 42.0, "safetyStock": 12.5 }
+          { "materialId": "M3", "onHand": 22.4, "safetyStock": 12.5, "mainSupplierId": null },
+          { "materialId": "M3", "onHand": 22.4, "safetyStock": 12.5, "mainSupplierId": null },
+          { "materialId": "M2", "onHand": 4.4, "safetyStock": 0.5, "mainSupplierId": "S1" },
+          { "materialId": "M2", "onHand": 4.4, "safetyStock": 0.5, "mainSupplierId": "SX" },
+          { "materialId": "M4", "onHand": 42.0, "safetyStock": 12.5, "mainSupplierId": "S3" },
+          { "materialId": "M4", "onHand": 42.0, "safetyStock": 12.5, "mainSupplierId": null }
         ],
         "openPurchaseOrders": [
           {
@@ -22153,6 +23585,10 @@
           { "supplierId": "S3", "promisedDate": "2023-05-15", "actualDate": "2023-05-14" },
           { "supplierId": "S3", "promisedDate": "2029-04-08", "actualDate": "2029-04-07" },
           { "supplierId": "S3", "promisedDate": "2028-02-02", "actualDate": "2028-02-14" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "exceptions": [
@@ -22160,7 +23596,26 @@
         ["M4", "CRITICAL", "2026-10-16", "2026-10-16", 6, false, -21, 12, 54.8],
         ["M3", "WARNING", "2026-10-12", null, 2, true, 0, 12, 40.0],
         ["M3", "WARNING", "2026-10-12", null, 2, true, 0, 12, 40.0]
-      ]
+      ],
+      "explanations": [
+        [
+          "P3 promised 2026-10-13, but Metallbau Kr\u00fcger GmbH is typically 1 working day(s) late (on-time rate 50%) (only 2 past deliveries, low confidence)",
+          "Increase order quantity or check the demand plan"
+        ],
+        [
+          "P3 promised 2026-10-13, but Metallbau Kr\u00fcger GmbH is typically 1 working day(s) late (on-time rate 50%) (only 2 past deliveries, low confidence)",
+          "Increase order quantity or check the demand plan"
+        ],
+        [
+          "P0 promised 2026-10-11, but S2 is typically 3 working day(s) late (on-time rate 0%) (only 2 past deliveries, low confidence); ERP view (promised dates) shows no problem at all: hidden risk",
+          "Expedite P0 / ask for partial delivery before 2026-10-12"
+        ],
+        [
+          "P0 promised 2026-10-11, but S2 is typically 3 working day(s) late (on-time rate 0%) (only 2 past deliveries, low confidence); ERP view (promised dates) shows no problem at all: hidden risk",
+          "Expedite P0 / ask for partial delivery before 2026-10-12"
+        ]
+      ],
+      "overduePurchaseOrders": []
     },
     {
       "name": "ranking-13",
@@ -22168,9 +23623,9 @@
       "horizonDays": 14,
       "input": {
         "materials": [
-          { "materialId": "M2", "onHand": 40.3, "safetyStock": 12.5 },
-          { "materialId": "M5", "onHand": 55.5, "safetyStock": 8.0 },
-          { "materialId": "M4", "onHand": 190.0, "safetyStock": 19.0 }
+          { "materialId": "M2", "onHand": 40.3, "safetyStock": 12.5, "mainSupplierId": "SX" },
+          { "materialId": "M5", "onHand": 55.5, "safetyStock": 8.0, "mainSupplierId": "SX" },
+          { "materialId": "M4", "onHand": 190.0, "safetyStock": 19.0, "mainSupplierId": "S1" }
         ],
         "openPurchaseOrders": [
           {
@@ -22223,13 +23678,29 @@
           { "supplierId": "S2", "promisedDate": "2026-10-01", "actualDate": "2026-10-04" },
           { "supplierId": "S3", "promisedDate": "2028-09-12", "actualDate": "2028-09-16" },
           { "supplierId": "S3", "promisedDate": "2024-01-20", "actualDate": "2024-01-20" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "exceptions": [
         ["M5", "CRITICAL", "2026-10-19", "2026-10-19", 10, false, -24, 8, 67],
         ["M2", "CRITICAL", "2026-10-22", null, 13, true, -1, 12, 53.6],
         ["M4", "WARNING", "2026-10-22", "2026-10-22", 13, false, 0, 19, 13.0]
-      ]
+      ],
+      "explanations": [
+        ["no open purchase order covers the demand", "Place an order now with SX"],
+        [
+          "P0 promised 2026-10-21, but Kunststoff Nord KG is typically 2 working day(s) late (on-time rate 50%) (only 2 past deliveries, low confidence); ERP view (promised dates) shows no problem at all: hidden risk",
+          "Expedite P0 / ask for partial delivery before 2026-10-22"
+        ],
+        [
+          "no open purchase order covers the demand",
+          "Place an order now with Metallbau Kr\u00fcger GmbH"
+        ]
+      ],
+      "overduePurchaseOrders": []
     },
     {
       "name": "ranking-14",
@@ -22237,10 +23708,20 @@
       "horizonDays": 14,
       "input": {
         "materials": [
-          { "materialId": "M5", "onHand": 40.8, "safetyStock": 33.3 },
-          { "materialId": "M3", "onHand": 42.0, "safetyStock": 0.5 },
-          { "materialId": "M4", "onHand": 0.0, "safetyStock": 57.300000000000004 },
-          { "materialId": "M4", "onHand": 0.0, "safetyStock": 57.300000000000004 }
+          { "materialId": "M5", "onHand": 40.8, "safetyStock": 33.3, "mainSupplierId": "SX" },
+          { "materialId": "M3", "onHand": 42.0, "safetyStock": 0.5, "mainSupplierId": "S2" },
+          {
+            "materialId": "M4",
+            "onHand": 0.0,
+            "safetyStock": 57.300000000000004,
+            "mainSupplierId": "SX"
+          },
+          {
+            "materialId": "M4",
+            "onHand": 0.0,
+            "safetyStock": 57.300000000000004,
+            "mainSupplierId": "S1"
+          }
         ],
         "openPurchaseOrders": [
           {
@@ -22306,6 +23787,10 @@
           { "supplierId": "S2", "promisedDate": "2022-10-10", "actualDate": "2022-10-18" },
           { "supplierId": "S2", "promisedDate": "2026-06-04", "actualDate": "2026-06-09" },
           { "supplierId": "S3", "promisedDate": "2025-07-20", "actualDate": "2025-07-19" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "exceptions": [
@@ -22313,7 +23798,23 @@
         ["M4", "CRITICAL", "2026-10-12", null, 2, true, -96, 57, 102.7],
         ["M3", "CRITICAL", "2026-10-14", "2026-10-20", 4, true, -84, 0, 100],
         ["M5", "CRITICAL", "2026-10-15", "2026-10-15", 5, false, -70, 33, 82]
-      ]
+      ],
+      "explanations": [
+        [
+          "P1 promised 2026-10-11, but S2 is typically 6 working day(s) late (on-time rate 0%); P2 promised 2026-10-10, but S2 is typically 6 working day(s) late (on-time rate 0%); ERP view (promised dates) shows no problem at all: hidden risk",
+          "Expedite P1 / ask for partial delivery before 2026-10-12; Expedite P2 / ask for partial delivery before 2026-10-12"
+        ],
+        [
+          "P1 promised 2026-10-11, but S2 is typically 6 working day(s) late (on-time rate 0%); P2 promised 2026-10-10, but S2 is typically 6 working day(s) late (on-time rate 0%); ERP view (promised dates) shows no problem at all: hidden risk",
+          "Expedite P1 / ask for partial delivery before 2026-10-12; Expedite P2 / ask for partial delivery before 2026-10-12"
+        ],
+        [
+          "P0 promised 2026-10-11, but S2 is typically 6 working day(s) late (on-time rate 0%); ERP view (promised dates) shows the problem only from 2026-10-20: hidden risk",
+          "Expedite P0 / ask for partial delivery before 2026-10-14"
+        ],
+        ["no open purchase order covers the demand", "Place an order now with SX"]
+      ],
+      "overduePurchaseOrders": []
     },
     {
       "name": "ranking-15",
@@ -22321,9 +23822,9 @@
       "horizonDays": 10,
       "input": {
         "materials": [
-          { "materialId": "M1", "onHand": 0.0, "safetyStock": 31.0 },
-          { "materialId": "M4", "onHand": 70.0, "safetyStock": 12.5 },
-          { "materialId": "M4", "onHand": 70.0, "safetyStock": 12.5 }
+          { "materialId": "M1", "onHand": 0.0, "safetyStock": 31.0, "mainSupplierId": "SX" },
+          { "materialId": "M4", "onHand": 70.0, "safetyStock": 12.5, "mainSupplierId": "S1" },
+          { "materialId": "M4", "onHand": 70.0, "safetyStock": 12.5, "mainSupplierId": "SX" }
         ],
         "openPurchaseOrders": [
           {
@@ -22365,13 +23866,29 @@
           { "supplierId": "S3", "promisedDate": "2029-02-05", "actualDate": "2029-02-14" },
           { "supplierId": "S3", "promisedDate": "2028-04-02", "actualDate": "2028-04-01" },
           { "supplierId": "S3", "promisedDate": "2024-07-29", "actualDate": "2024-08-02" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "exceptions": [
         ["M4", "CRITICAL", "2026-10-19", "2026-10-19", 8, false, -28, 12, 61],
         ["M4", "CRITICAL", "2026-10-19", "2026-10-19", 8, false, -28, 12, 61],
         ["M1", "WARNING", "2026-10-11", "2026-10-11", 0, false, 0, 31, 40.0]
-      ]
+      ],
+      "explanations": [
+        [
+          "no open purchase order covers the demand",
+          "Place an order now with Metallbau Kr\u00fcger GmbH"
+        ],
+        ["no open purchase order covers the demand", "Place an order now with SX"],
+        [
+          "P0 is promised for 2026-10-12, already AFTER the critical date; P1 is promised for 2026-10-13, already AFTER the critical date",
+          "Ask SX to pull P0 forward before 2026-10-11, or source elsewhere; Ask Metallbau Kr\u00fcger GmbH to pull P1 forward before 2026-10-11, or source elsewhere"
+        ]
+      ],
+      "overduePurchaseOrders": []
     },
     {
       "name": "ranking-16",
@@ -22379,9 +23896,9 @@
       "horizonDays": 7,
       "input": {
         "materials": [
-          { "materialId": "M4", "onHand": 33.0, "safetyStock": 0.5 },
-          { "materialId": "M3", "onHand": 21.0, "safetyStock": 12.5 },
-          { "materialId": "M2", "onHand": 17.0, "safetyStock": 0.0 }
+          { "materialId": "M4", "onHand": 33.0, "safetyStock": 0.5, "mainSupplierId": "S2" },
+          { "materialId": "M3", "onHand": 21.0, "safetyStock": 12.5, "mainSupplierId": null },
+          { "materialId": "M2", "onHand": 17.0, "safetyStock": 0.0, "mainSupplierId": "SX" }
         ],
         "openPurchaseOrders": [
           {
@@ -22429,12 +23946,21 @@
           { "supplierId": "S3", "promisedDate": "2030-01-29", "actualDate": "2030-02-02" },
           { "supplierId": "S3", "promisedDate": "2028-12-16", "actualDate": "2028-12-15" },
           { "supplierId": "S3", "promisedDate": "2029-09-03", "actualDate": "2029-09-07" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "exceptions": [
         ["M2", "CRITICAL", "2026-10-08", "2026-10-08", 1, false, -68, 0, 73],
         ["M3", "CRITICAL", "2026-10-12", "2026-10-12", 5, false, -14, 12, 52.2]
-      ]
+      ],
+      "explanations": [
+        ["no open purchase order covers the demand", "Place an order now with SX"],
+        ["no open purchase order covers the demand", "Place an order now with ?"]
+      ],
+      "overduePurchaseOrders": []
     },
     {
       "name": "ranking-17",
@@ -22442,11 +23968,11 @@
       "horizonDays": 14,
       "input": {
         "materials": [
-          { "materialId": "M2", "onHand": 18.7, "safetyStock": 12.5 },
-          { "materialId": "M4", "onHand": 47.5, "safetyStock": 40.0 },
-          { "materialId": "M3", "onHand": 11.0, "safetyStock": 0.5 },
-          { "materialId": "M1", "onHand": 25.0, "safetyStock": 12.5 },
-          { "materialId": "M1", "onHand": 25.0, "safetyStock": 12.5 }
+          { "materialId": "M2", "onHand": 18.7, "safetyStock": 12.5, "mainSupplierId": "SX" },
+          { "materialId": "M4", "onHand": 47.5, "safetyStock": 40.0, "mainSupplierId": "S3" },
+          { "materialId": "M3", "onHand": 11.0, "safetyStock": 0.5, "mainSupplierId": "S1" },
+          { "materialId": "M1", "onHand": 25.0, "safetyStock": 12.5, "mainSupplierId": "S2" },
+          { "materialId": "M1", "onHand": 25.0, "safetyStock": 12.5, "mainSupplierId": "S3" }
         ],
         "openPurchaseOrders": [
           {
@@ -22556,6 +24082,10 @@
           { "supplierId": "S3", "promisedDate": "2030-01-02", "actualDate": "2030-01-14" },
           { "supplierId": "S3", "promisedDate": "2023-11-03", "actualDate": "2023-11-12" },
           { "supplierId": "S3", "promisedDate": "2029-04-04", "actualDate": "2029-04-03" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "exceptions": [
@@ -22564,6 +24094,44 @@
         ["M1", "CRITICAL", "2026-10-15", "2026-10-15", 9, false, -75, 12, 70],
         ["M1", "CRITICAL", "2026-10-15", "2026-10-15", 9, false, -75, 12, 70],
         ["M3", "WARNING", "2026-10-07", null, 1, true, 0, 0, 59.0]
+      ],
+      "explanations": [
+        [
+          "P2 is promised for 2026-10-09, already AFTER the critical date; P3 is promised for 2026-10-09, already AFTER the critical date",
+          "Ask S2 to pull P2 forward before 2026-10-08, or source elsewhere; Ask S2 to pull P3 forward before 2026-10-08, or source elsewhere"
+        ],
+        [
+          "P0 promised 2026-10-04, but S2 is typically 4 working day(s) late (on-time rate 0%); P1 promised 2026-10-04, but S2 is typically 4 working day(s) late (on-time rate 0%)",
+          "Expedite P0 / ask for partial delivery before 2026-10-07; Expedite P1 / ask for partial delivery before 2026-10-07"
+        ],
+        ["", "Increase order quantity or check the demand plan"],
+        ["", "Increase order quantity or check the demand plan"],
+        [
+          "P4 is promised for 2026-10-09, already AFTER the critical date; P5 is promised for 2026-10-07, already AFTER the critical date; ERP view (promised dates) shows no problem at all: hidden risk",
+          "Ask Metallbau Kr\u00fcger GmbH to pull P4 forward before 2026-10-07, or source elsewhere; Ask Metallbau Kr\u00fcger GmbH to pull P5 forward before 2026-10-07, or source elsewhere"
+        ]
+      ],
+      "overduePurchaseOrders": [
+        {
+          "poId": "P0",
+          "materialId": "M2",
+          "supplierId": "S2",
+          "qty": 130.9,
+          "promisedDate": "2026-10-04",
+          "realisticDate": "2026-10-08",
+          "countedInRealisticView": true,
+          "hasException": true
+        },
+        {
+          "poId": "P1",
+          "materialId": "M2",
+          "supplierId": "S2",
+          "qty": 112.19999999999999,
+          "promisedDate": "2026-10-04",
+          "realisticDate": "2026-10-08",
+          "countedInRealisticView": true,
+          "hasException": true
+        }
       ]
     },
     {
@@ -22572,9 +24140,9 @@
       "horizonDays": 10,
       "input": {
         "materials": [
-          { "materialId": "M1", "onHand": 12.5, "safetyStock": 0.5 },
-          { "materialId": "M1", "onHand": 12.5, "safetyStock": 0.5 },
-          { "materialId": "M2", "onHand": 65.1, "safetyStock": 0.5 }
+          { "materialId": "M1", "onHand": 12.5, "safetyStock": 0.5, "mainSupplierId": "S1" },
+          { "materialId": "M1", "onHand": 12.5, "safetyStock": 0.5, "mainSupplierId": "SX" },
+          { "materialId": "M2", "onHand": 65.1, "safetyStock": 0.5, "mainSupplierId": "S1" }
         ],
         "openPurchaseOrders": [
           {
@@ -22628,12 +24196,42 @@
           { "supplierId": "S3", "promisedDate": "2030-01-18", "actualDate": "2030-01-30" },
           { "supplierId": "S3", "promisedDate": "2025-08-23", "actualDate": "2025-08-23" },
           { "supplierId": "S3", "promisedDate": "2029-01-02", "actualDate": "2029-01-02" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "exceptions": [
         ["M2", "CRITICAL", "2026-10-13", null, 5, true, -69, 0, 85],
         ["M1", "CRITICAL", "2026-10-12", "2026-10-12", 4, false, -8, 0, 73],
         ["M1", "CRITICAL", "2026-10-12", "2026-10-12", 4, false, -8, 0, 73]
+      ],
+      "explanations": [
+        [
+          "P1 promised 2026-10-11, but S2 is typically 6 working day(s) late (on-time rate 0%) (only 2 past deliveries, low confidence); P2 promised 2026-10-12, but Kunststoff Nord KG is typically 8 working day(s) late (on-time rate 60%); ERP view (promised dates) shows no problem at all: hidden risk",
+          "Expedite P1 / ask for partial delivery before 2026-10-13; Expedite P2 / ask for partial delivery before 2026-10-13"
+        ],
+        [
+          "P0 promised 2026-10-06, but S2 is typically 6 working day(s) late (on-time rate 0%) (only 2 past deliveries, low confidence)",
+          "Expedite P0 / ask for partial delivery before 2026-10-12"
+        ],
+        [
+          "P0 promised 2026-10-06, but S2 is typically 6 working day(s) late (on-time rate 0%) (only 2 past deliveries, low confidence)",
+          "Expedite P0 / ask for partial delivery before 2026-10-12"
+        ]
+      ],
+      "overduePurchaseOrders": [
+        {
+          "poId": "P0",
+          "materialId": "M1",
+          "supplierId": "S2",
+          "qty": 15.0,
+          "promisedDate": "2026-10-06",
+          "realisticDate": "2026-10-14",
+          "countedInRealisticView": true,
+          "hasException": true
+        }
       ]
     },
     {
@@ -22642,10 +24240,10 @@
       "horizonDays": 10,
       "input": {
         "materials": [
-          { "materialId": "M5", "onHand": 18.0, "safetyStock": 36.0 },
-          { "materialId": "M3", "onHand": 81.2, "safetyStock": 0.0 },
-          { "materialId": "M3", "onHand": 81.2, "safetyStock": 0.0 },
-          { "materialId": "M4", "onHand": 90.0, "safetyStock": 12.5 }
+          { "materialId": "M5", "onHand": 18.0, "safetyStock": 36.0, "mainSupplierId": null },
+          { "materialId": "M3", "onHand": 81.2, "safetyStock": 0.0, "mainSupplierId": "SX" },
+          { "materialId": "M3", "onHand": 81.2, "safetyStock": 0.0, "mainSupplierId": "S1" },
+          { "materialId": "M4", "onHand": 90.0, "safetyStock": 12.5, "mainSupplierId": "S3" }
         ],
         "openPurchaseOrders": [
           {
@@ -22704,12 +24302,24 @@
           { "supplierId": "S3", "promisedDate": "2023-11-19", "actualDate": "2023-11-18" },
           { "supplierId": "S3", "promisedDate": "2022-10-12", "actualDate": "2022-10-12" },
           { "supplierId": "S3", "promisedDate": "2023-01-20", "actualDate": "2023-02-01" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "exceptions": [
         ["M4", "CRITICAL", "2026-10-15", "2026-10-15", 4, false, -120, 12, 73],
         ["M5", "WARNING", "2026-10-11", "2026-10-11", 0, false, 0, 36, 40.0]
-      ]
+      ],
+      "explanations": [
+        ["no open purchase order covers the demand", "Place an order now with Kunststoff Nord KG"],
+        [
+          "P0 is promised for 2026-10-12, already AFTER the critical date",
+          "Ask Metallbau Kr\u00fcger GmbH to pull P0 forward before 2026-10-11, or source elsewhere"
+        ]
+      ],
+      "overduePurchaseOrders": []
     },
     {
       "name": "ranking-20",
@@ -22717,12 +24327,12 @@
       "horizonDays": 7,
       "input": {
         "materials": [
-          { "materialId": "M5", "onHand": 18.7, "safetyStock": 12.5 },
-          { "materialId": "M2", "onHand": 0.0, "safetyStock": 12.5 },
-          { "materialId": "M2", "onHand": 0.0, "safetyStock": 12.5 },
-          { "materialId": "M3", "onHand": 0.0, "safetyStock": 0.5 },
-          { "materialId": "M4", "onHand": 40.0, "safetyStock": 16.0 },
-          { "materialId": "M4", "onHand": 40.0, "safetyStock": 16.0 }
+          { "materialId": "M5", "onHand": 18.7, "safetyStock": 12.5, "mainSupplierId": "S3" },
+          { "materialId": "M2", "onHand": 0.0, "safetyStock": 12.5, "mainSupplierId": null },
+          { "materialId": "M2", "onHand": 0.0, "safetyStock": 12.5, "mainSupplierId": null },
+          { "materialId": "M3", "onHand": 0.0, "safetyStock": 0.5, "mainSupplierId": "SX" },
+          { "materialId": "M4", "onHand": 40.0, "safetyStock": 16.0, "mainSupplierId": null },
+          { "materialId": "M4", "onHand": 40.0, "safetyStock": 16.0, "mainSupplierId": null }
         ],
         "openPurchaseOrders": [
           {
@@ -22794,6 +24404,10 @@
           { "supplierId": "S3", "promisedDate": "2025-07-14", "actualDate": "2025-07-18" },
           { "supplierId": "S3", "promisedDate": "2024-04-04", "actualDate": "2024-04-13" },
           { "supplierId": "S3", "promisedDate": "2024-08-02", "actualDate": "2024-08-06" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "exceptions": [
@@ -22803,6 +24417,45 @@
         ["M5", "CRITICAL", "2026-10-14", null, 5, true, -9, 12, 63.4],
         ["M4", "WARNING", "2026-10-14", null, 5, true, 0, 16, 31.0],
         ["M4", "WARNING", "2026-10-14", null, 5, true, 0, 16, 31.0]
+      ],
+      "explanations": [
+        ["no open purchase order covers the demand", "Place an order now with ?"],
+        ["no open purchase order covers the demand", "Place an order now with ?"],
+        ["", "Increase order quantity or check the demand plan"],
+        [
+          "P0 is promised for 2026-10-14, already AFTER the critical date; ERP view (promised dates) shows no problem at all: hidden risk",
+          "Ask S2 to pull P0 forward before 2026-10-14, or source elsewhere"
+        ],
+        [
+          "P3 promised 2026-10-13, but S2 is typically 6 working day(s) late (on-time rate 0%) (only 1 past deliveries, low confidence); P4 promised 2026-10-13, but S2 is typically 6 working day(s) late (on-time rate 0%) (only 1 past deliveries, low confidence); ERP view (promised dates) shows no problem at all: hidden risk",
+          "Expedite P3 / ask for partial delivery before 2026-10-14; Expedite P4 / ask for partial delivery before 2026-10-14"
+        ],
+        [
+          "P3 promised 2026-10-13, but S2 is typically 6 working day(s) late (on-time rate 0%) (only 1 past deliveries, low confidence); P4 promised 2026-10-13, but S2 is typically 6 working day(s) late (on-time rate 0%) (only 1 past deliveries, low confidence); ERP view (promised dates) shows no problem at all: hidden risk",
+          "Expedite P3 / ask for partial delivery before 2026-10-14; Expedite P4 / ask for partial delivery before 2026-10-14"
+        ]
+      ],
+      "overduePurchaseOrders": [
+        {
+          "poId": "P1",
+          "materialId": "M3",
+          "supplierId": "S1",
+          "qty": 135.0,
+          "promisedDate": "2026-10-07",
+          "realisticDate": "2026-10-07",
+          "countedInRealisticView": false,
+          "hasException": true
+        },
+        {
+          "poId": "P2",
+          "materialId": "M3",
+          "supplierId": "SX",
+          "qty": 108.0,
+          "promisedDate": "2026-10-06",
+          "realisticDate": "2026-10-06",
+          "countedInRealisticView": false,
+          "hasException": true
+        }
       ]
     },
     {
@@ -22811,11 +24464,11 @@
       "horizonDays": 10,
       "input": {
         "materials": [
-          { "materialId": "M4", "onHand": 96.0, "safetyStock": 0.5 },
-          { "materialId": "M3", "onHand": 0.0, "safetyStock": 0.0 },
-          { "materialId": "M3", "onHand": 0.0, "safetyStock": 0.0 },
-          { "materialId": "M1", "onHand": 10.6, "safetyStock": 12.5 },
-          { "materialId": "M2", "onHand": 55.5, "safetyStock": 0.5 }
+          { "materialId": "M4", "onHand": 96.0, "safetyStock": 0.5, "mainSupplierId": "S2" },
+          { "materialId": "M3", "onHand": 0.0, "safetyStock": 0.0, "mainSupplierId": null },
+          { "materialId": "M3", "onHand": 0.0, "safetyStock": 0.0, "mainSupplierId": "S1" },
+          { "materialId": "M1", "onHand": 10.6, "safetyStock": 12.5, "mainSupplierId": null },
+          { "materialId": "M2", "onHand": 55.5, "safetyStock": 0.5, "mainSupplierId": "S2" }
         ],
         "openPurchaseOrders": [
           {
@@ -22891,6 +24544,10 @@
           { "supplierId": "S3", "promisedDate": "2026-02-03", "actualDate": "2026-02-03" },
           { "supplierId": "S3", "promisedDate": "2024-12-29", "actualDate": "2025-01-10" },
           { "supplierId": "S3", "promisedDate": "2027-03-13", "actualDate": "2027-03-13" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "exceptions": [
@@ -22898,7 +24555,23 @@
         ["M3", "CRITICAL", "2026-10-07", "2026-10-07", 0, false, -192, 0, 85],
         ["M4", "CRITICAL", "2026-10-15", null, 8, true, -32, 0, 76],
         ["M1", "WARNING", "2026-10-08", "2026-10-08", 1, false, 11, 12, 28.5]
-      ]
+      ],
+      "explanations": [
+        ["no open purchase order covers the demand", "Place an order now with ?"],
+        [
+          "no open purchase order covers the demand",
+          "Place an order now with Metallbau Kr\u00fcger GmbH"
+        ],
+        [
+          "P0 promised 2026-10-12, but S2 is typically 5 working day(s) late (on-time rate 0%); P1 is promised for 2026-10-15, already AFTER the critical date; ERP view (promised dates) shows no problem at all: hidden risk",
+          "Expedite P0 / ask for partial delivery before 2026-10-15; Ask S2 to pull P1 forward before 2026-10-15, or source elsewhere"
+        ],
+        [
+          "P3 is promised for 2026-10-09, already AFTER the critical date",
+          "Ask SX to pull P3 forward before 2026-10-08, or source elsewhere"
+        ]
+      ],
+      "overduePurchaseOrders": []
     },
     {
       "name": "ranking-22",
@@ -22906,12 +24579,12 @@
       "horizonDays": 10,
       "input": {
         "materials": [
-          { "materialId": "M4", "onHand": 96.0, "safetyStock": 0.5 },
-          { "materialId": "M4", "onHand": 96.0, "safetyStock": 0.5 },
-          { "materialId": "M1", "onHand": 18.0, "safetyStock": 12.0 },
-          { "materialId": "M3", "onHand": 47.5, "safetyStock": 0.0 },
-          { "materialId": "M5", "onHand": 48.0, "safetyStock": 0.0 },
-          { "materialId": "M5", "onHand": 48.0, "safetyStock": 0.0 }
+          { "materialId": "M4", "onHand": 96.0, "safetyStock": 0.5, "mainSupplierId": "SX" },
+          { "materialId": "M4", "onHand": 96.0, "safetyStock": 0.5, "mainSupplierId": "S1" },
+          { "materialId": "M1", "onHand": 18.0, "safetyStock": 12.0, "mainSupplierId": "S2" },
+          { "materialId": "M3", "onHand": 47.5, "safetyStock": 0.0, "mainSupplierId": "SX" },
+          { "materialId": "M5", "onHand": 48.0, "safetyStock": 0.0, "mainSupplierId": "S3" },
+          { "materialId": "M5", "onHand": 48.0, "safetyStock": 0.0, "mainSupplierId": "S1" }
         ],
         "openPurchaseOrders": [
           {
@@ -22976,6 +24649,10 @@
           { "supplierId": "S2", "promisedDate": "2026-05-20", "actualDate": "2026-05-23" },
           { "supplierId": "S2", "promisedDate": "2025-12-21", "actualDate": "2025-12-29" },
           { "supplierId": "S3", "promisedDate": "2025-07-17", "actualDate": "2025-07-21" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "exceptions": [
@@ -22984,7 +24661,21 @@
         ["M1", "CRITICAL", "2026-10-16", "2026-10-16", 9, false, -6, 12, 43.0],
         ["M4", "WARNING", "2026-10-16", "2026-10-16", 9, false, 0, 0, 8.0],
         ["M4", "WARNING", "2026-10-16", "2026-10-16", 9, false, 0, 0, 8.0]
-      ]
+      ],
+      "explanations": [
+        ["no open purchase order covers the demand", "Place an order now with Kunststoff Nord KG"],
+        [
+          "no open purchase order covers the demand",
+          "Place an order now with Metallbau Kr\u00fcger GmbH"
+        ],
+        ["", "Increase order quantity or check the demand plan"],
+        ["no open purchase order covers the demand", "Place an order now with SX"],
+        [
+          "no open purchase order covers the demand",
+          "Place an order now with Metallbau Kr\u00fcger GmbH"
+        ]
+      ],
+      "overduePurchaseOrders": []
     },
     {
       "name": "ranking-23",
@@ -22992,12 +24683,12 @@
       "horizonDays": 3,
       "input": {
         "materials": [
-          { "materialId": "M2", "onHand": 11.8, "safetyStock": 0.5 },
-          { "materialId": "M4", "onHand": 12.0, "safetyStock": 0.5 },
-          { "materialId": "M4", "onHand": 12.0, "safetyStock": 0.5 },
-          { "materialId": "M5", "onHand": 7.5, "safetyStock": 0.0 },
-          { "materialId": "M1", "onHand": 0.0, "safetyStock": 0.5 },
-          { "materialId": "M1", "onHand": 0.0, "safetyStock": 0.5 }
+          { "materialId": "M2", "onHand": 11.8, "safetyStock": 0.5, "mainSupplierId": null },
+          { "materialId": "M4", "onHand": 12.0, "safetyStock": 0.5, "mainSupplierId": "S3" },
+          { "materialId": "M4", "onHand": 12.0, "safetyStock": 0.5, "mainSupplierId": "SX" },
+          { "materialId": "M5", "onHand": 7.5, "safetyStock": 0.0, "mainSupplierId": "S2" },
+          { "materialId": "M1", "onHand": 0.0, "safetyStock": 0.5, "mainSupplierId": "SX" },
+          { "materialId": "M1", "onHand": 0.0, "safetyStock": 0.5, "mainSupplierId": "S1" }
         ],
         "openPurchaseOrders": [
           {
@@ -23047,6 +24738,10 @@
           { "supplierId": "S3", "promisedDate": "2022-10-10", "actualDate": "2022-10-09" },
           { "supplierId": "S3", "promisedDate": "2030-08-31", "actualDate": "2030-09-04" },
           { "supplierId": "S3", "promisedDate": "2029-01-15", "actualDate": "2029-01-19" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "exceptions": [
@@ -23056,6 +24751,61 @@
         ["M2", "CRITICAL", "2026-10-09", "2026-10-09", 1, false, -12, 0, 61],
         ["M4", "CRITICAL", "2026-10-09", "2026-10-09", 1, false, -12, 0, 61],
         ["M4", "CRITICAL", "2026-10-09", "2026-10-09", 1, false, -12, 0, 61]
+      ],
+      "explanations": [
+        ["no open purchase order covers the demand", "Place an order now with S2"],
+        [
+          "P3 promised 2026-10-07, but S2 is typically 5 working day(s) late (on-time rate 0%) (only 1 past deliveries, low confidence)",
+          "Expedite P3 / ask for partial delivery before 2026-10-08"
+        ],
+        [
+          "P3 promised 2026-10-07, but S2 is typically 5 working day(s) late (on-time rate 0%) (only 1 past deliveries, low confidence)",
+          "Expedite P3 / ask for partial delivery before 2026-10-08"
+        ],
+        [
+          "P0 promised 2026-10-06, but S2 is typically 5 working day(s) late (on-time rate 0%) (only 1 past deliveries, low confidence)",
+          "Expedite P0 / ask for partial delivery before 2026-10-09"
+        ],
+        [
+          "P1 is promised for 2026-10-10, already AFTER the critical date",
+          "Ask S2 to pull P1 forward before 2026-10-09, or source elsewhere"
+        ],
+        [
+          "P1 is promised for 2026-10-10, already AFTER the critical date",
+          "Ask S2 to pull P1 forward before 2026-10-09, or source elsewhere"
+        ]
+      ],
+      "overduePurchaseOrders": [
+        {
+          "poId": "P0",
+          "materialId": "M2",
+          "supplierId": "S2",
+          "qty": 23.6,
+          "promisedDate": "2026-10-06",
+          "realisticDate": "2026-10-13",
+          "countedInRealisticView": false,
+          "hasException": true
+        },
+        {
+          "poId": "P2",
+          "materialId": "M1",
+          "supplierId": "S1",
+          "qty": 40.0,
+          "promisedDate": "2026-10-07",
+          "realisticDate": "2026-10-07",
+          "countedInRealisticView": false,
+          "hasException": true
+        },
+        {
+          "poId": "P3",
+          "materialId": "M1",
+          "supplierId": "S2",
+          "qty": 30.0,
+          "promisedDate": "2026-10-07",
+          "realisticDate": "2026-10-14",
+          "countedInRealisticView": false,
+          "hasException": true
+        }
       ]
     },
     {
@@ -23064,8 +24814,8 @@
       "horizonDays": 7,
       "input": {
         "materials": [
-          { "materialId": "M2", "onHand": 60.0, "safetyStock": 60.0 },
-          { "materialId": "M4", "onHand": 5.1, "safetyStock": 5.1 }
+          { "materialId": "M2", "onHand": 60.0, "safetyStock": 60.0, "mainSupplierId": null },
+          { "materialId": "M4", "onHand": 5.1, "safetyStock": 5.1, "mainSupplierId": "S3" }
         ],
         "openPurchaseOrders": [
           {
@@ -23099,11 +24849,34 @@
           { "supplierId": "S3", "promisedDate": "2026-12-02", "actualDate": "2026-12-02" },
           { "supplierId": "S3", "promisedDate": "2025-12-26", "actualDate": "2025-12-25" },
           { "supplierId": "S3", "promisedDate": "2026-04-10", "actualDate": "2026-04-10" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "exceptions": [
         ["M4", "CRITICAL", "2026-10-09", "2026-10-09", 1, false, -15, 5, 73],
         ["M2", "CRITICAL", "2026-10-12", "2026-10-12", 4, false, -90, 60, 59.0]
+      ],
+      "explanations": [
+        [
+          "P0 promised 2026-10-07, but S2 is typically 5 working day(s) late (on-time rate 0%)",
+          "Expedite P0 / ask for partial delivery before 2026-10-09"
+        ],
+        ["no open purchase order covers the demand", "Place an order now with ?"]
+      ],
+      "overduePurchaseOrders": [
+        {
+          "poId": "P0",
+          "materialId": "M4",
+          "supplierId": "S2",
+          "qty": 20.4,
+          "promisedDate": "2026-10-07",
+          "realisticDate": "2026-10-14",
+          "countedInRealisticView": true,
+          "hasException": true
+        }
       ]
     },
     {
@@ -23112,8 +24885,13 @@
       "horizonDays": 17,
       "input": {
         "materials": [
-          { "materialId": "M3", "onHand": 11.399999999999999, "safetyStock": 12.5 },
-          { "materialId": "M2", "onHand": 48.0, "safetyStock": 0.5 }
+          {
+            "materialId": "M3",
+            "onHand": 11.399999999999999,
+            "safetyStock": 12.5,
+            "mainSupplierId": "S2"
+          },
+          { "materialId": "M2", "onHand": 48.0, "safetyStock": 0.5, "mainSupplierId": "SX" }
         ],
         "openPurchaseOrders": [
           {
@@ -23173,12 +24951,27 @@
           { "supplierId": "S2", "promisedDate": "2025-08-23", "actualDate": "2025-08-28" },
           { "supplierId": "S2", "promisedDate": "2028-07-04", "actualDate": "2028-07-09" },
           { "supplierId": "S3", "promisedDate": "2028-05-09", "actualDate": "2028-05-18" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "exceptions": [
         ["M3", "CRITICAL", "2026-10-19", null, 9, true, -6, 12, 78.6],
         ["M2", "WARNING", "2026-10-15", "2026-10-26", 5, true, 0, 0, 56.0]
-      ]
+      ],
+      "explanations": [
+        [
+          "P0 is promised for 2026-10-20, already AFTER the critical date; P1 promised 2026-10-17, but S2 is typically 5 working day(s) late (on-time rate 0%); ERP view (promised dates) shows no problem at all: hidden risk",
+          "Ask S2 to pull P0 forward before 2026-10-19, or source elsewhere; Expedite P1 / ask for partial delivery before 2026-10-19"
+        ],
+        [
+          "P2 is promised for 2026-10-15, already AFTER the critical date; ERP view (promised dates) shows the problem only from 2026-10-26: hidden risk",
+          "Ask Metallbau Kr\u00fcger GmbH to pull P2 forward before 2026-10-15, or source elsewhere"
+        ]
+      ],
+      "overduePurchaseOrders": []
     },
     {
       "name": "ranking-26",
@@ -23186,9 +24979,9 @@
       "horizonDays": 7,
       "input": {
         "materials": [
-          { "materialId": "M1", "onHand": 25.0, "safetyStock": 0.5 },
-          { "materialId": "M3", "onHand": 17.5, "safetyStock": 0.5 },
-          { "materialId": "M2", "onHand": 25.5, "safetyStock": 9.0 }
+          { "materialId": "M1", "onHand": 25.0, "safetyStock": 0.5, "mainSupplierId": "S2" },
+          { "materialId": "M3", "onHand": 17.5, "safetyStock": 0.5, "mainSupplierId": null },
+          { "materialId": "M2", "onHand": 25.5, "safetyStock": 9.0, "mainSupplierId": "SX" }
         ],
         "openPurchaseOrders": [
           {
@@ -23234,13 +25027,29 @@
           { "supplierId": "S3", "promisedDate": "2028-09-26", "actualDate": "2028-09-30" },
           { "supplierId": "S3", "promisedDate": "2027-09-07", "actualDate": "2027-09-07" },
           { "supplierId": "S3", "promisedDate": "2028-01-27", "actualDate": "2028-02-05" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "exceptions": [
         ["M3", "CRITICAL", "2026-10-09", "2026-10-09", 1, false, -32, 0, 73],
         ["M2", "WARNING", "2026-10-09", "2026-10-09", 1, false, 8, 9, 19.7],
         ["M1", "WARNING", "2026-10-14", "2026-10-14", 6, false, 0, 0, 8.0]
-      ]
+      ],
+      "explanations": [
+        ["no open purchase order covers the demand", "Place an order now with ?"],
+        [
+          "P1 is promised for 2026-10-11, already AFTER the critical date",
+          "Ask Metallbau Kr\u00fcger GmbH to pull P1 forward before 2026-10-09, or source elsewhere"
+        ],
+        [
+          "P0 is promised for 2026-10-15, already AFTER the critical date",
+          "Ask S2 to pull P0 forward before 2026-10-14, or source elsewhere"
+        ]
+      ],
+      "overduePurchaseOrders": []
     },
     {
       "name": "ranking-27",
@@ -23248,8 +25057,8 @@
       "horizonDays": 10,
       "input": {
         "materials": [
-          { "materialId": "M3", "onHand": 25.5, "safetyStock": 54.0 },
-          { "materialId": "M1", "onHand": 115.0, "safetyStock": 0.5 }
+          { "materialId": "M3", "onHand": 25.5, "safetyStock": 54.0, "mainSupplierId": null },
+          { "materialId": "M1", "onHand": 115.0, "safetyStock": 0.5, "mainSupplierId": "SX" }
         ],
         "openPurchaseOrders": [
           {
@@ -23283,12 +25092,21 @@
           { "supplierId": "S2", "promisedDate": "2026-01-01", "actualDate": "2026-01-09" },
           { "supplierId": "S2", "promisedDate": "2024-06-18", "actualDate": "2024-06-26" },
           { "supplierId": "S3", "promisedDate": "2027-03-22", "actualDate": "2027-03-26" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "exceptions": [
         ["M1", "CRITICAL", "2026-10-16", "2026-10-16", 7, false, -23, 0, 64],
         ["M3", "CRITICAL", "2026-10-15", "2026-10-15", 6, false, -28, 54, 52.3]
-      ]
+      ],
+      "explanations": [
+        ["no open purchase order covers the demand", "Place an order now with SX"],
+        ["", "Increase order quantity or check the demand plan"]
+      ],
+      "overduePurchaseOrders": []
     },
     {
       "name": "ranking-28",
@@ -23296,10 +25114,10 @@
       "horizonDays": 10,
       "input": {
         "materials": [
-          { "materialId": "M4", "onHand": 94.5, "safetyStock": 0.0 },
-          { "materialId": "M1", "onHand": 91.0, "safetyStock": 0.5 },
-          { "materialId": "M5", "onHand": 45.0, "safetyStock": 7.5 },
-          { "materialId": "M5", "onHand": 45.0, "safetyStock": 7.5 }
+          { "materialId": "M4", "onHand": 94.5, "safetyStock": 0.0, "mainSupplierId": "S2" },
+          { "materialId": "M1", "onHand": 91.0, "safetyStock": 0.5, "mainSupplierId": "S2" },
+          { "materialId": "M5", "onHand": 45.0, "safetyStock": 7.5, "mainSupplierId": "S3" },
+          { "materialId": "M5", "onHand": 45.0, "safetyStock": 7.5, "mainSupplierId": "SX" }
         ],
         "openPurchaseOrders": [
           {
@@ -23365,13 +25183,26 @@
           { "supplierId": "S2", "promisedDate": "2026-04-02", "actualDate": "2026-04-05" },
           { "supplierId": "S3", "promisedDate": "2023-03-17", "actualDate": "2023-03-17" },
           { "supplierId": "S3", "promisedDate": "2027-07-04", "actualDate": "2027-07-08" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "exceptions": [
         ["M5", "CRITICAL", "2026-10-20", "2026-10-20", 9, false, -8, 8, 48.0],
         ["M5", "CRITICAL", "2026-10-20", "2026-10-20", 9, false, -8, 8, 48.0],
         ["M1", "WARNING", "2026-10-20", "2026-10-20", 9, false, 0, 0, 8.0]
-      ]
+      ],
+      "explanations": [
+        ["no open purchase order covers the demand", "Place an order now with Kunststoff Nord KG"],
+        ["no open purchase order covers the demand", "Place an order now with SX"],
+        [
+          "P2 is promised for 2026-10-22, already AFTER the critical date; P3 is promised for 2026-10-22, already AFTER the critical date",
+          "Ask S2 to pull P2 forward before 2026-10-20, or source elsewhere; Ask S2 to pull P3 forward before 2026-10-20, or source elsewhere"
+        ]
+      ],
+      "overduePurchaseOrders": []
     },
     {
       "name": "ranking-29",
@@ -23379,9 +25210,9 @@
       "horizonDays": 10,
       "input": {
         "materials": [
-          { "materialId": "M1", "onHand": 24.8, "safetyStock": 12.5 },
-          { "materialId": "M5", "onHand": 80.5, "safetyStock": 16.1 },
-          { "materialId": "M5", "onHand": 80.5, "safetyStock": 16.1 }
+          { "materialId": "M1", "onHand": 24.8, "safetyStock": 12.5, "mainSupplierId": "S1" },
+          { "materialId": "M5", "onHand": 80.5, "safetyStock": 16.1, "mainSupplierId": "S3" },
+          { "materialId": "M5", "onHand": 80.5, "safetyStock": 16.1, "mainSupplierId": null }
         ],
         "openPurchaseOrders": [
           {
@@ -23432,13 +25263,32 @@
           { "supplierId": "S2", "promisedDate": "2026-05-28", "actualDate": "2026-06-02" },
           { "supplierId": "S2", "promisedDate": "2023-08-11", "actualDate": "2023-08-16" },
           { "supplierId": "S3", "promisedDate": "2022-10-24", "actualDate": "2022-11-02" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "exceptions": [
         ["M1", "CRITICAL", "2026-10-13", "2026-10-20", 2, true, -62, 12, 94],
         ["M5", "CRITICAL", "2026-10-19", null, 8, true, -32, 16, 76.0],
         ["M5", "CRITICAL", "2026-10-19", null, 8, true, -32, 16, 76.0]
-      ]
+      ],
+      "explanations": [
+        [
+          "P0 promised 2026-10-11, but S2 is typically 6 working day(s) late (on-time rate 0%); ERP view (promised dates) shows the problem only from 2026-10-20: hidden risk",
+          "Expedite P0 / ask for partial delivery before 2026-10-13"
+        ],
+        [
+          "P1 promised 2026-10-14, but S2 is typically 6 working day(s) late (on-time rate 0%); P2 promised 2026-10-17, but Kunststoff Nord KG is typically 7 working day(s) late (on-time rate 0%) (only 1 past deliveries, low confidence); ERP view (promised dates) shows no problem at all: hidden risk",
+          "Expedite P1 / ask for partial delivery before 2026-10-19; Expedite P2 / ask for partial delivery before 2026-10-19"
+        ],
+        [
+          "P1 promised 2026-10-14, but S2 is typically 6 working day(s) late (on-time rate 0%); P2 promised 2026-10-17, but Kunststoff Nord KG is typically 7 working day(s) late (on-time rate 0%) (only 1 past deliveries, low confidence); ERP view (promised dates) shows no problem at all: hidden risk",
+          "Expedite P1 / ask for partial delivery before 2026-10-19; Expedite P2 / ask for partial delivery before 2026-10-19"
+        ]
+      ],
+      "overduePurchaseOrders": []
     },
     {
       "name": "ranking-30",
@@ -23446,13 +25296,13 @@
       "horizonDays": 7,
       "input": {
         "materials": [
-          { "materialId": "M1", "onHand": 46.0, "safetyStock": 12.5 },
-          { "materialId": "M1", "onHand": 46.0, "safetyStock": 12.5 },
-          { "materialId": "M2", "onHand": 0.0, "safetyStock": 0.0 },
-          { "materialId": "M2", "onHand": 0.0, "safetyStock": 0.0 },
-          { "materialId": "M3", "onHand": 60.0, "safetyStock": 0.0 },
-          { "materialId": "M3", "onHand": 60.0, "safetyStock": 0.0 },
-          { "materialId": "M5", "onHand": 0.0, "safetyStock": 12.5 }
+          { "materialId": "M1", "onHand": 46.0, "safetyStock": 12.5, "mainSupplierId": "SX" },
+          { "materialId": "M1", "onHand": 46.0, "safetyStock": 12.5, "mainSupplierId": "S3" },
+          { "materialId": "M2", "onHand": 0.0, "safetyStock": 0.0, "mainSupplierId": "S1" },
+          { "materialId": "M2", "onHand": 0.0, "safetyStock": 0.0, "mainSupplierId": "SX" },
+          { "materialId": "M3", "onHand": 60.0, "safetyStock": 0.0, "mainSupplierId": "S3" },
+          { "materialId": "M3", "onHand": 60.0, "safetyStock": 0.0, "mainSupplierId": "SX" },
+          { "materialId": "M5", "onHand": 0.0, "safetyStock": 12.5, "mainSupplierId": "S1" }
         ],
         "openPurchaseOrders": [
           {
@@ -23503,13 +25353,26 @@
           { "supplierId": "S1", "promisedDate": "2023-05-23", "actualDate": "2023-05-23" },
           { "supplierId": "S2", "promisedDate": "2029-01-22", "actualDate": "2029-01-27" },
           { "supplierId": "S3", "promisedDate": "2027-03-31", "actualDate": "2027-04-04" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "exceptions": [
         ["M5", "CRITICAL", "2026-10-12", "2026-10-12", 2, false, -64, 12, 70],
         ["M1", "WARNING", "2026-10-16", "2026-10-16", 6, false, 0, 12, 13.0],
         ["M1", "WARNING", "2026-10-16", "2026-10-16", 6, false, 0, 12, 13.0]
-      ]
+      ],
+      "explanations": [
+        [
+          "no open purchase order covers the demand",
+          "Place an order now with Metallbau Kr\u00fcger GmbH"
+        ],
+        ["", "Increase order quantity or check the demand plan"],
+        ["", "Increase order quantity or check the demand plan"]
+      ],
+      "overduePurchaseOrders": []
     },
     {
       "name": "ranking-31",
@@ -23517,8 +25380,8 @@
       "horizonDays": 3,
       "input": {
         "materials": [
-          { "materialId": "M4", "onHand": 27.0, "safetyStock": 12.5 },
-          { "materialId": "M3", "onHand": 7.5, "safetyStock": 0.5 }
+          { "materialId": "M4", "onHand": 27.0, "safetyStock": 12.5, "mainSupplierId": null },
+          { "materialId": "M3", "onHand": 7.5, "safetyStock": 0.5, "mainSupplierId": "S2" }
         ],
         "openPurchaseOrders": [
           {
@@ -23545,11 +25408,34 @@
           { "supplierId": "S3", "promisedDate": "2025-07-28", "actualDate": "2025-07-27" },
           { "supplierId": "S3", "promisedDate": "2027-04-03", "actualDate": "2027-04-02" },
           { "supplierId": "S3", "promisedDate": "2023-05-19", "actualDate": "2023-05-28" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "exceptions": [
         ["M3", "CRITICAL", "2026-10-06", "2026-10-06", 0, false, -74, 0, 64],
         ["M4", "WARNING", "2026-10-07", "2026-10-07", 1, false, 0, 12, 16.0]
+      ],
+      "explanations": [
+        [
+          "P0 promised 2026-10-05, but S2 is typically 6 working day(s) late (on-time rate 0%) (only 2 past deliveries, low confidence)",
+          "Expedite P0 / ask for partial delivery before 2026-10-06"
+        ],
+        ["no open purchase order covers the demand", "Place an order now with ?"]
+      ],
+      "overduePurchaseOrders": [
+        {
+          "poId": "P0",
+          "materialId": "M3",
+          "supplierId": "S2",
+          "qty": 54.0,
+          "promisedDate": "2026-10-05",
+          "realisticDate": "2026-10-13",
+          "countedInRealisticView": false,
+          "hasException": true
+        }
       ]
     },
     {
@@ -23558,12 +25444,12 @@
       "horizonDays": 7,
       "input": {
         "materials": [
-          { "materialId": "M2", "onHand": 6.4, "safetyStock": 3.2 },
-          { "materialId": "M2", "onHand": 6.4, "safetyStock": 3.2 },
-          { "materialId": "M1", "onHand": 0.0, "safetyStock": 0.0 },
-          { "materialId": "M5", "onHand": 13.8, "safetyStock": 2.1 },
-          { "materialId": "M3", "onHand": 97.5, "safetyStock": 30.0 },
-          { "materialId": "M3", "onHand": 97.5, "safetyStock": 30.0 }
+          { "materialId": "M2", "onHand": 6.4, "safetyStock": 3.2, "mainSupplierId": "S3" },
+          { "materialId": "M2", "onHand": 6.4, "safetyStock": 3.2, "mainSupplierId": null },
+          { "materialId": "M1", "onHand": 0.0, "safetyStock": 0.0, "mainSupplierId": "S2" },
+          { "materialId": "M5", "onHand": 13.8, "safetyStock": 2.1, "mainSupplierId": null },
+          { "materialId": "M3", "onHand": 97.5, "safetyStock": 30.0, "mainSupplierId": "S2" },
+          { "materialId": "M3", "onHand": 97.5, "safetyStock": 30.0, "mainSupplierId": "S2" }
         ],
         "openPurchaseOrders": [
           {
@@ -23645,9 +25531,31 @@
           { "supplierId": "S2", "promisedDate": "2028-02-20", "actualDate": "2028-02-28" },
           { "supplierId": "S3", "promisedDate": "2029-04-03", "actualDate": "2029-04-02" },
           { "supplierId": "S3", "promisedDate": "2028-11-18", "actualDate": "2028-11-17" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
-      "exceptions": [["M1", "CRITICAL", "2026-10-06", null, 0, true, -67, 0, 91]]
+      "exceptions": [["M1", "CRITICAL", "2026-10-06", null, 0, true, -67, 0, 91]],
+      "explanations": [
+        [
+          "P2 promised 2026-10-05, but S2 is typically 6 working day(s) late (on-time rate 0%) (only 1 past deliveries, low confidence); P3 is promised for 2026-10-06, already AFTER the critical date; ERP view (promised dates) shows no problem at all: hidden risk",
+          "Expedite P2 / ask for partial delivery before 2026-10-06; Ask S2 to pull P3 forward before 2026-10-06, or source elsewhere"
+        ]
+      ],
+      "overduePurchaseOrders": [
+        {
+          "poId": "P2",
+          "materialId": "M1",
+          "supplierId": "S2",
+          "qty": 67.0,
+          "promisedDate": "2026-10-05",
+          "realisticDate": "2026-10-13",
+          "countedInRealisticView": false,
+          "hasException": true
+        }
+      ]
     },
     {
       "name": "ranking-33",
@@ -23655,11 +25563,11 @@
       "horizonDays": 10,
       "input": {
         "materials": [
-          { "materialId": "M2", "onHand": 18.3, "safetyStock": 5.4 },
-          { "materialId": "M2", "onHand": 18.3, "safetyStock": 5.4 },
-          { "materialId": "M1", "onHand": 74.4, "safetyStock": 18.6 },
-          { "materialId": "M5", "onHand": 96.0, "safetyStock": 0.5 },
-          { "materialId": "M3", "onHand": 18.0, "safetyStock": 12.5 }
+          { "materialId": "M2", "onHand": 18.3, "safetyStock": 5.4, "mainSupplierId": null },
+          { "materialId": "M2", "onHand": 18.3, "safetyStock": 5.4, "mainSupplierId": "S2" },
+          { "materialId": "M1", "onHand": 74.4, "safetyStock": 18.6, "mainSupplierId": "SX" },
+          { "materialId": "M5", "onHand": 96.0, "safetyStock": 0.5, "mainSupplierId": "S3" },
+          { "materialId": "M3", "onHand": 18.0, "safetyStock": 12.5, "mainSupplierId": "S2" }
         ],
         "openPurchaseOrders": [
           {
@@ -23743,6 +25651,10 @@
           { "supplierId": "S3", "promisedDate": "2027-09-21", "actualDate": "2027-09-20" },
           { "supplierId": "S3", "promisedDate": "2024-10-26", "actualDate": "2024-10-30" },
           { "supplierId": "S3", "promisedDate": "2029-06-16", "actualDate": "2029-06-16" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "exceptions": [
@@ -23750,7 +25662,26 @@
         ["M2", "WARNING", "2026-10-14", "2026-10-14", 4, false, 2, 5, 24.1],
         ["M2", "WARNING", "2026-10-14", "2026-10-14", 4, false, 2, 5, 24.1],
         ["M5", "WARNING", "2026-10-19", null, 9, true, 0, 0, 23.0]
-      ]
+      ],
+      "explanations": [
+        [
+          "P5 is promised for 2026-10-17, already AFTER the critical date",
+          "Ask Metallbau Kr\u00fcger GmbH to pull P5 forward before 2026-10-13, or source elsewhere"
+        ],
+        [
+          "P0 is promised for 2026-10-15, already AFTER the critical date",
+          "Ask SX to pull P0 forward before 2026-10-14, or source elsewhere"
+        ],
+        [
+          "P0 is promised for 2026-10-15, already AFTER the critical date",
+          "Ask SX to pull P0 forward before 2026-10-14, or source elsewhere"
+        ],
+        [
+          "P3 promised 2026-10-18, but Kunststoff Nord KG is typically 2 working day(s) late (on-time rate 67%); P4 is promised for 2026-10-19, already AFTER the critical date; ERP view (promised dates) shows no problem at all: hidden risk",
+          "Expedite P3 / ask for partial delivery before 2026-10-19; Ask S2 to pull P4 forward before 2026-10-19, or source elsewhere"
+        ]
+      ],
+      "overduePurchaseOrders": []
     },
     {
       "name": "ranking-34",
@@ -23758,9 +25689,9 @@
       "horizonDays": 14,
       "input": {
         "materials": [
-          { "materialId": "M4", "onHand": 60.5, "safetyStock": 36.3 },
-          { "materialId": "M2", "onHand": 40.0, "safetyStock": 0.0 },
-          { "materialId": "M2", "onHand": 40.0, "safetyStock": 0.0 }
+          { "materialId": "M4", "onHand": 60.5, "safetyStock": 36.3, "mainSupplierId": "SX" },
+          { "materialId": "M2", "onHand": 40.0, "safetyStock": 0.0, "mainSupplierId": "S2" },
+          { "materialId": "M2", "onHand": 40.0, "safetyStock": 0.0, "mainSupplierId": null }
         ],
         "openPurchaseOrders": [
           {
@@ -23800,13 +25731,26 @@
           { "supplierId": "S2", "promisedDate": "2027-04-10", "actualDate": "2027-04-13" },
           { "supplierId": "S2", "promisedDate": "2023-03-31", "actualDate": "2023-04-03" },
           { "supplierId": "S3", "promisedDate": "2024-10-27", "actualDate": "2024-11-05" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "exceptions": [
         ["M4", "CRITICAL", "2026-10-15", "2026-10-19", 6, true, -36, 36, 84.0],
         ["M2", "CRITICAL", "2026-10-15", "2026-10-15", 6, false, -60, 0, 79],
         ["M2", "CRITICAL", "2026-10-15", "2026-10-15", 6, false, -60, 0, 79]
-      ]
+      ],
+      "explanations": [
+        [
+          "P0 promised 2026-10-14, but S2 is typically 4 working day(s) late (on-time rate 0%); ERP view (promised dates) shows the problem only from 2026-10-19: hidden risk",
+          "Expedite P0 / ask for partial delivery before 2026-10-15"
+        ],
+        ["no open purchase order covers the demand", "Place an order now with S2"],
+        ["no open purchase order covers the demand", "Place an order now with ?"]
+      ],
+      "overduePurchaseOrders": []
     },
     {
       "name": "ranking-35",
@@ -23814,11 +25758,16 @@
       "horizonDays": 7,
       "input": {
         "materials": [
-          { "materialId": "M2", "onHand": 7.5, "safetyStock": 15.8 },
-          { "materialId": "M5", "onHand": 79.1, "safetyStock": 0.0 },
-          { "materialId": "M4", "onHand": 15.299999999999999, "safetyStock": 5.1 },
-          { "materialId": "M1", "onHand": 0.0, "safetyStock": 12.5 },
-          { "materialId": "M1", "onHand": 0.0, "safetyStock": 12.5 }
+          { "materialId": "M2", "onHand": 7.5, "safetyStock": 15.8, "mainSupplierId": "S2" },
+          { "materialId": "M5", "onHand": 79.1, "safetyStock": 0.0, "mainSupplierId": "SX" },
+          {
+            "materialId": "M4",
+            "onHand": 15.299999999999999,
+            "safetyStock": 5.1,
+            "mainSupplierId": "SX"
+          },
+          { "materialId": "M1", "onHand": 0.0, "safetyStock": 12.5, "mainSupplierId": "S1" },
+          { "materialId": "M1", "onHand": 0.0, "safetyStock": 12.5, "mainSupplierId": "S1" }
         ],
         "openPurchaseOrders": [
           {
@@ -23891,6 +25840,10 @@
           { "supplierId": "S3", "promisedDate": "2028-07-13", "actualDate": "2028-07-22" },
           { "supplierId": "S3", "promisedDate": "2026-11-26", "actualDate": "2026-12-05" },
           { "supplierId": "S3", "promisedDate": "2028-11-16", "actualDate": "2028-11-15" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "exceptions": [
@@ -23899,6 +25852,44 @@
         ["M2", "CRITICAL", "2026-10-07", "2026-10-07", 0, false, -72, 16, 76],
         ["M5", "CRITICAL", "2026-10-13", null, 6, true, -10, 0, 73],
         ["M4", "CRITICAL", "2026-10-12", "2026-10-12", 5, false, -10, 5, 61.0]
+      ],
+      "explanations": [
+        [
+          "P3 promised 2026-10-06, but S2 is typically 5 working day(s) late (on-time rate 0%); P4 is promised for 2026-10-07, already AFTER the critical date; ERP view (promised dates) shows the problem only from 2026-10-09: hidden risk",
+          "Expedite P3 / ask for partial delivery before 2026-10-07; Ask Kunststoff Nord KG to pull P4 forward before 2026-10-07, or source elsewhere"
+        ],
+        [
+          "P3 promised 2026-10-06, but S2 is typically 5 working day(s) late (on-time rate 0%); P4 is promised for 2026-10-07, already AFTER the critical date; ERP view (promised dates) shows the problem only from 2026-10-09: hidden risk",
+          "Expedite P3 / ask for partial delivery before 2026-10-07; Ask Kunststoff Nord KG to pull P4 forward before 2026-10-07, or source elsewhere"
+        ],
+        ["", "Increase order quantity or check the demand plan"],
+        [
+          "P1 promised 2026-10-12, but Kunststoff Nord KG is typically 6 working day(s) late (on-time rate 50%); P2 is promised for 2026-10-14, already AFTER the critical date; ERP view (promised dates) shows no problem at all: hidden risk",
+          "Expedite P1 / ask for partial delivery before 2026-10-13; Ask S2 to pull P2 forward before 2026-10-13, or source elsewhere"
+        ],
+        ["no open purchase order covers the demand", "Place an order now with SX"]
+      ],
+      "overduePurchaseOrders": [
+        {
+          "poId": "P0",
+          "materialId": "M2",
+          "supplierId": "S1",
+          "qty": 110.60000000000001,
+          "promisedDate": "2026-10-05",
+          "realisticDate": "2026-10-05",
+          "countedInRealisticView": false,
+          "hasException": true
+        },
+        {
+          "poId": "P3",
+          "materialId": "M1",
+          "supplierId": "S2",
+          "qty": 101.0,
+          "promisedDate": "2026-10-06",
+          "realisticDate": "2026-10-13",
+          "countedInRealisticView": true,
+          "hasException": true
+        }
       ]
     },
     {
@@ -23907,9 +25898,9 @@
       "horizonDays": 19,
       "input": {
         "materials": [
-          { "materialId": "M4", "onHand": 7.5, "safetyStock": 58.5 },
-          { "materialId": "M1", "onHand": 371.5, "safetyStock": 56.0 },
-          { "materialId": "M2", "onHand": 136.0, "safetyStock": 0.0 }
+          { "materialId": "M4", "onHand": 7.5, "safetyStock": 58.5, "mainSupplierId": "SX" },
+          { "materialId": "M1", "onHand": 371.5, "safetyStock": 56.0, "mainSupplierId": "S1" },
+          { "materialId": "M2", "onHand": 136.0, "safetyStock": 0.0, "mainSupplierId": "SX" }
         ],
         "openPurchaseOrders": [
           {
@@ -23985,12 +25976,49 @@
           { "supplierId": "S3", "promisedDate": "2030-08-07", "actualDate": "2030-08-06" },
           { "supplierId": "S3", "promisedDate": "2029-05-20", "actualDate": "2029-05-19" },
           { "supplierId": "S3", "promisedDate": "2023-01-06", "actualDate": "2023-01-15" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "exceptions": [
         ["M4", "CRITICAL", "2026-10-07", "2026-10-07", 0, false, -110, 58, 110.7],
         ["M2", "CRITICAL", "2026-10-19", "2026-10-19", 12, false, -85, 0, 76],
         ["M1", "WARNING", "2026-10-22", "2026-10-22", 15, false, 8, 56, 20.7]
+      ],
+      "explanations": [
+        [
+          "P1 promised 2026-10-06, but S2 is typically 6 working day(s) late (on-time rate 0%)",
+          "Expedite P1 / ask for partial delivery before 2026-10-07"
+        ],
+        ["no open purchase order covers the demand", "Place an order now with SX"],
+        [
+          "P2 is promised for 2026-10-25, already AFTER the critical date",
+          "Ask Kunststoff Nord KG to pull P2 forward before 2026-10-22, or source elsewhere"
+        ]
+      ],
+      "overduePurchaseOrders": [
+        {
+          "poId": "P0",
+          "materialId": "M4",
+          "supplierId": "S1",
+          "qty": 195.0,
+          "promisedDate": "2026-10-05",
+          "realisticDate": "2026-10-05",
+          "countedInRealisticView": false,
+          "hasException": true
+        },
+        {
+          "poId": "P1",
+          "materialId": "M4",
+          "supplierId": "S2",
+          "qty": 136.5,
+          "promisedDate": "2026-10-06",
+          "realisticDate": "2026-10-14",
+          "countedInRealisticView": true,
+          "hasException": true
+        }
       ]
     },
     {
@@ -23999,10 +26027,10 @@
       "horizonDays": 14,
       "input": {
         "materials": [
-          { "materialId": "M2", "onHand": 21.4, "safetyStock": 0.5 },
-          { "materialId": "M2", "onHand": 21.4, "safetyStock": 0.5 },
-          { "materialId": "M4", "onHand": 130.0, "safetyStock": 52.0 },
-          { "materialId": "M5", "onHand": 27.6, "safetyStock": 0.5 }
+          { "materialId": "M2", "onHand": 21.4, "safetyStock": 0.5, "mainSupplierId": "S2" },
+          { "materialId": "M2", "onHand": 21.4, "safetyStock": 0.5, "mainSupplierId": "S1" },
+          { "materialId": "M4", "onHand": 130.0, "safetyStock": 52.0, "mainSupplierId": "S3" },
+          { "materialId": "M5", "onHand": 27.6, "safetyStock": 0.5, "mainSupplierId": "SX" }
         ],
         "openPurchaseOrders": [
           {
@@ -24077,6 +26105,10 @@
           { "supplierId": "S3", "promisedDate": "2030-07-22", "actualDate": "2030-07-22" },
           { "supplierId": "S3", "promisedDate": "2029-04-05", "actualDate": "2029-04-05" },
           { "supplierId": "S3", "promisedDate": "2029-01-11", "actualDate": "2029-01-23" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "exceptions": [
@@ -24084,7 +26116,26 @@
         ["M2", "CRITICAL", "2026-10-07", "2026-10-15", 2, true, -11, 0, 106],
         ["M5", "CRITICAL", "2026-10-09", null, 4, true, -19, 0, 100],
         ["M4", "CRITICAL", "2026-10-12", null, 7, true, -78, 52, 86.0]
-      ]
+      ],
+      "explanations": [
+        [
+          "P0 is promised for 2026-10-07, already AFTER the critical date; ERP view (promised dates) shows the problem only from 2026-10-15: hidden risk",
+          "Ask Metallbau Kr\u00fcger GmbH to pull P0 forward before 2026-10-07, or source elsewhere"
+        ],
+        [
+          "P0 is promised for 2026-10-07, already AFTER the critical date; ERP view (promised dates) shows the problem only from 2026-10-15: hidden risk",
+          "Ask Metallbau Kr\u00fcger GmbH to pull P0 forward before 2026-10-07, or source elsewhere"
+        ],
+        [
+          "P3 promised 2026-10-07, but S2 is typically 5 working day(s) late (on-time rate 0%); ERP view (promised dates) shows no problem at all: hidden risk",
+          "Expedite P3 / ask for partial delivery before 2026-10-09"
+        ],
+        [
+          "P1 promised 2026-10-08, but Kunststoff Nord KG is typically 5 working day(s) late (on-time rate 67%); P2 promised 2026-10-08, but S2 is typically 5 working day(s) late (on-time rate 0%); ERP view (promised dates) shows no problem at all: hidden risk",
+          "Expedite P1 / ask for partial delivery before 2026-10-12; Expedite P2 / ask for partial delivery before 2026-10-12"
+        ]
+      ],
+      "overduePurchaseOrders": []
     },
     {
       "name": "ranking-38",
@@ -24092,9 +26143,9 @@
       "horizonDays": 14,
       "input": {
         "materials": [
-          { "materialId": "M1", "onHand": 0.0, "safetyStock": 0.5 },
-          { "materialId": "M1", "onHand": 0.0, "safetyStock": 0.5 },
-          { "materialId": "M5", "onHand": 170.0, "safetyStock": 17.0 }
+          { "materialId": "M1", "onHand": 0.0, "safetyStock": 0.5, "mainSupplierId": null },
+          { "materialId": "M1", "onHand": 0.0, "safetyStock": 0.5, "mainSupplierId": "S1" },
+          { "materialId": "M5", "onHand": 170.0, "safetyStock": 17.0, "mainSupplierId": "S1" }
         ],
         "openPurchaseOrders": [
           {
@@ -24142,13 +26193,29 @@
           { "supplierId": "S3", "promisedDate": "2030-05-16", "actualDate": "2030-05-15" },
           { "supplierId": "S3", "promisedDate": "2023-06-17", "actualDate": "2023-06-26" },
           { "supplierId": "S3", "promisedDate": "2025-02-13", "actualDate": "2025-02-13" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
       "exceptions": [
         ["M1", "CRITICAL", "2026-10-05", "2026-10-05", 0, false, -100, 0, 97],
         ["M1", "CRITICAL", "2026-10-05", "2026-10-05", 0, false, -100, 0, 97],
         ["M5", "WARNING", "2026-10-16", null, 11, true, 0, 17, 34.0]
-      ]
+      ],
+      "explanations": [
+        ["no open purchase order covers the demand", "Place an order now with ?"],
+        [
+          "no open purchase order covers the demand",
+          "Place an order now with Metallbau Kr\u00fcger GmbH"
+        ],
+        [
+          "P0 is promised for 2026-10-16, already AFTER the critical date; P1 is promised for 2026-10-18, already AFTER the critical date; ERP view (promised dates) shows no problem at all: hidden risk",
+          "Ask S2 to pull P0 forward before 2026-10-16, or source elsewhere; Ask S2 to pull P1 forward before 2026-10-16, or source elsewhere"
+        ]
+      ],
+      "overduePurchaseOrders": []
     },
     {
       "name": "ranking-39",
@@ -24156,9 +26223,9 @@
       "horizonDays": 14,
       "input": {
         "materials": [
-          { "materialId": "M4", "onHand": 88.5, "safetyStock": 12.5 },
-          { "materialId": "M3", "onHand": 268.5, "safetyStock": 0.5 },
-          { "materialId": "M3", "onHand": 268.5, "safetyStock": 0.5 }
+          { "materialId": "M4", "onHand": 88.5, "safetyStock": 12.5, "mainSupplierId": "S2" },
+          { "materialId": "M3", "onHand": 268.5, "safetyStock": 0.5, "mainSupplierId": "S2" },
+          { "materialId": "M3", "onHand": 268.5, "safetyStock": 0.5, "mainSupplierId": null }
         ],
         "openPurchaseOrders": [
           {
@@ -24213,9 +26280,59 @@
           { "supplierId": "S2", "promisedDate": "2025-07-21", "actualDate": "2025-07-24" },
           { "supplierId": "S3", "promisedDate": "2025-03-31", "actualDate": "2025-03-30" },
           { "supplierId": "S3", "promisedDate": "2027-01-14", "actualDate": "2027-01-13" }
+        ],
+        "suppliers": [
+          { "supplierId": "S1", "name": "Metallbau Kr\u00fcger GmbH" },
+          { "supplierId": "S3", "name": "Kunststoff Nord KG" }
         ]
       },
-      "exceptions": [["M4", "CRITICAL", "2026-10-22", "2026-10-22", 11, false, -18, 12, 58.2]]
+      "exceptions": [["M4", "CRITICAL", "2026-10-22", "2026-10-22", 11, false, -18, 12, 58.2]],
+      "explanations": [["", "Increase order quantity or check the demand plan"]],
+      "overduePurchaseOrders": []
+    }
+  ],
+  "overdue": [
+    {
+      "name": "adr-0005-overdue-example",
+      "asOf": "2026-10-05",
+      "horizonDays": 28,
+      "input": {
+        "materials": [
+          { "materialId": "M1", "onHand": 0.0, "safetyStock": 0.0, "mainSupplierId": "S1" }
+        ],
+        "openPurchaseOrders": [
+          {
+            "poId": "PO1",
+            "materialId": "M1",
+            "supplierId": "S1",
+            "qty": 50.0,
+            "promisedDate": "2026-10-02"
+          }
+        ],
+        "demand": [{ "materialId": "M1", "date": "2026-10-06", "qty": 1.0 }],
+        "supplierHistory": [
+          { "supplierId": "S1", "promisedDate": "2026-06-01", "actualDate": "2026-06-03" },
+          { "supplierId": "S1", "promisedDate": "2026-06-08", "actualDate": "2026-06-10" },
+          { "supplierId": "S1", "promisedDate": "2026-06-15", "actualDate": "2026-06-17" },
+          { "supplierId": "S1", "promisedDate": "2026-06-22", "actualDate": "2026-06-24" },
+          { "supplierId": "S1", "promisedDate": "2026-06-29", "actualDate": "2026-07-01" }
+        ],
+        "suppliers": []
+      },
+      "exceptions": [],
+      "explanations": [],
+      "overduePurchaseOrders": [
+        {
+          "poId": "PO1",
+          "materialId": "M1",
+          "supplierId": "S1",
+          "qty": 50.0,
+          "promisedDate": "2026-10-02",
+          "realisticDate": "2026-10-06",
+          "countedInRealisticView": true,
+          "hasException": false
+        }
+      ]
     }
   ]
 }

@@ -1,9 +1,14 @@
-"""Generate CPython reference vectors for the engine's dates, rounding, statistics, projection and ranking.
+"""Generate CPython reference vectors for the engine's dates, rounding, statistics, projection,
+ranking and explanations.
 
 The expected values come straight from the prototype (`add_workdays`, `workdays_between`,
 `percentile`, `supplier_stats`, `project`, `analyse`) and from CPython itself (`date.weekday`,
 `timedelta`, `round`), so `python-vectors.test.ts` checks the TypeScript ports against the real
 thing instead of hand-written tables. Seeded, so reruns are byte-identical.
+
+The overdue-PO expectations (`overduePurchaseOrders`, ADR-0005 item 5, option B) have no prototype
+output to record: they are computed here from the prototype's own helpers (`supplier_stats`,
+`add_workdays`) on the same inputs, so the engine's additions are still checked against Python.
 
 Run:  python3 packages/engine/scripts/generate-python-vectors.py
       pnpm exec prettier --write packages/engine/src/__fixtures__/python-vectors.json
@@ -23,6 +28,9 @@ from shortage_radar import add_workdays, percentile, supplier_stats, workdays_be
 
 OUT = ROOT / "packages" / "engine" / "src" / "__fixtures__" / "python-vectors.json"
 rng = random.Random(20261005)
+# Fields added after the first release of this file (main supplier, supplier names) draw from their
+# own stream, so every older section stays byte-identical.
+extra_rng = random.Random(20261006)
 AS_OF = date(2026, 10, 5)
 
 # Weekends, month/year boundaries, leap days (incl. century rules), the epoch, and the edges
@@ -225,6 +233,33 @@ def check_points(points, on_hand, safety, erp_result, real_result):
         assert [first_short, first_below, min_stock] == [iso(result[0]), iso(result[1]), result[2]]
 
 
+def explanation_rows(results):
+    """`[why, next_action]` per exception, the prototype's English text in ranked order."""
+    return [[r["why"], r["next_action"]] for r in results]
+
+
+def overdue_rows(tables, as_of, horizon, results):
+    """Open POs promised before `as_of` (ADR-0005 item 5, option B), in PO-file order, computed
+    from the prototype's helpers: the realistic date is `add_workdays(promised, p80)` exactly as
+    `analyse` shifts receipts, and a PO counts in the realistic view when that date falls inside
+    `[as_of, as_of + horizon)`."""
+    stats = supplier_stats(tables["supplier_history"])
+    flagged = {r["material_id"] for r in results}
+    end = as_of + timedelta(days=horizon)
+    rows = []
+    for p in tables["open_purchase_orders"]:
+        if p["promised_date"] >= as_of:
+            continue
+        realistic = add_workdays(p["promised_date"], stats.get(p["supplier_id"], {}).get("p80", 0))
+        rows.append({"poId": p["po_id"], "materialId": p["material_id"],
+                     "supplierId": p["supplier_id"], "qty": p["qty"],
+                     "promisedDate": p["promised_date"].isoformat(),
+                     "realisticDate": realistic.isoformat(),
+                     "countedInRealisticView": as_of <= realistic < end,
+                     "hasException": p["material_id"] in flagged})
+    return rows
+
+
 def exception_rows(results):
     """`analyse` results as compact rows: [materialId, severity, criticalDate, erpViewDate,
     daysUntil, hidden, minProjectedStock, safetyStock, score], in the prototype's ranked order."""
@@ -236,7 +271,8 @@ def exception_rows(results):
 
 def run_analyse(tables, as_of, horizon):
     """Runs the prototype's `analyse` on in-memory tables. Returns every `project` call it makes
-    (ERP view first, then realistic view, once per material row) and its ranked exceptions."""
+    (ERP view first, then realistic view, once per material row), its ranked exceptions, their
+    English `why` / `next_action` texts and the overdue POs (see `overdue_rows`)."""
     calls = []
     real_project, real_load = shortage_radar.project, shortage_radar.load_table
 
@@ -248,7 +284,7 @@ def run_analyse(tables, as_of, horizon):
     shortage_radar.project = recording_project
     shortage_radar.load_table = lambda _dir, table, optional=False: tables.get(table, [])
     try:
-        results, _, _ = shortage_radar.analyse(Path("."), as_of, horizon)
+        results, _, _ = shortage_radar.analyse(Path("."), as_of, horizon, "en")
     finally:
         shortage_radar.project, shortage_radar.load_table = real_project, real_load
 
@@ -273,13 +309,15 @@ def run_analyse(tables, as_of, horizon):
         candidates = [e["realistic"][0] or e["realistic"][1] for e in expected
                       if e["materialId"] == r["material_id"]]
         assert r["critical_date"] in candidates
-    return expected, exception_rows(results)
+    return (expected, exception_rows(results), explanation_rows(results),
+            overdue_rows(tables, as_of, horizon, results))
 
 
 def tables_payload(tables):
     return {
         "materials": [{"materialId": m["material_id"], "onHand": m["on_hand"],
-                       "safetyStock": m.get("safety_stock", 0.0) or 0.0}
+                       "safetyStock": m.get("safety_stock", 0.0) or 0.0,
+                       "mainSupplierId": m.get("main_supplier_id", "") or None}
                       for m in tables["materials"]],
         "openPurchaseOrders": [{"poId": p["po_id"], "materialId": p["material_id"],
                                 "supplierId": p["supplier_id"], "qty": p["qty"],
@@ -289,7 +327,20 @@ def tables_payload(tables):
                    for r in tables["demand"]],
         "supplierHistory": [history_row(r["supplier_id"], r["promised_date"], r["actual_date"])
                             for r in tables["supplier_history"]],
+        "suppliers": [{"supplierId": r["supplier_id"], "name": r["name"]}
+                      for r in tables.get("suppliers", [])],
     }
+
+
+def add_supplier_fields(tables):
+    """Main supplier per material row and a partial suppliers table (S2 and SX stay unnamed, so
+    the prototype falls back to the ID), drawn from `extra_rng`. A missing main supplier renders
+    as `?` in the prototype's "place an order" action."""
+    for m in tables["materials"]:
+        m["main_supplier_id"] = extra_rng.choice(["S1", "S2", "S3", "SX", ""])
+    tables["suppliers"] = [{"supplier_id": "S1", "name": "Metallbau Krüger GmbH"},
+                           {"supplier_id": "S3", "name": "Kunststoff Nord KG"}]
+    return tables
 
 
 def random_tables(as_of, horizon):
@@ -323,26 +374,30 @@ def random_tables(as_of, horizon):
 def projection_vectors():
     def load_sample(name):
         folder = ROOT / "reference" / "python-prototype" / name
-        return {t: load_table(folder, t) for t in
-                ("materials", "open_purchase_orders", "demand", "supplier_history")}
+        tables = {t: load_table(folder, t) for t in
+                  ("materials", "open_purchase_orders", "demand", "supplier_history")}
+        tables["suppliers"] = load_table(folder, "suppliers", optional=True)
+        return tables
 
     # sample_data_de differs only in headers, formats and descriptions; the fields the projection
     # reads are the same, so embedding it again would double this section without new engine
     # coverage. Loader parity for the German files is the parsers' job (P1-09, P1-10).
     tables, tables_de = load_sample("sample_data"), load_sample("sample_data_de")
-    expected, exceptions = run_analyse(tables, AS_OF, 28)
+    expected, exceptions, explanations, overdue = run_analyse(tables, AS_OF, 28)
     assert tables_payload(tables_de) == tables_payload(tables)
-    assert run_analyse(tables_de, AS_OF, 28) == (expected, exceptions)
+    assert run_analyse(tables_de, AS_OF, 28) == (expected, exceptions, explanations, overdue)
     cases = [{"name": "sample_data", "asOf": AS_OF.isoformat(), "horizonDays": 28,
-              "input": tables_payload(tables), "expected": expected, "exceptions": exceptions}]
+              "input": tables_payload(tables), "expected": expected, "exceptions": exceptions,
+              "explanations": explanations, "overduePurchaseOrders": overdue}]
     for i in range(40):
         as_of = AS_OF + timedelta(days=rng.randint(0, 6))  # every weekday and weekend day
         horizon = rng.choice([1, 10, 28, rng.randint(0, 45)])
-        tables = random_tables(as_of, horizon)
-        expected, exceptions = run_analyse(tables, as_of, horizon)
+        tables = add_supplier_fields(random_tables(as_of, horizon))
+        expected, exceptions, explanations, overdue = run_analyse(tables, as_of, horizon)
         cases.append({"name": f"random-{i}", "asOf": as_of.isoformat(), "horizonDays": horizon,
                       "input": tables_payload(tables), "expected": expected,
-                      "exceptions": exceptions})
+                      "exceptions": exceptions, "explanations": explanations,
+                      "overduePurchaseOrders": overdue})
     return cases
 
 
@@ -387,11 +442,33 @@ def ranking_vectors():
     for i in range(40):
         as_of = AS_OF + timedelta(days=rng.randint(0, 6))
         horizon = rng.choice([7, 10, 14, rng.randint(1, 21)])
-        tables = ranking_tables(as_of, horizon)
-        _, exceptions = run_analyse(tables, as_of, horizon)
+        tables = add_supplier_fields(ranking_tables(as_of, horizon))
+        _, exceptions, explanations, overdue = run_analyse(tables, as_of, horizon)
         cases.append({"name": f"ranking-{i}", "asOf": as_of.isoformat(), "horizonDays": horizon,
-                      "input": tables_payload(tables), "exceptions": exceptions})
+                      "input": tables_payload(tables), "exceptions": exceptions,
+                      "explanations": explanations, "overduePurchaseOrders": overdue})
     return cases
+
+
+def overdue_vectors():
+    """The worked example of ADR-0005 item 5: PO 50 promised Fri 2026-10-02 from a supplier with
+    P80 = 2 lands on Tue 2026-10-06 in the realistic view only. The ERP view runs out on 10-06,
+    the realistic view never does, so the prototype reports nothing, yet the PO is overdue."""
+    history = [{"supplier_id": "S1", "promised_date": d, "actual_date": add_workdays(d, 2)}
+               for d in (date(2026, 6, 1) + timedelta(days=7 * i) for i in range(5))]
+    tables = {"materials": [{"material_id": "M1", "on_hand": 0.0, "safety_stock": 0.0,
+                             "main_supplier_id": "S1"}],
+              "open_purchase_orders": [{"po_id": "PO1", "material_id": "M1", "supplier_id": "S1",
+                                        "qty": 50.0, "promised_date": date(2026, 10, 2)}],
+              "demand": [{"material_id": "M1", "date": date(2026, 10, 6), "qty": 1.0}],
+              "supplier_history": history, "suppliers": []}
+    assert supplier_stats(history)["S1"]["p80"] == 2
+    expected, exceptions, explanations, overdue = run_analyse(tables, AS_OF, 28)
+    assert expected[0]["erp"][0] == "2026-10-06" and expected[0]["realistic"][0] is None
+    assert exceptions == [] and overdue[0]["realisticDate"] == "2026-10-06"
+    return [{"name": "adr-0005-overdue-example", "asOf": AS_OF.isoformat(), "horizonDays": 28,
+             "input": tables_payload(tables), "exceptions": exceptions,
+             "explanations": explanations, "overduePurchaseOrders": overdue}]
 
 
 def main():
@@ -408,6 +485,7 @@ def main():
         "project": project_vectors(),
         "projection": projection_vectors(),
         "ranking": ranking_vectors(),
+        "overdue": overdue_vectors(),
     }
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(payload) + "\n", encoding="utf-8")
