@@ -117,6 +117,15 @@ describe('pyRound(x, ndigits) (CPython returns a float)', () => {
     expect(pyRound(Number.NaN, 1)).toBeNaN();
   });
 
+  it('throws RangeError when rounding overshoots the double range, as CPython raises OverflowError', () => {
+    // CPython: round(1.7976931348623157e308, -308) -> OverflowError: rounded value too large.
+    expect(() => pyRound(Number.MAX_VALUE, -308)).toThrow(RangeError);
+    expect(() => pyRound(-Number.MAX_VALUE, -308)).toThrow(RangeError);
+    expect(() => pyRound(1.5e308, -308)).toThrow(RangeError);
+    // One digit less still fits: 1.79769313e308.
+    expect(pyRound(Number.MAX_VALUE, -300)).toBe(1.79769313e308);
+  });
+
   it('throws TypeError for a non-integer ndigits, as CPython does', () => {
     expect(() => pyRound(1.5, 1.5)).toThrow(TypeError);
     expect(() => pyRound(1.5, Number.NaN)).toThrow(TypeError);

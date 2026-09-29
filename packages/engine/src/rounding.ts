@@ -25,7 +25,8 @@ const NDIGITS_MIN = -308;
  * The engine uses it for `p80` and `minProjectedStock` (`pyRound(x)`) and `score` (`pyRound(x, 1)`).
  *
  * @example `pyRound(2.5)` is `2`, `pyRound(3.5)` is `4`, `pyRound(2.675, 2)` is `2.67`.
- * @throws RangeError for `pyRound(x)` with non-finite `x`; TypeError if `ndigits` is not an integer.
+ * @throws RangeError for `pyRound(x)` with non-finite `x`, or when the rounded value exceeds the
+ * double range (CPython `OverflowError`); TypeError if `ndigits` is not an integer.
  */
 export function pyRound(x: number, ndigits?: number): number {
   if (ndigits === undefined) {
@@ -38,7 +39,13 @@ export function pyRound(x: number, ndigits?: number): number {
   }
   if (!Number.isFinite(x) || ndigits > NDIGITS_MAX) return x;
   if (ndigits < NDIGITS_MIN) return 0 * x;
-  return roundFinite(x, ndigits);
+  const rounded = roundFinite(x, ndigits);
+  // Rounding near DBL_MAX to a negative ndigits can overshoot it (1.8e308 -> 2e308); CPython raises
+  // OverflowError instead of returning inf, so a finite input never yields a non-finite result.
+  if (!Number.isFinite(rounded)) {
+    throw new RangeError(`rounded value too large to represent: ${String(x)}`);
+  }
+  return rounded;
 }
 
 /** Correctly rounded, ties-to-even rounding of a finite `x` to `ndigits` decimal digits. */
