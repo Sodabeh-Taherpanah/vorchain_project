@@ -4,7 +4,13 @@ import { describe, expect, it } from 'vitest';
 import { addDays, addWorkdays, isWorkday, parseIsoDate, type IsoDate } from './dates.ts';
 import type { DailyQuantities } from './daily-quantities.ts';
 import { materialId, poId, supplierId } from './ids.ts';
-import { demandByMaterial, projectionSeries, projectStock } from './projection.ts';
+import {
+  demandByMaterial,
+  projectionSeries,
+  projectionWindow,
+  projectOverWindow,
+  projectStock,
+} from './projection.ts';
 import { buildReceipts } from './receipts.ts';
 import { computeSupplierStats, statsBySupplier } from './supplier-stats.ts';
 import type { AnalysisInput, DeliveryRecord, Material } from './types.ts';
@@ -327,6 +333,61 @@ describe('projectStock properties', () => {
         expect(notLater(erp.firstBelowSafety, realistic.firstBelowSafety)).toBe(true);
         expect(realistic.minStock).toBeLessThanOrEqual(erp.minStock);
       }),
+    );
+  });
+});
+
+describe('projectionWindow and projectOverWindow', () => {
+  it.each([
+    { horizonDays: 3, expected: ['2026-10-05', '2026-10-06', '2026-10-07'] },
+    { horizonDays: 1, expected: ['2026-10-05'] },
+    { horizonDays: 0, expected: [] },
+    { horizonDays: -2, expected: [] },
+  ])('a horizon of $horizonDays gives $expected', ({ horizonDays, expected }) => {
+    expect(projectionWindow(AS_OF, horizonDays)).toEqual(expected);
+  });
+
+  it('crosses month and year boundaries in calendar days', () => {
+    expect(projectionWindow(d('2026-12-30'), 4)).toEqual([
+      '2026-12-30',
+      '2026-12-31',
+      '2027-01-01',
+      '2027-01-02',
+    ]);
+  });
+
+  it('rejects a fractional horizon (a programmer error)', () => {
+    expect(() => projectionWindow(AS_OF, 2.5)).toThrow(RangeError);
+  });
+
+  it('gives exactly the projectStock result when one window is shared by many projections', () => {
+    const schedule = fc
+      .array(
+        fc.tuple(fc.integer({ min: -5, max: 35 }), fc.double({ min: 0, max: 200, noNaN: true })),
+        {
+          maxLength: 20,
+        },
+      )
+      .map((pairs) => new Map(pairs.map(([n, qty]) => [addDays(AS_OF, n), qty])));
+    const view = fc.record({
+      onHand: fc.double({ min: -50, max: 400, noNaN: true }),
+      safetyStock: fc.double({ min: 0, max: 150, noNaN: true }),
+      demandByDay: schedule,
+      receiptsByDay: schedule,
+    });
+    fc.assert(
+      fc.property(
+        fc.integer({ min: -2, max: 30 }),
+        fc.array(view, { maxLength: 5 }),
+        (horizon, views) => {
+          const window = projectionWindow(AS_OF, horizon);
+          for (const v of views) {
+            expect(projectOverWindow(window, v)).toEqual(
+              projectStock({ ...v, asOf: AS_OF, horizonDays: horizon }),
+            );
+          }
+        },
+      ),
     );
   });
 });
