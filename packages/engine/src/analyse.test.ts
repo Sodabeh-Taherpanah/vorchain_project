@@ -128,8 +128,23 @@ describe('analyse: ports of the Python tests', () => {
         safetyStock: 0,
         hidden: true,
         score: 79, // 9 + 30 + 15 + 25
-        reasons: [],
-        actions: [],
+        // Prototype: "P1 promised 2026-10-09, but S1 is typically 3 working day(s) late (on-time
+        // rate 0%); ERP view (promised dates) shows no problem at all: hidden risk" and
+        // "Expedite P1 / ask for partial delivery before 2026-10-12".
+        reasons: [
+          {
+            code: 'PO_LATE',
+            poId: 'P1',
+            promisedDate: '2026-10-09',
+            supplierId: 'S1',
+            delayDays: 3,
+            onTimeRate: 0,
+            lowConfidence: false,
+            deliveries: 5,
+          },
+          { code: 'HIDDEN_ERP_NONE' },
+        ],
+        actions: [{ code: 'EXPEDITE', poId: 'P1', before: '2026-10-12' }],
       },
     ]);
     expect(report.summary).toEqual({ critical: 1, warning: 0, hidden: 1 });
@@ -492,12 +507,31 @@ describe('analyse: properties', () => {
           expect(e.daysUntil).toBeLessThan(horizonDays);
           expect(e.daysUntil).toBe(diffDays(AS_OF, e.criticalDate));
           expect(e.hidden).toBe(e.erpViewDate === null || e.erpViewDate > e.criticalDate);
-          expect(e.reasons).toEqual([]);
-          expect(e.actions).toEqual([]);
         });
         expect(summary.critical + summary.warning).toBe(exceptions.length);
         expect(summary.critical).toBe(exceptions.filter((e) => e.severity === 'CRITICAL').length);
         expect(summary.hidden).toBe(exceptions.filter((e) => e.hidden).length);
+      }),
+    );
+  });
+
+  it('every exception has at least one action, and a hidden one says why it is hidden', () => {
+    fc.assert(
+      fc.property(anyQuantities, ({ data, horizonDays }) => {
+        const report = analyse(toInput(data), { asOf: AS_OF, horizonDays });
+        for (const e of report.exceptions) {
+          expect(e.actions.length).toBeGreaterThan(0);
+          const hiddenReasons = e.reasons.filter((r) => r.code.startsWith('HIDDEN_'));
+          expect(hiddenReasons).toEqual(
+            !e.hidden
+              ? []
+              : e.erpViewDate === null
+                ? [{ code: 'HIDDEN_ERP_NONE' }]
+                : [{ code: 'HIDDEN_ERP_LATER', erpViewDate: e.erpViewDate }],
+          );
+          const noOrder = !data.orders.some((o) => o.id === e.materialId);
+          expect(e.reasons[0]?.code === 'NO_OPEN_PO').toBe(noOrder);
+        }
       }),
     );
   });

@@ -2,7 +2,8 @@
  * Public API of the Vorchain engine: pure, deterministic domain logic with no I/O, DOM or Node
  * APIs (AGENTS.md §2, ADR-0005). Analysis functions arrive with P1-02..P1-06:
  * supplier statistics since P1-02, receipt schedules and the stock projection since P1-03,
- * `analyse` with exception detection, scoring and ranking since P1-04.
+ * `analyse` with exception detection, scoring and ranking since P1-04, structured explanations
+ * (reason and action codes) since P1-05.
  */
 export const ENGINE_PACKAGE_NAME = '@vorchain/engine';
 
@@ -28,6 +29,8 @@ export type { StockProjection, StockProjectionInput } from './projection.ts';
 export { buildReceipts, realisticReceiptDate, receiptDelayDays } from './receipts.ts';
 export type { ReceiptSchedule, SupplierStatsMap } from './receipts.ts';
 export { detectShortage, rankByScore, shortageScore } from './ranking.ts';
+export { ACTION_CODES, explainShortage, explanationPoId, REASON_CODES } from './explanations.ts';
+export type { Explanation, ShortageContext } from './explanations.ts';
 export type { ScoreFactors, ShortageFinding } from './ranking.ts';
 export { pyRound } from './rounding.ts';
 export {
@@ -39,6 +42,7 @@ export {
 export type { SupplierStatsOptions } from './supplier-stats.ts';
 export type {
   Action,
+  ActionCode,
   AnalysisInput,
   AnalysisOptions,
   DeliveryRecord,
@@ -48,6 +52,7 @@ export type {
   ProjectionSeries,
   PurchaseOrder,
   Reason,
+  ReasonCode,
   Report,
   Severity,
   ShortageException,

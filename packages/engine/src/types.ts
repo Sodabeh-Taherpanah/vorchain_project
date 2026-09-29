@@ -101,36 +101,58 @@ export interface SupplierStats {
   readonly reliable: boolean;
 }
 
-/** Why a material is at risk: a code plus parameters, rendered by the UI via i18n. */
+/**
+ * Why a material is at risk: a code plus parameters, rendered by the UI via i18n (the engine holds
+ * no display text). Produced by `explainShortage` in the prototype's order.
+ */
 export type Reason =
+  /** The material has no open PO at all (prototype `no_po`). */
   | { readonly code: 'NO_OPEN_PO' }
+  /** The PO is promised on or after the critical date (prototype `after`). */
   | { readonly code: 'PO_AFTER_CRITICAL'; readonly poId: PoId; readonly promisedDate: IsoDate }
+  /** The PO is promised before the critical date, but its supplier is late (prototype `late`). */
   | {
       readonly code: 'PO_LATE';
       readonly poId: PoId;
       readonly promisedDate: IsoDate;
       readonly supplierId: SupplierId;
-      /** The supplier's P80 delay in working days. */
+      /** The supplier's P80 delay in working days (always `> 0` here). */
       readonly delayDays: number;
+      /** The supplier's on-time rate from 0 to 1. */
       readonly onTimeRate: number;
-      /** True when the supplier's statistics are not `reliable`. */
+      /** True when the supplier's statistics are not `reliable` (prototype `few` suffix). */
       readonly lowConfidence: boolean;
+      /** The supplier's number of past deliveries. */
       readonly deliveries: number;
     }
+  /** Hidden risk: the ERP view shows the same kind of problem only later (prototype `erp_later`). */
   | { readonly code: 'HIDDEN_ERP_LATER'; readonly erpViewDate: IsoDate }
+  /** Hidden risk: the ERP view shows no problem of this kind at all (prototype `erp_none`). */
   | { readonly code: 'HIDDEN_ERP_NONE' };
 
-/** What the planner should do next: a code plus parameters, rendered by the UI via i18n. */
+/**
+ * What the planner should do next: a code plus parameters, rendered by the UI via i18n. Every
+ * exception has at least one action (`REVIEW_QTY_OR_DEMAND` when no rule gave one).
+ */
 export type Action =
+  /** Order now from the material's main supplier, `null` if unknown (prototype `place`). */
   | { readonly code: 'PLACE_ORDER'; readonly supplierId: SupplierId | null }
+  /** Ask the supplier to deliver the PO before the critical date (prototype `pull`). */
   | {
       readonly code: 'PULL_FORWARD';
       readonly supplierId: SupplierId;
       readonly poId: PoId;
       readonly before: IsoDate;
     }
+  /** Chase the PO or ask for a partial delivery before the critical date (prototype `expedite`). */
   | { readonly code: 'EXPEDITE'; readonly poId: PoId; readonly before: IsoDate }
+  /** Fallback when no rule suggested an action (prototype `default`). */
   | { readonly code: 'REVIEW_QTY_OR_DEMAND' };
+
+/** Every reason code; the UI checks its i18n messages against this list. */
+export type ReasonCode = Reason['code'];
+/** Every action code; the UI checks its i18n messages against this list. */
+export type ActionCode = Action['code'];
 
 /** One material that runs short in the realistic view within the horizon. */
 export interface ShortageException {

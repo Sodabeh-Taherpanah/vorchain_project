@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
+import { prototypeText, supplierNames } from './__fixtures__/prototype-text.ts';
 import vectors from './__fixtures__/python-vectors.json' with { type: 'json' };
 import {
   addDays,
@@ -25,7 +26,7 @@ import type { AnalysisInput, DeliveryRecord, Report } from './types.ts';
  * against cases nobody thought to write down (random dates across years 1..9999, random bit
  * patterns for rounding, random delivery histories with weekend dates and missing values, random
  * stock projections, plus the prototype sample dataset and random datasets run through the
- * prototype's `analyse`, down to the ranked exceptions).
+ * prototype's `analyse`, down to the ranked exceptions and their English why / next-action text).
  */
 
 function d(input: string): IsoDate {
@@ -96,7 +97,12 @@ interface ProjectionVector {
   asOf: string;
   horizonDays: number;
   input: {
-    materials: { materialId: string; onHand: number; safetyStock: number }[];
+    materials: {
+      materialId: string;
+      onHand: number;
+      safetyStock: number;
+      mainSupplierId: string | null;
+    }[];
     openPurchaseOrders: {
       poId: string;
       materialId: string;
@@ -106,6 +112,7 @@ interface ProjectionVector {
     }[];
     demand: { materialId: string; date: string; qty: number }[];
     supplierHistory: SupplierStatsVector['history'];
+    suppliers: { supplierId: string; name: string }[];
   };
   expected: {
     materialId: string;
@@ -118,14 +125,20 @@ interface ProjectionVector {
     points: [string, number, number, number, number, number][];
   }[];
   exceptions: ExceptionRow[];
+  /** The prototype's `[why, next_action]` per exception, English, in ranked order. */
+  explanations: [why: string, nextAction: string][];
 }
-/** Datasets built for the ranking: tables and the exceptions `analyse` returned, nothing else. */
+/**
+ * Datasets built for the ranking (and the ADR-0005 overdue example): tables, the exceptions
+ * `analyse` returned and their explanations, nothing else.
+ */
 interface RankingVector {
   name: string;
   asOf: string;
   horizonDays: number;
   input: ProjectionVector['input'];
   exceptions: ExceptionRow[];
+  explanations: ProjectionVector['explanations'];
 }
 
 const addWorkdaysVectors = vectors.addWorkdays as AddWorkdaysVector[];
@@ -139,9 +152,11 @@ const projectVectors = vectors.project as ProjectVector[];
 // a main supplier), which a direct cast rejects; the shape is fixed by the generator script.
 const projectionVectors = vectors.projection as unknown as ProjectionVector[];
 const rankingVectors = vectors.ranking as unknown as RankingVector[];
+const overdueVectors = vectors.overdue as unknown as RankingVector[];
 const analyseVectors: (ProjectionVector | RankingVector)[] = [
   ...projectionVectors,
   ...rankingVectors,
+  ...overdueVectors,
 ];
 
 function toDeliveryRecord(row: SupplierStatsVector['history'][number]): DeliveryRecord {
@@ -170,7 +185,7 @@ function toAnalysisInput({ input }: Pick<ProjectionVector, 'input'>): AnalysisIn
     materials: input.materials.map((m) => ({
       materialId: materialId(m.materialId),
       description: '',
-      mainSupplierId: null,
+      mainSupplierId: m.mainSupplierId === null ? null : supplierId(m.mainSupplierId),
       onHand: m.onHand,
       safetyStock: m.safetyStock,
       unit: null,
@@ -188,7 +203,7 @@ function toAnalysisInput({ input }: Pick<ProjectionVector, 'input'>): AnalysisIn
       qty: line.qty,
     })),
     supplierHistory: input.supplierHistory.map(toDeliveryRecord),
-    suppliers: [],
+    suppliers: input.suppliers.map((s) => ({ supplierId: supplierId(s.supplierId), name: s.name })),
   };
 }
 
@@ -235,6 +250,26 @@ describe('CPython parity vectors', () => {
     expect(rows.filter((r) => !Number.isInteger(r[8])).length).toBeGreaterThan(20);
     const ties = analyseVectors.reduce((n, v) => n + tiesBetweenMaterials(v.exceptions), 0);
     expect(ties).toBeGreaterThan(5);
+    // Every explanation rule, including the combinations the backlog names, is reached.
+    const texts = analyseVectors.flatMap((v) => v.explanations);
+    const why = texts.flatMap(([w]) => w.split('; '));
+    const next = texts.flatMap(([, n]) => n.split('; '));
+    const count = (parts: string[], fragment: string) =>
+      parts.filter((p) => p.includes(fragment)).length;
+    expect(texts.length).toBe(rows.length);
+    expect(count(why, 'no open purchase order')).toBeGreaterThan(20);
+    expect(count(why, 'already AFTER')).toBeGreaterThan(20);
+    expect(count(why, 'working day(s) late')).toBeGreaterThan(20);
+    expect(count(why, 'low confidence')).toBeGreaterThan(10);
+    expect(count(why, 'problem only from')).toBeGreaterThan(5);
+    expect(count(why, 'no problem at all')).toBeGreaterThan(20);
+    expect(count(next, 'Place an order now with ?')).toBeGreaterThan(5);
+    expect(count(next, 'Place an order now with')).toBeGreaterThan(20);
+    expect(count(next, 'pull')).toBeGreaterThan(20);
+    expect(count(next, 'Expedite')).toBeGreaterThan(20);
+    expect(count(next, 'Increase order quantity')).toBeGreaterThan(10);
+    // Late but arriving before the critical date: a PO_LATE reason without EXPEDITE.
+    expect(count(why, 'working day(s) late')).toBeGreaterThan(count(next, 'Expedite'));
   });
 
   it('addWorkdays matches add_workdays', () => {
@@ -379,6 +414,8 @@ describe('CPython parity vectors', () => {
       });
       // Exact equality (Object.is per number), in the prototype's ranked order.
       expect(toExceptionRows(report)).toEqual(vector.exceptions);
+      const names = supplierNames(toAnalysisInput(vector).suppliers);
+      expect(report.exceptions.map((e) => prototypeText(e, names))).toEqual(vector.explanations);
       const critical = vector.exceptions.filter((r) => r[1] === 'CRITICAL').length;
       expect(report.summary).toEqual({
         critical,
