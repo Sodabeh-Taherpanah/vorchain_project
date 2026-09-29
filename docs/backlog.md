@@ -71,7 +71,7 @@ order.
 ---
 
 ## Task 0: Repo bootstrap: workspaces, tooling, CI skeleton
-- [ ] Done
+- [x] Done
 - **Owner:** devops
 - **Why:** every later task relies on the same commands, strict TypeScript, lint boundaries,
   hooks and CI. Doing this once, first, keeps feature PRs small (ADR-0002, 0008, 0009, 0010).
