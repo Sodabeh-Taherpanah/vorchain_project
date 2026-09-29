@@ -1,4 +1,8 @@
 import type { NextConfig } from 'next';
+import createNextIntlPlugin from 'next-intl/plugin';
+
+// Registers `src/i18n/request.ts` as the next-intl request config (ADR-0004).
+const withNextIntl = createNextIntlPlugin();
 
 const nextConfig: NextConfig = {
   // Same build runs on the host and in the GHCR container image (ADR-0004, ADR-0006).
@@ -9,4 +13,4 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);
