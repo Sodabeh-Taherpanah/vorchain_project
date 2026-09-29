@@ -139,7 +139,7 @@ order.
 ---
 
 ## P1-01: Engine: domain types, date-only helpers, Python-compatible rounding
-- [ ] Done
+- [x] Done
 - **Owner:** builder
 - **Why:** every engine rule depends on exact calendar arithmetic and on rounding identical to
   CPython; getting these wrong breaks parity silently (ADR-0005 items 1, 4).
@@ -162,7 +162,7 @@ order.
   `workdaysBetween(a, addWorkdays(a, n)) === n` for weekday `a`, `diffDays(a, addDays(a, n)) === n`.
   100 % coverage for `dates.ts` and `rounding.ts`.
 - **Packages:** `packages/engine`
-- **Branch:** `feat/engine-types-dates`
+- **Branch:** `feat/engine-domain-types`
 - **Commits:**
   - `feat(engine): add date-only type and working-day helpers`
   - `feat(engine): add python-compatible rounding helper`
