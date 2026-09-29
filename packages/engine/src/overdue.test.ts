@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { analyse } from './analyse.ts';
 import { addDays, addWorkdays, parseIsoDate, type IsoDate } from './dates.ts';
+import { explanationPoId } from './explanations.ts';
 import { materialId, poId, supplierId, type MaterialId } from './ids.ts';
 import { findOverduePurchaseOrders, overdueReasons } from './overdue.ts';
 import type { SupplierStatsMap } from './receipts.ts';
@@ -118,6 +119,15 @@ describe('findOverduePurchaseOrders', () => {
     expect(counted(10)).toEqual([false]); // window ends before 10-15
     expect(counted(11)).toEqual([true]); // 10-15 is the last day of the window
     expect(counted(0)).toEqual([false]); // an empty window counts nothing
+    expect(counted(-3)).toEqual([false]); // a negative horizon projects no day either
+  });
+
+  it('counts a PO whose realistic date is asOf itself (the window starts at asOf)', () => {
+    // Thu 10-01 + 2 working days = Mon 10-05 = asOf: the realistic view books it on day one.
+    const onAsOf = [order('P6', 'M1', 'LATE2', '2026-10-01')];
+    expect(
+      findOverduePurchaseOrders(onAsOf, STATS, { asOf: AS_OF, horizonDays: 1 }, flagged),
+    ).toEqual([expect.objectContaining({ realisticDate: AS_OF, countedInRealisticView: true })]);
   });
 
   it('returns an empty list when no PO is overdue', () => {
@@ -256,5 +266,47 @@ describe('analyse: overdue POs (ADR-0005 item 5, option B)', () => {
     expect(exception?.actions).toEqual([{ code: 'EXPEDITE', poId: 'PO1', before: '2026-10-06' }]);
     expect(report.overduePurchaseOrders.map((o) => o.hasException)).toEqual([true]);
     expect(report.summary.overduePurchaseOrders).toBe(1);
+  });
+
+  it('handles duplicate material rows, orphan POs and a PO promised exactly on asOf', () => {
+    // M1 appears twice: row 1 (on hand 0) runs short on 10-06, row 2 (on hand 1000) never does.
+    // PO1 (overdue, P80 2) lands on asOf in the realistic view only; PO3 is promised on asOf, so it
+    // is not overdue; PO2 belongs to a material that is not in the materials table.
+    const row = (onHand: number) => ({
+      materialId: materialId('M1'),
+      description: '',
+      mainSupplierId: supplierId('S1'),
+      onHand,
+      safetyStock: 0,
+      unit: null,
+    });
+    const report = analyse(
+      input({
+        materials: [row(0), row(1000)],
+        openPurchaseOrders: [
+          order('PO1', 'M1', 'S1', '2026-10-01'),
+          order('PO2', 'M-ORPHAN', 'S1', '2026-09-30'),
+          order('PO3', 'M1', 'S1', '2026-10-05'),
+        ],
+        demand: [{ materialId: materialId('M1'), date: d('2026-10-06'), qty: 100 }],
+        supplierHistory: history('S1', 2),
+      }),
+      { asOf: AS_OF, horizonDays: 28 },
+    );
+    expect(report.exceptions.map((e) => [e.materialId, e.minProjectedStock])).toEqual([
+      ['M1', -50],
+    ]);
+    expect(report.exceptions[0]?.reasons.map((r) => [r.code, explanationPoId(r)])).toEqual([
+      ['PO_LATE', 'PO1'],
+      ['PO_LATE', 'PO3'],
+      ['PO_OVERDUE', 'PO1'],
+    ]);
+    expect(
+      report.overduePurchaseOrders.map((o) => [o.poId, o.countedInRealisticView, o.hasException]),
+    ).toEqual([
+      ['PO1', true, true], // one of the two M1 rows has an exception
+      ['PO2', false, false], // Wed 09-30 + 2 = Fri 10-02, still before asOf; no material row
+    ]);
+    expect(report.summary.overduePurchaseOrders).toBe(2);
   });
 });

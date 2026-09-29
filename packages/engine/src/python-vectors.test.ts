@@ -294,6 +294,51 @@ describe('CPython parity vectors', () => {
     expect(overdueVectors.map((v) => v.name)).toEqual(['adr-0005-overdue-example']);
   });
 
+  it('analyse vectors have exactly the fields their interfaces declare (the casts are unchecked)', () => {
+    // `as unknown as` skips the compile-time check, so a renamed or missing fixture field would
+    // only show up as a confusing failure (or an `undefined` compared with `undefined`) later.
+    const keys = (row: object) => Object.keys(row).sort();
+    const expectKeys = (rows: readonly object[], expected: string[]) => {
+      for (const row of rows) expect(keys(row)).toEqual([...expected].sort());
+    };
+    const top = ['name', 'asOf', 'horizonDays', 'input', 'exceptions', 'explanations'];
+    expectKeys(rankingVectors, [...top, 'overduePurchaseOrders']);
+    expectKeys(overdueVectors, [...top, 'overduePurchaseOrders']);
+    expectKeys(projectionVectors, [...top, 'overduePurchaseOrders', 'expected']);
+    for (const v of analyseVectors) {
+      expectKeys(
+        [v.input],
+        ['materials', 'openPurchaseOrders', 'demand', 'supplierHistory', 'suppliers'],
+      );
+      expectKeys(v.input.materials, ['materialId', 'onHand', 'safetyStock', 'mainSupplierId']);
+      expectKeys(v.input.suppliers, ['supplierId', 'name']);
+      expectKeys(v.overduePurchaseOrders, [
+        'poId',
+        'materialId',
+        'supplierId',
+        'qty',
+        'promisedDate',
+        'realisticDate',
+        'countedInRealisticView',
+        'hasException',
+      ]);
+      for (const m of v.input.materials) {
+        expect(m.mainSupplierId === null || typeof m.mainSupplierId === 'string').toBe(true);
+      }
+      for (const o of v.overduePurchaseOrders) {
+        expect([typeof o.countedInRealisticView, typeof o.hasException]).toEqual([
+          'boolean',
+          'boolean',
+        ]);
+        expect(o.promisedDate < v.asOf).toBe(true);
+      }
+      expect(v.explanations).toHaveLength(v.exceptions.length);
+      for (const pair of v.explanations) {
+        expect(pair.map((text) => typeof text)).toEqual(['string', 'string']);
+      }
+    }
+  });
+
   it('addWorkdays matches add_workdays', () => {
     const mismatches = addWorkdaysVectors.filter(
       ([from, n, expected]) => addWorkdays(d(from), n) !== expected,
