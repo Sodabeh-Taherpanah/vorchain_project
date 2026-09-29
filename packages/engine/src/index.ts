@@ -4,6 +4,17 @@
  */
 export const ENGINE_PACKAGE_NAME = '@vorchain/engine';
 
+export {
+  addDays,
+  addWorkdays,
+  diffDays,
+  isoDateFromParts,
+  isWorkday,
+  parseIsoDate,
+  weekday,
+  workdaysBetween,
+} from './dates.ts';
+export type { DateError, IsoDate, Weekday } from './dates.ts';
 export { materialId, poId, supplierId } from './ids.ts';
 export type { Brand, MaterialId, PoId, SupplierId } from './ids.ts';
 export { err, ok } from './result.ts';
