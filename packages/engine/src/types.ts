@@ -146,6 +146,10 @@ export interface ShortageException {
   readonly daysUntil: number;
   /** Lowest realistic projected stock in the window, `pyRound(x)`. */
   readonly minProjectedStock: number;
+  /**
+   * The material's safety stock as `pyRound(x)`, like the prototype's `safety_stock` output column.
+   * Display only: the projection and the score use the unrounded `Material.safetyStock`.
+   */
   readonly safetyStock: number;
   /** `erpViewDate === null || erpViewDate > criticalDate`: the ERP does not show this risk yet. */
   readonly hidden: boolean;
