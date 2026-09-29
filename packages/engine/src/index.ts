@@ -1,5 +1,10 @@
 /**
- * Public API of the Vorchain engine. The domain types and functions arrive with P1-01..P1-06;
- * until then this module only identifies the package so workspace wiring can be tested.
+ * Public API of the Vorchain engine: pure, deterministic domain logic with no I/O, DOM or Node
+ * APIs (AGENTS.md §2, ADR-0005). Analysis functions arrive with P1-02..P1-06.
  */
 export const ENGINE_PACKAGE_NAME = '@vorchain/engine';
+
+export { materialId, poId, supplierId } from './ids.ts';
+export type { Brand, MaterialId, PoId, SupplierId } from './ids.ts';
+export { err, ok } from './result.ts';
+export type { Err, Ok, Result } from './result.ts';
