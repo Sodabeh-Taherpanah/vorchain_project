@@ -240,7 +240,7 @@ order.
 ---
 
 ## P1-04: Engine: exception detection, severity, hidden flag, score, ranking
-- [ ] Done
+- [x] Done
 - **Owner:** builder
 - **Why:** turns projections into the ranked list a planner acts on (spec §5.2 steps 5 to 8).
 - **Acceptance criteria:**
@@ -260,6 +260,16 @@ order.
 - **Packages:** `packages/engine`
 - **Branch:** `feat/engine-ranking`
 - **Commits:** `feat(engine): detect, score and rank shortage exceptions`
+- **Note (P1-04):** `ranking.ts` exports `detectShortage` (severity, dates, hidden flag),
+  `shortageScore` and `rankByScore`; `analyse.ts` wires them up. The CRITICAL property holds as
+  `minProjectedStock < 0` only for whole quantities: with fractional ones `pyRound(-0.4)` is `0`,
+  so the property test checks `<= 0` there (as the prototype does). An overdue PO can make the ERP
+  view look worse than the realistic view; the prototype then raises nothing, and so do we
+  (ADR-0005 item 5). Performance (P1-03 QA finding): `projectionWindow` builds the window once per
+  run and `projectOverWindow` reuses it; 20k materials, 100k demand rows, 30k POs, 90 days went
+  from ~3.6 s to ~0.35 s. `analyse.perf.test.ts` guards this with a call-count check and a 3 s
+  timeout. Parity: `python-vectors.test.ts` compares the ranked exceptions with the prototype's
+  `analyse` on `sample_data`, the 40 P1-03 datasets and 40 ranking-shaped datasets.
 
 ---
 

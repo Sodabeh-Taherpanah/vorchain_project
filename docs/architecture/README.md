@@ -126,8 +126,8 @@ flowchart TB
     compare["compare.ts<br/>compareCodePoints (Python str order)"]
     daily["daily-quantities.ts<br/>DailyQuantities (qty per day)"]
     receipts["receipts.ts<br/>buildReceipts, realisticReceiptDate,<br/>receiptDelayDays"]
-    projection["projection.ts<br/>projectStock, demandByMaterial,<br/>projectionSeries"]
-    ranking["ranking.ts<br/>detectException, severity,<br/>hidden flag, score, stable sort"]
+    projection["projection.ts<br/>projectionWindow, projectOverWindow,<br/>projectStock, demandByMaterial,<br/>projectionSeries"]
+    ranking["ranking.ts<br/>detectShortage (severity, hidden flag),<br/>shortageScore, rankByScore (stable)"]
     explain["explanations.ts<br/>Reason / Action codes + params"]
     analyse["analyse.ts<br/>public entry: analyse(input, options)"]
   end
@@ -320,6 +320,17 @@ function buildReceipts(pos: PurchaseOrder[], stats: SupplierStatsMap): ReadonlyM
 function demandByMaterial(demand: DemandLine[]): ReadonlyMap<MaterialId, DailyQuantities>;
 function projectStock(input: { onHand; demandByDay; receiptsByDay; asOf; horizonDays; safetyStock }):
   { firstStockOut: IsoDate | null; firstBelowSafety: IsoDate | null; minStock: number };
+```
+
+Since P1-04: `analyse` and its building blocks in `ranking.ts`. Internally, `analyse` builds the
+projection window once per run (`projectionWindow`) and projects every material in both views over
+it (`projectOverWindow`); rebuilding it per projection cost ~90 % of the run time at 20k materials.
+
+```ts
+interface ShortageFinding { severity: Severity; criticalDate: IsoDate; erpViewDate: IsoDate | null; hidden: boolean }
+function detectShortage(erp: StockProjection, realistic: StockProjection): ShortageFinding | null;
+function shortageScore(f: { horizonDays; daysUntil; safetyStock; minStock; hidden; severity }): number; // pyRound(x, 1)
+function rankByScore<T extends { score: number }>(items: readonly T[]): T[];  // stable, score desc
 ```
 
 Supplier names are resolved in the UI (`suppliers` table), not in the engine, so the engine output

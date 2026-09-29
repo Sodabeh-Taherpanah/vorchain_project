@@ -17,18 +17,29 @@ import type {
   ProjectionSeries,
 } from './types.ts';
 
-/** Input of {@link projectStock}: one material in one view. */
-export interface StockProjectionInput {
+/** One material in one view: everything the projection needs besides the window. */
+export interface MaterialView {
   /** Stock at the start of `asOf`. */
   readonly onHand: number;
   readonly demandByDay: DailyQuantities;
   readonly receiptsByDay: DailyQuantities;
+  readonly safetyStock: number;
+}
+
+/** Input of {@link projectStock}: one material in one view, plus the window it is projected over. */
+export interface StockProjectionInput extends MaterialView {
   /** Day 0 of the window. */
   readonly asOf: IsoDate;
   /** Window length in calendar days; `0` or less means no day is projected, like `range()`. */
   readonly horizonDays: number;
-  readonly safetyStock: number;
 }
+
+/**
+ * The calendar days `asOf, asOf + 1, …` of the window `[asOf, asOf + horizonDays)`. Building it
+ * costs one date calculation per day, so `analyse` builds it once and shares it across all
+ * materials and both views instead of rebuilding it per projection.
+ */
+export type ProjectionWindow = readonly IsoDate[];
 
 /** Outcome of {@link projectStock}; the prototype's `(first_short, first_below_ss, min_stock)`. */
 export interface StockProjection {
@@ -50,12 +61,20 @@ const NO_QUANTITIES: DailyQuantities = new Map();
  * @throws RangeError if `horizonDays` is not an integer (a programmer error).
  */
 export function projectStock(input: StockProjectionInput): StockProjection {
-  const { onHand, demandByDay, receiptsByDay, safetyStock } = input;
+  return projectOverWindow(projectionWindow(input.asOf, input.horizonDays), input);
+}
+
+/**
+ * {@link projectStock} over a prebuilt window, for callers that project many materials over the
+ * same window. Same arithmetic, same results bit for bit.
+ */
+export function projectOverWindow(window: ProjectionWindow, view: MaterialView): StockProjection {
+  const { onHand, demandByDay, receiptsByDay, safetyStock } = view;
   let firstStockOut: IsoDate | null = null;
   let firstBelowSafety: IsoDate | null = null;
   let minStock = onHand;
   let stock = onHand;
-  for (const date of windowDays(input.asOf, input.horizonDays)) {
+  for (const date of window) {
     stock = nextStock(stock, quantityOn(receiptsByDay, date), quantityOn(demandByDay, date));
     // Same operand order as Python `min(min_stock, stock)`, which keeps the first of equal values.
     if (stock < minStock) minStock = stock;
@@ -112,19 +131,25 @@ export function projectionSeries(
 
   let erpStock = material.onHand;
   let realisticStock = material.onHand;
-  const points = windowDays(options.asOf, options.horizonDays).map((date): ProjectionPoint => {
-    const demand = quantityOn(demandByDay, date);
-    const erpReceipts = quantityOn(receipts?.erp, date);
-    const realisticReceipts = quantityOn(receipts?.realistic, date);
-    erpStock = nextStock(erpStock, erpReceipts, demand);
-    realisticStock = nextStock(realisticStock, realisticReceipts, demand);
-    return { date, demand, erpReceipts, realisticReceipts, erpStock, realisticStock };
-  });
+  const points = projectionWindow(options.asOf, options.horizonDays).map(
+    (date): ProjectionPoint => {
+      const demand = quantityOn(demandByDay, date);
+      const erpReceipts = quantityOn(receipts?.erp, date);
+      const realisticReceipts = quantityOn(receipts?.realistic, date);
+      erpStock = nextStock(erpStock, erpReceipts, demand);
+      realisticStock = nextStock(realisticStock, realisticReceipts, demand);
+      return { date, demand, erpReceipts, realisticReceipts, erpStock, realisticStock };
+    },
+  );
   return { materialId, safetyStock: material.safetyStock, points };
 }
 
-/** The calendar days `asOf, asOf + 1, …` of the window; empty for `horizonDays <= 0`. */
-function windowDays(asOf: IsoDate, horizonDays: number): IsoDate[] {
+/**
+ * Builds the {@link ProjectionWindow}; empty for `horizonDays <= 0`.
+ *
+ * @throws RangeError if `horizonDays` is not an integer (a programmer error).
+ */
+export function projectionWindow(asOf: IsoDate, horizonDays: number): ProjectionWindow {
   if (!Number.isInteger(horizonDays)) {
     throw new RangeError(`horizonDays must be an integer, got ${String(horizonDays)}`);
   }
