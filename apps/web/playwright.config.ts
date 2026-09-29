@@ -1,7 +1,11 @@
 import { defineConfig, devices } from '@playwright/test';
 
 const PORT = 3100;
-const BASE_URL = `http://127.0.0.1:${String(PORT)}`;
+// `localhost`, not `127.0.0.1`: with `--hostname 127.0.0.1`, Next.js 16 turns the proxy's rewrite
+// (e.g. /en/contact -> /en/kontakt) into an absolute `localhost` URL, treats it as external and
+// runs the proxy again, which redirects back to /en/contact in an endless loop.
+const HOSTNAME = 'localhost';
+const BASE_URL = `http://${HOSTNAME}:${String(PORT)}`;
 const isCI = Boolean(process.env.CI);
 
 /**
@@ -21,7 +25,7 @@ export default defineConfig({
   },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: {
-    command: `next start --hostname 127.0.0.1 --port ${String(PORT)}`,
+    command: `next start --hostname ${HOSTNAME} --port ${String(PORT)}`,
     url: BASE_URL,
     reuseExistingServer: !isCI,
     timeout: 60_000,
