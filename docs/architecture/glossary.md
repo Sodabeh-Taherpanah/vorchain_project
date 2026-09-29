@@ -46,6 +46,7 @@ Use the **code name** in TypeScript identifiers, the **German term** in `de` UI 
 | Planbestand, projizierter Bestand | Projected stock | `ProjectionSeries`, `minProjectedStock` | Day-by-day stock |
 | ERP-Sicht | ERP view | `erpView` | POs arrive on the promised date |
 | realistische Sicht | Realistic view | `realisticView` | POs arrive on promised date + supplier P80 working days |
+| überfällige Bestellung | Overdue PO | (no code name yet) | Open PO promised before `asOf`. Dropped from the ERP view but may enter the realistic view after the P80 shift (ADR-0005 item 5, backlog Q4) |
 | Fehlteil, Fehlbestand | Stock-out | `CRITICAL` | Projected stock < 0 |
 | Unterschreitung Sicherheitsbestand | Below safety stock | `WARNING` | Projected stock < safety stock but never < 0 |
 | kritisches Datum | Critical date | `criticalDate` | First stock-out date, or first below-safety date |
