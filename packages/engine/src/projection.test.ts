@@ -5,6 +5,8 @@ import { addDays, addWorkdays, isWorkday, parseIsoDate, type IsoDate } from './d
 import type { DailyQuantities } from './daily-quantities.ts';
 import { materialId, poId, supplierId } from './ids.ts';
 import { demandByMaterial, projectionSeries, projectStock } from './projection.ts';
+import { buildReceipts } from './receipts.ts';
+import { computeSupplierStats, statsBySupplier } from './supplier-stats.ts';
 import type { AnalysisInput, DeliveryRecord, Material } from './types.ts';
 
 function d(input: string): IsoDate {
@@ -238,6 +240,95 @@ describe('projectStock properties', () => {
       }),
     );
   });
+
+  /** `now` is on or before `was`, where `null` means "never" (later than any day). */
+  const notLater = (was: IsoDate | null, now: IsoDate | null) =>
+    was === null || (now !== null && now <= was);
+  // Receipts dated before `asOf` never arrive (ADR-0005 item 5), so delaying an overdue receipt
+  // can move it INTO the window and help. The monotonicity below only holds from `asOf` on; the
+  // overdue case is pinned by an example test further down.
+  const notOverdue = fc.integer({ min: 0, max: 35 });
+
+  it('delaying a receipt never postpones or removes a problem (the hidden-risk direction)', () => {
+    fc.assert(
+      fc.property(
+        base,
+        notOverdue,
+        fc.integer({ min: 0, max: 20 }),
+        fc.integer({ min: 1, max: 300 }),
+        (input, n, delay, qty) => {
+          const withReceiptOn = (day: IsoDate) => {
+            const receipts = new Map(input.receiptsByDay);
+            receipts.set(day, (receipts.get(day) ?? 0) + qty);
+            return projectStock({ ...input, asOf: AS_OF, receiptsByDay: receipts });
+          };
+          const onTime = withReceiptOn(addDays(AS_OF, n));
+          const late = withReceiptOn(addDays(AS_OF, n + delay));
+          expect(notLater(onTime.firstStockOut, late.firstStockOut)).toBe(true);
+          expect(notLater(onTime.firstBelowSafety, late.firstBelowSafety)).toBe(true);
+          expect(late.minStock).toBeLessThanOrEqual(onTime.minStock);
+        },
+      ),
+    );
+  });
+
+  it('adding demand never postpones or removes a problem', () => {
+    fc.assert(
+      fc.property(base, offset, fc.integer({ min: 1, max: 300 }), (input, n, qty) => {
+        const before = projectStock({ ...input, asOf: AS_OF });
+        const demand = new Map(input.demandByDay);
+        const day = addDays(AS_OF, n);
+        demand.set(day, (demand.get(day) ?? 0) + qty);
+        const after = projectStock({ ...input, asOf: AS_OF, demandByDay: demand });
+        expect(notLater(before.firstStockOut, after.firstStockOut)).toBe(true);
+        expect(notLater(before.firstBelowSafety, after.firstBelowSafety)).toBe(true);
+        expect(after.minStock).toBeLessThanOrEqual(before.minStock);
+      }),
+    );
+  });
+
+  it('the realistic view never shows a problem later than the ERP view (POs not overdue)', () => {
+    // P80 delays are >= 0, so realistic receipts are never earlier than promised ones. A problem
+    // can therefore be hidden in the ERP view, but the ERP view can never be the more alarming one.
+    const stats = new Map(
+      [0, 1, 3, 7].map((p80, i) => {
+        const id = supplierId(`S${String(i)}`);
+        const row = {
+          supplierId: id,
+          meanDelayDays: p80,
+          p80DelayDays: p80,
+          onTimeRate: 0.5,
+          deliveries: i + 1, // S0..S1 have too little history, S2..S3 enough
+          reliable: i + 1 >= 3,
+        };
+        return [id, row] as const;
+      }),
+    );
+    const order = fc.record({
+      supplier: fc.constantFrom('S0', 'S1', 'S2', 'S3', 'UNKNOWN'),
+      promised: notOverdue,
+      qty: fc.integer({ min: 1, max: 300 }),
+    });
+    fc.assert(
+      fc.property(base, fc.array(order, { maxLength: 8 }), (input, rows) => {
+        const pos = rows.map((r, i) => ({
+          poId: poId(`P${String(i)}`),
+          materialId: materialId('M1'),
+          supplierId: supplierId(r.supplier),
+          qty: r.qty,
+          promisedDate: addDays(AS_OF, r.promised),
+        }));
+        const schedule = buildReceipts(pos, stats).get(materialId('M1'));
+        const view = (receiptsByDay: DailyQuantities | undefined) =>
+          projectStock({ ...input, asOf: AS_OF, receiptsByDay: receiptsByDay ?? new Map() });
+        const erp = view(schedule?.erp);
+        const realistic = view(schedule?.realistic);
+        expect(notLater(erp.firstStockOut, realistic.firstStockOut)).toBe(true);
+        expect(notLater(erp.firstBelowSafety, realistic.firstBelowSafety)).toBe(true);
+        expect(realistic.minStock).toBeLessThanOrEqual(erp.minStock);
+      }),
+    );
+  });
 });
 
 describe('demandByMaterial', () => {
@@ -332,6 +423,112 @@ describe('projectionSeries', () => {
     expect(() => projectionSeries(scenarioInput(0), materialId('NOPE'), options)).toThrow(
       RangeError,
     );
+  });
+
+  it('crosses zero and the safety stock on the days projectStock reports (property)', () => {
+    // The chart must agree with the report for every material, not just the scenario above.
+    const day = fc.integer({ min: -5, max: 35 }).map((n) => addDays(AS_OF, n));
+    const id = fc.constantFrom('M1', 'M2', 'M3');
+    const inputArb = fc.record({
+      materials: fc.tuple(
+        fc.integer({ min: -20, max: 300 }),
+        fc.integer({ min: 0, max: 100 }),
+        fc.integer({ min: 0, max: 300 }),
+      ),
+      pos: fc.array(
+        fc.record({
+          material: id,
+          supplier: fc.constantFrom('S1', 'S2', 'UNKNOWN'),
+          qty: fc.integer({ min: 1, max: 300 }),
+          promised: day,
+        }),
+        { maxLength: 10 },
+      ),
+      demand: fc.array(
+        fc.record({ material: id, date: day, qty: fc.integer({ min: 0, max: 60 }) }),
+        { maxLength: 40 },
+      ),
+      delay: fc.integer({ min: 0, max: 6 }),
+      horizonDays: fc.integer({ min: 0, max: 30 }),
+    });
+    fc.assert(
+      fc.property(inputArb, (arb) => {
+        const [onHand1, safety1, onHand2] = arb.materials;
+        const input: AnalysisInput = {
+          // M3 is not in the materials table: its POs and demand must be ignored.
+          materials: [material('M1', onHand1, safety1), material('M2', onHand2)],
+          openPurchaseOrders: arb.pos.map((r, i) => ({
+            poId: poId(`P${String(i)}`),
+            materialId: materialId(r.material),
+            supplierId: supplierId(r.supplier),
+            qty: r.qty,
+            promisedDate: r.promised,
+          })),
+          demand: arb.demand.map((r) => ({
+            materialId: materialId(r.material),
+            date: r.date,
+            qty: r.qty,
+          })),
+          // S1 always `delay` working days late (5 deliveries), S2 once (too little history).
+          supplierHistory: [
+            ...lateHistory(arb.delay),
+            { ...lateHistory(arb.delay + 1)[0]!, supplierId: supplierId('S2') },
+          ],
+          suppliers: [],
+        };
+        const opts = { asOf: AS_OF, horizonDays: arb.horizonDays };
+        const receipts = buildReceipts(
+          input.openPurchaseOrders,
+          statsBySupplier(computeSupplierStats(input.supplierHistory)),
+        );
+        const demand = demandByMaterial(input.demand);
+        for (const m of input.materials) {
+          const series = projectionSeries(input, m.materialId, opts);
+          expect(series.points).toHaveLength(Math.max(0, arb.horizonDays));
+          for (const view of ['erp', 'realistic'] as const) {
+            const stock = series.points.map((p) =>
+              view === 'erp' ? p.erpStock : p.realisticStock,
+            );
+            const expected = projectStock({
+              onHand: m.onHand,
+              safetyStock: m.safetyStock,
+              demandByDay: demand.get(m.materialId) ?? new Map(),
+              receiptsByDay: receipts.get(m.materialId)?.[view] ?? new Map(),
+              ...opts,
+            });
+            const firstDay = (below: number) =>
+              series.points.find((_, i) => (stock[i] ?? 0) < below)?.date ?? null;
+            expect(firstDay(0)).toBe(expected.firstStockOut);
+            expect(firstDay(m.safetyStock)).toBe(expected.firstBelowSafety);
+            expect(Math.min(m.onHand, ...stock)).toBe(expected.minStock);
+          }
+        }
+      }),
+    );
+  });
+
+  it('an overdue PO from a late supplier arrives only in the realistic view (prototype quirk)', () => {
+    // Confirmed with python3 `project`: ERP view stock-out on 10-06 (min -1), realistic view none.
+    // Promised Fri 2026-10-02 is before asOf, so the ERP view drops it (ADR-0005 item 5); one
+    // working day late is Mon 2026-10-05 = asOf, inside the window. Backlog open question Q4.
+    const input: AnalysisInput = {
+      materials: [material('M1', 0)],
+      openPurchaseOrders: [
+        {
+          poId: poId('P1'),
+          materialId: materialId('M1'),
+          supplierId: supplierId('S1'),
+          qty: 5,
+          promisedDate: d('2026-10-02'),
+        },
+      ],
+      demand: [{ materialId: materialId('M1'), date: d('2026-10-06'), qty: 1 }],
+      supplierHistory: lateHistory(1),
+      suppliers: [],
+    };
+    const series = projectionSeries(input, materialId('M1'), options);
+    expect(series.points[0]).toMatchObject({ erpReceipts: 0, realisticReceipts: 5 });
+    expect(series.points[1]).toMatchObject({ erpStock: -1, realisticStock: 4 });
   });
 
   it('does not mutate its input', () => {
