@@ -20,3 +20,20 @@ export type { Brand, MaterialId, PoId, SupplierId } from './ids.ts';
 export { err, ok } from './result.ts';
 export type { Err, Ok, Result } from './result.ts';
 export { pyRound } from './rounding.ts';
+export type {
+  Action,
+  AnalysisInput,
+  AnalysisOptions,
+  DeliveryRecord,
+  DemandLine,
+  Material,
+  ProjectionPoint,
+  ProjectionSeries,
+  PurchaseOrder,
+  Reason,
+  Report,
+  Severity,
+  ShortageException,
+  Supplier,
+  SupplierStats,
+} from './types.ts';
