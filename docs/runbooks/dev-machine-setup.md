@@ -40,7 +40,13 @@ Status of the local development setup, last updated 2026-09-25.
       Check with `clang --version` and `/usr/bin/git --version`.
 - [x] **Git identity.** Already set globally (`user.name` and `user.email`).
 - [x] **Add a `.gitignore` and make the first commit.** Done 2026-09-25 (`docs: add project rules, spec and agent definitions`).
-- [ ] **Create `package.json`** with `"packageManager": "pnpm@12.6.0"` so corepack uses the same pnpm everywhere, then run `pnpm install`.
+- [x] **Create `package.json`** with `"packageManager": "pnpm@12.6.0"` so corepack uses the same pnpm everywhere, then run `pnpm install`.
+      Done in Task 0. The repo's `.npmrc` sets `registry=https://registry.npmjs.org/`, but the
+      `NPM_CONFIG_*` variables above still override it until they are removed; until then prefix
+      commands with `NPM_CONFIG_REGISTRY=https://registry.npmjs.org/ NPM_CONFIG_STRICT_SSL=true`.
+- [ ] **Playwright browsers.** `cdn.playwright.dev` answered HTTP 403 ("not available in your
+      location") for Chromium 153 (Playwright 1.63) on 2026-09-26. Try another network or set
+      `PLAYWRIGHT_DOWNLOAD_HOST` to a mirror; CI is not affected.
 - [ ] Optional cleanup: remove the old git (`sudo rm -rf /usr/local/git`) and the old Node (`nvm uninstall 18.18.2`).
 
 ## Quick check

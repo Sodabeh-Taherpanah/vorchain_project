@@ -1,0 +1,27 @@
+{
+  "name": "@vorchain/parsers",
+  "version": "0.0.0",
+  "private": true,
+  "description": "CSV and XLSX files to validated engine input, with German and English header aliases.",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "@vorchain/engine": "workspace:*"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "^5.0.2",
+    "@vorchain/config": "workspace:*",
+    "typescript": "~6.0.3",
+    "vite": "^8.3.1",
+    "vitest": "^5.0.2"
+  }
+}

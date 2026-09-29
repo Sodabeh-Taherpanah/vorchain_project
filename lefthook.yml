@@ -1,0 +1,17 @@
+# Git hooks (AGENTS.md §3, ADR-0009). Installed by `pnpm install` via the root `prepare` script.
+# Skip once in an emergency with `LEFTHOOK=0 git commit ...`; CI runs the same checks anyway.
+pre-commit:
+  piped: true # format first, then lint the formatted files
+  jobs:
+    - name: prettier
+      glob: '*.{js,mjs,cjs,ts,tsx,json,yml,yaml,css}'
+      run: pnpm exec prettier --write --ignore-unknown {staged_files}
+      stage_fixed: true
+    - name: eslint
+      glob: '*.{js,mjs,cjs,ts,tsx}'
+      run: pnpm exec eslint --no-warn-ignored --max-warnings=0 {staged_files}
+
+commit-msg:
+  jobs:
+    - name: commitlint
+      run: pnpm exec commitlint --edit {1}

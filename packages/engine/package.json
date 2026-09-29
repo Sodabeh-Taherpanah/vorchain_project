@@ -1,0 +1,24 @@
+{
+  "name": "@vorchain/engine",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Pure, deterministic domain logic: supplier delay statistics, stock projection, exceptions and explanations. No I/O, DOM or Node APIs.",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "coverage": "vitest run --coverage"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "^5.0.2",
+    "@vorchain/config": "workspace:*",
+    "typescript": "~6.0.3",
+    "vite": "^8.3.1",
+    "vitest": "^5.0.2"
+  }
+}
