@@ -1,7 +1,7 @@
 # 0005. Engine as a pure TypeScript package with parity tests against the Python prototype
 
 - Status: accepted
-- Date: 2026-09-25
+- Date: 2026-09-25 (amended 2026-09-29: overdue-PO consequence in item 5)
 - Deciders: Sodabeh Taherpanah
 
 ## Context and problem
@@ -45,8 +45,23 @@ Parity requirements (the traps found while reading the prototype):
    may fall on weekends (the sample data has such rows), so test weekend endpoints explicitly.
    `addWorkdays(d, 0)` returns `d` even on a weekend.
 5. **Projection window** is `[asOf, asOf + horizon)` in calendar days. Receipts and demand dated
-   before `asOf` are **ignored** (so overdue POs never arrive). This is prototype behaviour; we keep
-   it for parity and track the domain question in the backlog's open questions.
+   before `asOf` are **ignored**. This is prototype behaviour; we keep it for parity and track the
+   domain question as open question Q4 in `docs/backlog.md`.
+   **Consequence for overdue POs** (found in the P1-03 QA review, confirmed with the prototype's
+   `project` in python3): a PO promised before `asOf` is dropped from the ERP view, but with a
+   late supplier `addWorkdays(promised, p80)` can move it into the window, so it arrives **only in
+   the realistic view**. The realistic view can then look *less* alarming than the ERP view.
+   Example: `asOf` 2026-10-05, on hand 0, demand 1 on 2026-10-06, PO 50 promised 2026-10-02,
+   supplier P80 = 2 -> ERP view stock-out on 2026-10-06 (min -1), realistic view receipt on
+   2026-10-06 and no stock-out. Because spec §5.2 step 5 skips a material when the realistic view
+   is clean, such a material does **not appear in the report at all**, although the ERP view shows
+   a stock-out. When both views still show a problem, the ERP date is earlier, so `hidden` is
+   `false`. We keep this for parity (the golden files encode it). Tests pin it:
+   `packages/engine/src/projection.test.ts` ("a receipt before asOf never arrives"), and the
+   "realistic view is never better than ERP view" property in ADR-0008 is restricted to POs
+   promised on or after `asOf`.
+   Whether the demo tells the user about overdue POs is an **owner decision** (see "Open options"
+   below); the engine does not change until then.
 6. Demand is summed per `(material, date)` as floats; the score uses the **unrounded** minimum stock.
 7. `hidden = erpViewDate === null || erpViewDate > criticalDate`; `erpViewDate` is the ERP-view
    date of the **same kind** (stock-out if realistic is CRITICAL, else below-safety).
@@ -72,6 +87,25 @@ Two parity levels:
 - Negative / risks: we knowingly copy prototype quirks (item 5, number parsing of `1.234`);
   changing them later is a deliberate, versioned behaviour change (new golden files + ADR).
 - Follow-ups: P1-01 to P1-06, P1-10. Coverage gate 95 % lines/branches on `packages/engine`.
+
+### Open options for the owner: overdue POs (item 5, Q4)
+Not decided here; the owner picks one (or a combination) before P1-05 / P1-17 start. Options A and
+B keep parity; C and D change behaviour.
+- **A. Do nothing in Phase 1.** Pure parity. Risk: a planner may miss a material the ERP already
+  flags, and the realistic view can look better than the ERP view without any hint why.
+- **B. Inform, don't change the numbers (parity-safe).** The UI or report shows a note such as
+  "n open POs are overdue (promised before the as-of date) and are not counted in the ERP view".
+  Could be a report-level count computed outside the golden comparison (e.g. a new
+  `Report.overduePurchaseOrders` field or a UI-side count over the parsed POs), a demo hint in
+  P1-17 (summary area) and/or P1-18 (drawer, PO markers before `asOf`). A per-exception reason
+  code (e.g. `PO_OVERDUE`) in P1-05 would change `reasons`; it is parity-safe only if the P1-05
+  test that maps codes to the prototype's `TXT['en']` strings skips it (the golden comparison
+  covers no explanation text).
+- **C. Treat overdue POs as arriving on `asOf` in the ERP view** (realistic view unchanged or
+  `max(asOf, promised + p80)`). Removes the "less alarming" inversion. Breaks parity: needs a
+  versioned behaviour change, new golden files from a changed prototype and a new ADR.
+- **D. Surface ERP-only stock-outs** (materials skipped by step 5 although the ERP view has a
+  problem) as a separate list. Also a behaviour change beyond the prototype; same cost as C.
 
 ## References
 - Python prototype v0.2 in `reference/python-prototype/` (read 2026-09-25)

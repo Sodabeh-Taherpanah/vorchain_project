@@ -325,6 +325,13 @@ function projectStock(input: { onHand; demandByDay; receiptsByDay; asOf; horizon
 Supplier names are resolved in the UI (`suppliers` table), not in the engine, so the engine output
 stays free of display text.
 
+Known parity quirk (ADR-0005 item 5, backlog Q4): the projection window drops receipts dated
+before `asOf`. An overdue PO therefore never arrives in the ERP view, but its realistic date
+(`promised + p80`) can fall inside the window, so the realistic view can look *less* alarming than
+the ERP view, and a material with an ERP-only stock-out is skipped from the report. Kept for
+parity; whether the demo should mention overdue POs is an open owner decision (options in
+ADR-0005).
+
 ## 8. Deployment view
 
 ```mermaid
