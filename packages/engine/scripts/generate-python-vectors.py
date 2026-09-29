@@ -1,4 +1,4 @@
-"""Generate CPython reference vectors for the engine's date, rounding, statistics and projection code.
+"""Generate CPython reference vectors for the engine's dates, rounding, statistics, projection and ranking.
 
 The expected values come straight from the prototype (`add_workdays`, `workdays_between`,
 `percentile`, `supplier_stats`, `project`, `analyse`) and from CPython itself (`date.weekday`,
@@ -225,9 +225,18 @@ def check_points(points, on_hand, safety, erp_result, real_result):
         assert [first_short, first_below, min_stock] == [iso(result[0]), iso(result[1]), result[2]]
 
 
+def exception_rows(results):
+    """`analyse` results as compact rows: [materialId, severity, criticalDate, erpViewDate,
+    daysUntil, hidden, minProjectedStock, safetyStock, score], in the prototype's ranked order."""
+    return [[r["material_id"], r["severity"], r["critical_date"],
+             None if r["erp_view_date"] == "none" else r["erp_view_date"], r["days_until"],
+             r["hidden_risk"] == "yes", r["min_projected_stock"], r["safety_stock"], r["score"]]
+            for r in results]
+
+
 def run_analyse(tables, as_of, horizon):
-    """Runs the prototype's `analyse` on in-memory tables and records every `project` call it
-    makes (ERP view first, then realistic view, once per material row)."""
+    """Runs the prototype's `analyse` on in-memory tables. Returns every `project` call it makes
+    (ERP view first, then realistic view, once per material row) and its ranked exceptions."""
     calls = []
     real_project, real_load = shortage_radar.project, shortage_radar.load_table
 
@@ -264,7 +273,7 @@ def run_analyse(tables, as_of, horizon):
         candidates = [e["realistic"][0] or e["realistic"][1] for e in expected
                       if e["materialId"] == r["material_id"]]
         assert r["critical_date"] in candidates
-    return expected
+    return expected, exception_rows(results)
 
 
 def tables_payload(tables):
@@ -321,18 +330,67 @@ def projection_vectors():
     # reads are the same, so embedding it again would double this section without new engine
     # coverage. Loader parity for the German files is the parsers' job (P1-09, P1-10).
     tables, tables_de = load_sample("sample_data"), load_sample("sample_data_de")
-    expected = run_analyse(tables, AS_OF, 28)
+    expected, exceptions = run_analyse(tables, AS_OF, 28)
     assert tables_payload(tables_de) == tables_payload(tables)
-    assert run_analyse(tables_de, AS_OF, 28) == expected
+    assert run_analyse(tables_de, AS_OF, 28) == (expected, exceptions)
     cases = [{"name": "sample_data", "asOf": AS_OF.isoformat(), "horizonDays": 28,
-              "input": tables_payload(tables), "expected": expected}]
+              "input": tables_payload(tables), "expected": expected, "exceptions": exceptions}]
     for i in range(40):
         as_of = AS_OF + timedelta(days=rng.randint(0, 6))  # every weekday and weekend day
         horizon = rng.choice([1, 10, 28, rng.randint(0, 45)])
         tables = random_tables(as_of, horizon)
+        expected, exceptions = run_analyse(tables, as_of, horizon)
         cases.append({"name": f"random-{i}", "asOf": as_of.isoformat(), "horizonDays": horizon,
-                      "input": tables_payload(tables),
-                      "expected": run_analyse(tables, as_of, horizon)})
+                      "input": tables_payload(tables), "expected": expected,
+                      "exceptions": exceptions})
+    return cases
+
+
+def ranking_tables(as_of, horizon):
+    """A dataset shaped for the ranking, like the prototype's own test: each material has steady
+    weekday demand, stock for a few days and a PO promised inside the window from an on-time, a
+    late, a mixed or an unknown supplier. That mix gives hidden risks (ERP date later or none),
+    WARNINGs, fractional score terms, and repeated rows whose equal scores file order must
+    break."""
+    materials, demand, pos = [], [], []
+    for mid in rng.sample(["M1", "M2", "M3", "M4", "M5"], rng.randint(2, 4)):
+        rate = rng.choice([float(rng.randint(5, 30)), round(rng.uniform(1, 20), 1)])
+        cover = rng.randint(0, horizon)  # calendar days the stock lasts
+        weekdays = sum(1 for i in range(cover) if (as_of + timedelta(days=i)).weekday() < 5)
+        row = {"material_id": mid, "on_hand": rate * weekdays + rng.choice([0, 0, 7.5]),
+               "safety_stock": rng.choice([0.0, 0.5, rate * rng.randint(1, 3), 12.5])}
+        materials.append(row)
+        if rng.random() < 0.25:  # identical row: same score, so file order must break the tie
+            materials.append(dict(row))
+        demand += [{"material_id": mid, "date": day, "qty": rate}
+                   for day in (as_of + timedelta(days=i) for i in range(horizon)) if day.weekday() < 5]
+        for _ in range(rng.randint(0, 2)):
+            pos.append({"po_id": f"P{len(pos)}", "material_id": mid,
+                        "supplier_id": rng.choice(["S1", "S2", "S2", "S3", "SX"]),
+                        "qty": rate * rng.randint(2, 10),
+                        # around the day the stock runs out, so the supplier's delay decides
+                        "promised_date": as_of + timedelta(days=cover - rng.randint(-1, 3))})
+    history = []
+    for sid, delays in (("S1", [0, 0, 1]), ("S2", [3, 5, 8]), ("S3", [-1, 0, 4, 9, 12])):
+        for _ in range(rng.randint(1, 5)):
+            promised = realistic_date()
+            actual = promised + timedelta(days=rng.choice(delays))
+            history.append({"supplier_id": sid, "promised_date": promised, "actual_date": actual})
+    return {"materials": materials, "open_purchase_orders": pos, "demand": demand,
+            "supplier_history": history}
+
+
+def ranking_vectors():
+    """Exceptions, severity, hidden flag, score and order from `analyse` on datasets built for
+    the ranking. Only inputs and exceptions are stored (no daily points) to keep the file small."""
+    cases = []
+    for i in range(40):
+        as_of = AS_OF + timedelta(days=rng.randint(0, 6))
+        horizon = rng.choice([7, 10, 14, rng.randint(1, 21)])
+        tables = ranking_tables(as_of, horizon)
+        _, exceptions = run_analyse(tables, as_of, horizon)
+        cases.append({"name": f"ranking-{i}", "asOf": as_of.isoformat(), "horizonDays": horizon,
+                      "input": tables_payload(tables), "exceptions": exceptions})
     return cases
 
 
@@ -349,6 +407,7 @@ def main():
         # Generated after the older sections so their seeded values stay byte-identical.
         "project": project_vectors(),
         "projection": projection_vectors(),
+        "ranking": ranking_vectors(),
     }
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(payload) + "\n", encoding="utf-8")

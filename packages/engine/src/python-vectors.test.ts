@@ -11,19 +11,21 @@ import {
   type IsoDate,
 } from './dates.ts';
 import type { DailyQuantities } from './daily-quantities.ts';
+import { analyse } from './analyse.ts';
 import { materialId, poId, supplierId } from './ids.ts';
 import { demandByMaterial, projectionSeries, projectStock } from './projection.ts';
 import { buildReceipts } from './receipts.ts';
 import { pyRound } from './rounding.ts';
 import { computeSupplierStats, percentile, statsBySupplier } from './supplier-stats.ts';
-import type { AnalysisInput, DeliveryRecord } from './types.ts';
+import type { AnalysisInput, DeliveryRecord, Report } from './types.ts';
 
 /**
  * Parity with CPython on seeded, generated inputs (see scripts/generate-python-vectors.py). The
  * hand-written tables in dates.test.ts and rounding.test.ts document intent; these vectors guard
  * against cases nobody thought to write down (random dates across years 1..9999, random bit
  * patterns for rounding, random delivery histories with weekend dates and missing values, random
- * stock projections, plus the prototype sample dataset run through the prototype's `analyse`).
+ * stock projections, plus the prototype sample dataset and random datasets run through the
+ * prototype's `analyse`, down to the ranked exceptions).
  */
 
 function d(input: string): IsoDate {
@@ -70,7 +72,25 @@ interface ProjectVector {
   receiptsByDay: DayEntries;
   expected: ProjectResult;
 }
-/** Tables and, per material row, every `project` call the prototype's `analyse` made. */
+/**
+ * One ranked exception as the prototype's `analyse` returned it: `[materialId, severity,
+ * criticalDate, erpViewDate, daysUntil, hidden, minProjectedStock, safetyStock, score]`.
+ */
+type ExceptionRow = [
+  materialId: string,
+  severity: string,
+  criticalDate: string,
+  erpViewDate: string | null,
+  daysUntil: number,
+  hidden: boolean,
+  minProjectedStock: number,
+  safetyStock: number,
+  score: number,
+];
+/**
+ * Tables and, per material row, every `project` call the prototype's `analyse` made, plus the
+ * exceptions it returned.
+ */
 interface ProjectionVector {
   name: string;
   asOf: string;
@@ -97,6 +117,15 @@ interface ProjectionVector {
     /** `[date, demand, erpReceipts, realisticReceipts, erpStock, realisticStock]` per day. */
     points: [string, number, number, number, number, number][];
   }[];
+  exceptions: ExceptionRow[];
+}
+/** Datasets built for the ranking: tables and the exceptions `analyse` returned, nothing else. */
+interface RankingVector {
+  name: string;
+  asOf: string;
+  horizonDays: number;
+  input: ProjectionVector['input'];
+  exceptions: ExceptionRow[];
 }
 
 const addWorkdaysVectors = vectors.addWorkdays as AddWorkdaysVector[];
@@ -107,6 +136,11 @@ const percentileVectors = vectors.percentile as PercentileVector[];
 const supplierStatsVectors = vectors.supplierStats as SupplierStatsVector[];
 const projectVectors = vectors.project as ProjectVector[];
 const projectionVectors = vectors.projection as ProjectionVector[];
+const rankingVectors = vectors.ranking as RankingVector[];
+const analyseVectors: (ProjectionVector | RankingVector)[] = [
+  ...projectionVectors,
+  ...rankingVectors,
+];
 
 function toDeliveryRecord(row: SupplierStatsVector['history'][number]): DeliveryRecord {
   return {
@@ -129,7 +163,7 @@ function toProjectResult(result: ReturnType<typeof projectStock>): ProjectResult
   return [result.firstStockOut, result.firstBelowSafety, result.minStock];
 }
 
-function toAnalysisInput({ input }: ProjectionVector): AnalysisInput {
+function toAnalysisInput({ input }: Pick<ProjectionVector, 'input'>): AnalysisInput {
   return {
     materials: input.materials.map((m) => ({
       materialId: materialId(m.materialId),
@@ -156,6 +190,28 @@ function toAnalysisInput({ input }: ProjectionVector): AnalysisInput {
   };
 }
 
+function toExceptionRows(report: Report): ExceptionRow[] {
+  return report.exceptions.map((e) => [
+    e.materialId,
+    e.severity,
+    e.criticalDate,
+    e.erpViewDate,
+    e.daysUntil,
+    e.hidden,
+    e.minProjectedStock,
+    e.safetyStock,
+    e.score,
+  ]);
+}
+
+/** Adjacent exceptions of different materials with equal scores, where file order decides. */
+function tiesBetweenMaterials(rows: readonly ExceptionRow[]): number {
+  return rows.filter((row, i) => {
+    const previous = rows[i - 1];
+    return previous?.[8] === row[8] && previous[0] !== row[0];
+  }).length;
+}
+
 describe('CPython parity vectors', () => {
   it('cover every helper with a meaningful number of cases', () => {
     expect(addWorkdaysVectors.length).toBeGreaterThan(250);
@@ -168,6 +224,15 @@ describe('CPython parity vectors', () => {
     expect(projectionVectors.length).toBeGreaterThan(40);
     // sample_data_de loads to the same projection input; the generator asserts that instead.
     expect(projectionVectors.map((v) => v.name)).toContain('sample_data');
+    expect(rankingVectors.length).toBeGreaterThan(30);
+    // The ranking vectors exist to reach these cases; fail loudly if a regeneration loses them.
+    const rows = analyseVectors.flatMap((v) => v.exceptions);
+    expect(rows.filter((r) => r[1] === 'WARNING').length).toBeGreaterThan(20);
+    expect(rows.filter((r) => r[5] && r[3] === null).length).toBeGreaterThan(20);
+    expect(rows.filter((r) => r[5] && r[3] !== null).length).toBeGreaterThan(5);
+    expect(rows.filter((r) => !Number.isInteger(r[8])).length).toBeGreaterThan(20);
+    const ties = analyseVectors.reduce((n, v) => n + tiesBetweenMaterials(v.exceptions), 0);
+    expect(ties).toBeGreaterThan(5);
   });
 
   it('addWorkdays matches add_workdays', () => {
@@ -299,6 +364,24 @@ describe('CPython parity vectors', () => {
           ]);
           expect(points).toEqual(row.points);
         }
+      });
+    },
+  );
+
+  it.each(analyseVectors.map((v) => [v.name, v] as const))(
+    'analyse gives the same exceptions, severities, hidden flags, scores and order (%s)',
+    (_name, vector) => {
+      const report = analyse(toAnalysisInput(vector), {
+        asOf: d(vector.asOf),
+        horizonDays: vector.horizonDays,
+      });
+      // Exact equality (Object.is per number), in the prototype's ranked order.
+      expect(toExceptionRows(report)).toEqual(vector.exceptions);
+      const critical = vector.exceptions.filter((r) => r[1] === 'CRITICAL').length;
+      expect(report.summary).toEqual({
+        critical,
+        warning: vector.exceptions.length - critical,
+        hidden: vector.exceptions.filter((r) => r[5]).length,
       });
     },
   );
