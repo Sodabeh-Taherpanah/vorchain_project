@@ -9,6 +9,8 @@ engineStrict: true
 # false = never run: these packages ship prebuilt binaries via optionalDependencies,
 # so their postinstall scripts are not needed (and native compilation is not wanted in CI).
 allowBuilds:
+  '@parcel/watcher': false # next-intl message extractor; prebuilt binaries via optional deps
+  '@swc/core': false # next-intl message extractor; prebuilt binaries via optional deps
   lefthook: false # hooks are installed by the root `prepare` script instead
   unrs-resolver: false
 
