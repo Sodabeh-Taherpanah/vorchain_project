@@ -65,6 +65,39 @@ const ENGINE_PURITY_POLICY = {
 };
 
 /**
+ * The engine is deterministic (AGENTS.md §2, ADR-0005): `asOf` is an input, so nothing in
+ * `packages/engine/src` (tests included, which must be reproducible too) may read the clock or
+ * draw random numbers. `new Date(x)` with an argument stays allowed for the UTC helpers in
+ * `dates.ts`.
+ */
+const ENGINE_DETERMINISM_RULES = {
+  'no-restricted-properties': [
+    'error',
+    {
+      object: 'Date',
+      property: 'now',
+      message: 'The engine never reads the clock: pass `asOf` in (AGENTS.md §2).',
+    },
+    {
+      object: 'Math',
+      property: 'random',
+      message: 'The engine is deterministic: no randomness (use seeded fast-check in tests).',
+    },
+  ],
+  'no-restricted-syntax': [
+    'error',
+    {
+      selector: "NewExpression[callee.name='Date'][arguments.length=0]",
+      message: '`new Date()` reads the clock; the engine takes `asOf` as input (AGENTS.md §2).',
+    },
+    {
+      selector: "CallExpression[callee.name='Date']",
+      message: '`Date()` returns the current time as a string; the engine never reads the clock.',
+    },
+  ],
+};
+
+/**
  * @param {{ rootDir: string }} options `rootDir` is the absolute monorepo root.
  * @returns {import('eslint').Linter.Config[]}
  */
@@ -150,6 +183,11 @@ export function createEslintConfig({ rootDir }) {
           },
         ],
       },
+    },
+    {
+      name: 'vorchain/engine-determinism',
+      files: ['packages/engine/src/**/*.ts'],
+      rules: ENGINE_DETERMINISM_RULES,
     },
     {
       name: 'vorchain/tests',
