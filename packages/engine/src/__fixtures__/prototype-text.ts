@@ -21,8 +21,11 @@ function percent(rate: number): string {
   return `${String(pyRound(rate * 100))}%`;
 }
 
-/** The prototype's text for one reason. */
-export function reasonText(reason: Reason, name: SupplierNames): string {
+/**
+ * The prototype's text for one reason, or `null` for `PO_OVERDUE`: that code comes from ADR-0005
+ * option B and has no prototype counterpart, so the parity comparison skips it on purpose.
+ */
+export function reasonText(reason: Reason, name: SupplierNames): string | null {
   switch (reason.code) {
     case 'NO_OPEN_PO':
       return 'no open purchase order covers the demand';
@@ -40,6 +43,8 @@ export function reasonText(reason: Reason, name: SupplierNames): string {
       return `ERP view (promised dates) shows the problem only from ${reason.erpViewDate}: hidden risk`;
     case 'HIDDEN_ERP_NONE':
       return 'ERP view (promised dates) shows no problem at all: hidden risk';
+    case 'PO_OVERDUE':
+      return null;
     default:
       return reason satisfies never;
   }
@@ -62,12 +67,12 @@ export function actionText(action: Action, name: SupplierNames): string {
   }
 }
 
-/** `"; ".join(why)` and `"; ".join(action)`. */
+/** `"; ".join(why)` and `"; ".join(action)`, skipping `PO_OVERDUE` (see `reasonText`). */
 export function prototypeText(
   explanation: { readonly reasons: readonly Reason[]; readonly actions: readonly Action[] },
   name: SupplierNames,
 ): [why: string, nextAction: string] {
-  const why = explanation.reasons.map((r) => reasonText(r, name));
+  const why = explanation.reasons.flatMap((r) => reasonText(r, name) ?? []);
   const next = explanation.actions.map((a) => actionText(a, name));
   return [why.join('; '), next.join('; ')];
 }

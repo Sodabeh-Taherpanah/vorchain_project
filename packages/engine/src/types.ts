@@ -103,7 +103,8 @@ export interface SupplierStats {
 
 /**
  * Why a material is at risk: a code plus parameters, rendered by the UI via i18n (the engine holds
- * no display text). Produced by `explainShortage` in the prototype's order.
+ * no display text). Produced by `explainShortage` in the prototype's order, followed by any
+ * `PO_OVERDUE` entries (see `overdueReasons`).
  */
 export type Reason =
   /** The material has no open PO at all (prototype `no_po`). */
@@ -128,7 +129,19 @@ export type Reason =
   /** Hidden risk: the ERP view shows the same kind of problem only later (prototype `erp_later`). */
   | { readonly code: 'HIDDEN_ERP_LATER'; readonly erpViewDate: IsoDate }
   /** Hidden risk: the ERP view shows no problem of this kind at all (prototype `erp_none`). */
-  | { readonly code: 'HIDDEN_ERP_NONE' };
+  | { readonly code: 'HIDDEN_ERP_NONE' }
+  /**
+   * Not in the prototype (ADR-0005 item 5, option B): the PO is promised before `asOf`, so the ERP
+   * view never counts it. Information only; it never changes a number, severity, score or order.
+   */
+  | {
+      readonly code: 'PO_OVERDUE';
+      readonly poId: PoId;
+      readonly promisedDate: IsoDate;
+      readonly supplierId: SupplierId;
+      /** `addWorkdays(promisedDate, p80)`: the day the realistic view books the PO. */
+      readonly realisticDate: IsoDate;
+    };
 
 /**
  * What the planner should do next: a code plus parameters, rendered by the UI via i18n. Every
@@ -153,6 +166,29 @@ export type Action =
 export type ReasonCode = Reason['code'];
 /** Every action code; the UI checks its i18n messages against this list. */
 export type ActionCode = Action['code'];
+
+/**
+ * An open PO promised before `asOf` (ADR-0005 item 5, option B). The ERP view never counts it
+ * (the projection window starts at `asOf`); the realistic view counts it only if its P80-shifted
+ * date falls inside the window. Reported so the UI can say so; no number depends on it.
+ */
+export interface OverduePurchaseOrder {
+  readonly poId: PoId;
+  readonly materialId: MaterialId;
+  readonly supplierId: SupplierId;
+  readonly qty: number;
+  /** Before `asOf`. */
+  readonly promisedDate: IsoDate;
+  /** `addWorkdays(promisedDate, p80)`, the day the realistic view books the PO. */
+  readonly realisticDate: IsoDate;
+  /** `realisticDate` lies in `[asOf, asOf + horizonDays)`, so only the realistic view counts it. */
+  readonly countedInRealisticView: boolean;
+  /**
+   * The material has an exception in this report (it then carries a `PO_OVERDUE` reason). When
+   * `false`, the material may have dropped out of the report because of this PO.
+   */
+  readonly hasException: boolean;
+}
 
 /** One material that runs short in the realistic view within the horizon. */
 export interface ShortageException {
@@ -189,6 +225,8 @@ export interface Report {
     readonly critical: number;
     readonly warning: number;
     readonly hidden: number;
+    /** `overduePurchaseOrders.length` (option B, not in the prototype). */
+    readonly overduePurchaseOrders: number;
   };
   /** Sorted by `score` descending; ties keep materials-file order (stable sort). */
   readonly exceptions: readonly ShortageException[];
@@ -199,6 +237,12 @@ export interface Report {
    * history are absent.
    */
   readonly supplierStats: readonly SupplierStats[];
+  /**
+   * Open POs promised before `asOf`, in PO-file order (ADR-0005 item 5, option B; not in the
+   * prototype). Includes POs of materials without an exception, which is the only way to show a
+   * material that dropped out of the report because its overdue PO lands in the realistic view.
+   */
+  readonly overduePurchaseOrders: readonly OverduePurchaseOrder[];
 }
 
 /** Stock of one material on one day of the projection window, after receipts and demand. */

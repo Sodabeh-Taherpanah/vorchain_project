@@ -3,7 +3,9 @@ import { describe, expect, it } from 'vitest';
 
 import { analyse } from './analyse.ts';
 import { addDays, addWorkdays, diffDays, isWorkday, parseIsoDate, type IsoDate } from './dates.ts';
+import { explainShortage } from './explanations.ts';
 import { materialId, poId, supplierId } from './ids.ts';
+import { computeSupplierStats, statsBySupplier } from './supplier-stats.ts';
 import type {
   AnalysisInput,
   DeliveryRecord,
@@ -110,7 +112,12 @@ describe('analyse: ports of the Python tests', () => {
   it('test_reliable_supplier_no_alert: an on-time supplier raises nothing', () => {
     const report = analyse(baseDataset(0), { asOf: AS_OF, horizonDays: 10 });
     expect(report.exceptions).toEqual([]);
-    expect(report.summary).toEqual({ critical: 0, warning: 0, hidden: 0 });
+    expect(report.summary).toEqual({
+      critical: 0,
+      warning: 0,
+      hidden: 0,
+      overduePurchaseOrders: 0,
+    });
   });
 
   it('test_late_supplier_creates_hidden_risk: 1 CRITICAL, hidden, ERP view shows nothing', () => {
@@ -147,7 +154,12 @@ describe('analyse: ports of the Python tests', () => {
         actions: [{ code: 'EXPEDITE', poId: 'P1', before: '2026-10-12' }],
       },
     ]);
-    expect(report.summary).toEqual({ critical: 1, warning: 0, hidden: 1 });
+    expect(report.summary).toEqual({
+      critical: 1,
+      warning: 0,
+      hidden: 1,
+      overduePurchaseOrders: 0,
+    });
   });
 });
 
@@ -359,7 +371,12 @@ describe('analyse: ranking', () => {
       ['M1', -110, 79],
       ['M3', -110, 79],
     ]);
-    expect(report.summary).toEqual({ critical: 4, warning: 0, hidden: 0 });
+    expect(report.summary).toEqual({
+      critical: 4,
+      warning: 0,
+      hidden: 0,
+      overduePurchaseOrders: 0,
+    });
   });
 });
 
@@ -531,6 +548,62 @@ describe('analyse: properties', () => {
           );
           const noOrder = !data.orders.some((o) => o.id === e.materialId);
           expect(e.reasons[0]?.code === 'NO_OPEN_PO').toBe(noOrder);
+        }
+      }),
+    );
+  });
+
+  it('PO_OVERDUE: one per overdue PO of the material, after all prototype reasons', () => {
+    fc.assert(
+      fc.property(anyQuantities, ({ data, horizonDays }) => {
+        const full = toInput(data);
+        const report = analyse(full, { asOf: AS_OF, horizonDays });
+        for (const e of report.exceptions) {
+          const overdue = full.openPurchaseOrders.filter(
+            (o) => o.materialId === e.materialId && o.promisedDate < AS_OF,
+          );
+          const codes = e.reasons.map((r) => r.code);
+          const firstOverdue = codes.indexOf('PO_OVERDUE');
+          const trailing = firstOverdue === -1 ? [] : codes.slice(firstOverdue);
+          expect(trailing.every((c) => c === 'PO_OVERDUE')).toBe(true);
+          expect(trailing.length).toBe(overdue.length);
+          expect(e.reasons.flatMap((r) => (r.code === 'PO_OVERDUE' ? [r.poId] : []))).toEqual(
+            overdue.map((o) => o.poId),
+          );
+        }
+      }),
+    );
+  });
+
+  it('the overdue list holds exactly the POs promised before asOf, in PO-file order', () => {
+    fc.assert(
+      fc.property(anyQuantities, ({ data, horizonDays }) => {
+        const full = toInput(data);
+        const report = analyse(full, { asOf: AS_OF, horizonDays });
+        const flagged = new Set(report.exceptions.map((e) => e.materialId));
+        const overdue = full.openPurchaseOrders.filter((o) => o.promisedDate < AS_OF);
+        expect(report.overduePurchaseOrders.map((o) => [o.poId, o.hasException])).toEqual(
+          overdue.map((o) => [o.poId, flagged.has(o.materialId)]),
+        );
+        expect(report.summary.overduePurchaseOrders).toBe(overdue.length);
+      }),
+    );
+  });
+
+  it('overdue info changes nothing else: without PO_OVERDUE, reasons and actions are the rules', () => {
+    fc.assert(
+      fc.property(anyQuantities, ({ data, horizonDays }) => {
+        const full = toInput(data);
+        const stats = statsBySupplier(computeSupplierStats(full.supplierHistory));
+        for (const e of analyse(full, { asOf: AS_OF, horizonDays }).exceptions) {
+          const expected = explainShortage({
+            mainSupplierId: e.mainSupplierId,
+            purchaseOrders: full.openPurchaseOrders.filter((o) => o.materialId === e.materialId),
+            stats,
+            finding: e,
+          });
+          expect(e.reasons.filter((r) => r.code !== 'PO_OVERDUE')).toEqual(expected.reasons);
+          expect(e.actions).toEqual(expected.actions);
         }
       }),
     );

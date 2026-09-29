@@ -1,7 +1,8 @@
 /**
  * Structured explanations (spec §5.2 step 9), ported from the `why` / `action` block in `analyse`
  * in `reference/python-prototype/shortage_radar.py`. The engine returns codes and parameters only;
- * the UI renders them per locale (AGENTS.md §2.3, ADR-0005). No display text lives here.
+ * the UI renders them per locale (AGENTS.md §2.3, ADR-0005). No display text lives here. The
+ * `PO_OVERDUE` reason (not in the prototype) comes from `overdue.ts`.
  */
 import type { PoId, SupplierId } from './ids.ts';
 import type { ShortageFinding } from './ranking.ts';
@@ -15,6 +16,7 @@ export const REASON_CODES = [
   'PO_LATE',
   'HIDDEN_ERP_LATER',
   'HIDDEN_ERP_NONE',
+  'PO_OVERDUE',
 ] as const satisfies readonly ReasonCode[];
 
 /** Every action code, for exhaustiveness checks of i18n messages in the UI. */
@@ -124,6 +126,7 @@ export function explanationPoId(entry: Reason | Action): PoId | null {
   switch (entry.code) {
     case 'PO_AFTER_CRITICAL':
     case 'PO_LATE':
+    case 'PO_OVERDUE':
     case 'PULL_FORWARD':
     case 'EXPEDITE':
       return entry.poId;

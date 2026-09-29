@@ -127,6 +127,20 @@ interface ProjectionVector {
   exceptions: ExceptionRow[];
   /** The prototype's `[why, next_action]` per exception, English, in ranked order. */
   explanations: [why: string, nextAction: string][];
+  /**
+   * Open POs promised before `asOf` (ADR-0005 option B). The prototype has no such output: the
+   * generator computes them with the prototype's `supplier_stats` and `add_workdays`.
+   */
+  overduePurchaseOrders: {
+    poId: string;
+    materialId: string;
+    supplierId: string;
+    qty: number;
+    promisedDate: string;
+    realisticDate: string;
+    countedInRealisticView: boolean;
+    hasException: boolean;
+  }[];
 }
 /**
  * Datasets built for the ranking (and the ADR-0005 overdue example): tables, the exceptions
@@ -139,6 +153,7 @@ interface RankingVector {
   input: ProjectionVector['input'];
   exceptions: ExceptionRow[];
   explanations: ProjectionVector['explanations'];
+  overduePurchaseOrders: ProjectionVector['overduePurchaseOrders'];
 }
 
 const addWorkdaysVectors = vectors.addWorkdays as AddWorkdaysVector[];
@@ -270,6 +285,13 @@ describe('CPython parity vectors', () => {
     expect(count(next, 'Increase order quantity')).toBeGreaterThan(10);
     // Late but arriving before the critical date: a PO_LATE reason without EXPEDITE.
     expect(count(why, 'working day(s) late')).toBeGreaterThan(count(next, 'Expedite'));
+    // Overdue POs (option B) of every kind: with and without an exception, counted or not.
+    const overdue = analyseVectors.flatMap((v) => v.overduePurchaseOrders);
+    expect(overdue.filter((o) => o.hasException).length).toBeGreaterThan(20);
+    expect(overdue.filter((o) => !o.hasException).length).toBeGreaterThan(20);
+    expect(overdue.filter((o) => o.countedInRealisticView).length).toBeGreaterThan(10);
+    expect(overdue.filter((o) => !o.countedInRealisticView).length).toBeGreaterThan(20);
+    expect(overdueVectors.map((v) => v.name)).toEqual(['adr-0005-overdue-example']);
   });
 
   it('addWorkdays matches add_workdays', () => {
@@ -414,14 +436,37 @@ describe('CPython parity vectors', () => {
       });
       // Exact equality (Object.is per number), in the prototype's ranked order.
       expect(toExceptionRows(report)).toEqual(vector.exceptions);
+      // Rendered with the prototype's English templates. PO_OVERDUE (ADR-0005 option B) has no
+      // prototype counterpart, so prototypeText skips it explicitly; everything else must match.
       const names = supplierNames(toAnalysisInput(vector).suppliers);
       expect(report.exceptions.map((e) => prototypeText(e, names))).toEqual(vector.explanations);
       const critical = vector.exceptions.filter((r) => r[1] === 'CRITICAL').length;
-      expect(report.summary).toEqual({
+      // summary.overduePurchaseOrders is option B, not prototype output: checked in the next test.
+      expect({ ...report.summary, overduePurchaseOrders: undefined }).toEqual({
         critical,
         warning: vector.exceptions.length - critical,
         hidden: vector.exceptions.filter((r) => r[5]).length,
+        overduePurchaseOrders: undefined,
       });
+    },
+  );
+
+  it.each(analyseVectors.map((v) => [v.name, v] as const))(
+    'analyse reports the overdue POs Python computes from the same input (option B, %s)',
+    (_name, vector) => {
+      const report = analyse(toAnalysisInput(vector), {
+        asOf: d(vector.asOf),
+        horizonDays: vector.horizonDays,
+      });
+      expect(report.overduePurchaseOrders).toEqual(vector.overduePurchaseOrders);
+      expect(report.summary.overduePurchaseOrders).toBe(vector.overduePurchaseOrders.length);
+      // PO_OVERDUE sits on exactly the exceptions of materials with an overdue PO, one per PO.
+      for (const e of report.exceptions) {
+        const expected = vector.overduePurchaseOrders.filter((o) => o.materialId === e.materialId);
+        expect(e.reasons.filter((r) => r.code === 'PO_OVERDUE').map((r) => r.poId)).toEqual(
+          expected.map((o) => o.poId),
+        );
+      }
     },
   );
 });

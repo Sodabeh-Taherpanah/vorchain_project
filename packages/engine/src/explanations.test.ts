@@ -291,6 +291,15 @@ describe('explanation codes', () => {
         before: CRITICAL,
       }),
     ).toBe('P8');
+    expect(
+      explanationPoId({
+        code: 'PO_OVERDUE',
+        poId: poId('P9'),
+        promisedDate: d('2026-10-02'),
+        supplierId: supplierId('S'),
+        realisticDate: d('2026-10-06'),
+      }),
+    ).toBe('P9');
   });
 
   it('an exhaustive switch over the codes fails to compile when a case is missing', () => {

@@ -1,11 +1,14 @@
 /**
  * Public entry of the engine: one analysis run (spec §5.2), ported from `analyse` in
  * `reference/python-prototype/shortage_radar.py`, including the explanations (`reasons`, `actions`).
+ * Beyond the prototype, it reports overdue POs (ADR-0005 item 5, option B) without letting them
+ * change any number.
  */
 import { diffDays } from './dates.ts';
 import type { DailyQuantities } from './daily-quantities.ts';
 import { explainShortage } from './explanations.ts';
 import type { MaterialId } from './ids.ts';
+import { findOverduePurchaseOrders, overdueReasons } from './overdue.ts';
 import {
   demandByMaterial,
   projectionWindow,
@@ -68,12 +71,19 @@ export function analyse(input: AnalysisInput, options: AnalysisOptions): Report 
       return exception === null ? [] : [exception];
     }),
   );
+  const overduePurchaseOrders = findOverduePurchaseOrders(
+    input.openPurchaseOrders,
+    stats,
+    options,
+    new Set(exceptions.map((e) => e.materialId)),
+  );
   return {
     asOf: options.asOf,
     horizonDays: options.horizonDays,
-    summary: summarise(exceptions),
+    summary: { ...summarise(exceptions), overduePurchaseOrders: overduePurchaseOrders.length },
     exceptions,
     supplierStats,
+    overduePurchaseOrders,
   };
 }
 
@@ -97,9 +107,10 @@ function materialException(
   if (finding === null) return null;
 
   const daysUntil = diffDays(options.asOf, finding.criticalDate);
+  const orders = purchaseOrders.get(material.materialId) ?? [];
   const { reasons, actions } = explainShortage({
     mainSupplierId: material.mainSupplierId,
-    purchaseOrders: purchaseOrders.get(material.materialId) ?? [],
+    purchaseOrders: orders,
     stats,
     finding,
   });
@@ -122,7 +133,8 @@ function materialException(
       hidden: finding.hidden,
       severity: finding.severity,
     }),
-    reasons,
+    // Option B: overdue POs trail the prototype's reasons, which stay an unchanged prefix.
+    reasons: [...reasons, ...overdueReasons(orders, stats, options.asOf)],
     actions,
   };
 }
@@ -139,7 +151,9 @@ function purchaseOrdersByMaterial(
   return byMaterial;
 }
 
-function summarise(exceptions: readonly ShortageException[]): Report['summary'] {
+function summarise(
+  exceptions: readonly ShortageException[],
+): Omit<Report['summary'], 'overduePurchaseOrders'> {
   const critical = exceptions.filter((e) => e.severity === 'CRITICAL').length;
   return {
     critical,
