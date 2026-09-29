@@ -1,7 +1,7 @@
 # 0004. Next.js App Router with static generation and next-intl
 
 - Status: accepted
-- Date: 2026-09-25
+- Date: 2026-09-25 (amended 2026-09-29: locale via `next/root-params` instead of `setRequestLocale`)
 - Deciders: Sodabeh Taherpanah
 
 ## Context and problem
@@ -33,9 +33,17 @@ We choose **option 1**.
   16 the file is `proxy.ts`). German slugs for German pages (`/de/kontakt`, `/de/datenschutz`,
   `/de/impressum`) via next-intl `pathnames`, English equivalents (`/en/contact`, `/en/privacy`,
   `/en/legal-notice`).
-- Every page is statically generated (`generateStaticParams` returns both locales; call
-  `setRequestLocale`). `/demo` is a static shell with a client component island; the worker loads
-  on demand.
+- Every page is statically generated (`generateStaticParams` in the `[locale]` root layout returns
+  both locales, `dynamicParams = false`). The next-intl request config reads the locale from
+  `next/root-params` (default since Next.js 16.3); next-intl now calls `setRequestLocale` a legacy
+  API, so layouts and pages do not call it (amended 2026-09-29, P1-12). `/demo` is a static shell
+  with a client component island; the worker loads on demand.
+- No locale cookie (`localeCookie: false`, amended 2026-09-29, P1-12): the URL prefix already
+  carries the locale, and Phase 1 sets no cookies (AGENTS.md §5). `/` and unprefixed paths still
+  pick the locale from `Accept-Language`, falling back to `de`. If a language switcher should later
+  remember an explicit choice for `/`, re-enable the cookie and list it in the Datenschutzerklärung.
+- The proxy's `Link` response header announces the `de`/`en` alternates and an unprefixed
+  `x-default` (which redirects by `Accept-Language`). P1-23 adds the same alternates to `<head>`.
 - Messages in `apps/web/messages/{de,en}.json`. A unit test asserts both files have identical key
   sets. Engine `Reason`/`Action` codes map to message keys `demo.reason.<CODE>` / `demo.action.<CODE>`.
 - `output: 'standalone'` is set so the same build can run in a container (ADR-0006).
@@ -47,6 +55,18 @@ We choose **option 1**.
 - Negative / risks: next-intl and Next.js minor releases occasionally change APIs (middleware was
   renamed to proxy in Next 16); pin via lockfile and let Dependabot/Renovate PRs run the full e2e
   suite.
+- Known upstream bug ([vercel/next.js#94745](https://github.com/vercel/next.js/issues/94745), open
+  as of 2026-09-29, reproduced with `next@16.3.6`): when the server is **bound** to a loopback IP
+  (`next start -H 127.0.0.1`, or `HOSTNAME=127.0.0.1` / `::1` for the standalone `server.js`), the
+  router builds its base URL from that literal IP while `NextURL` normalizes loopback hosts to
+  `localhost`. The rewrite from the proxy (`/en/contact` -> `/en/kontakt`) then looks external,
+  Next proxies it over the network, the proxy runs again and answers
+  `307 /en/contact`: an endless loop on `/en/contact`, `/en/legal-notice` and `/en/privacy`
+  (a `500 EPROTO` behind a TLS proxy that sends `X-Forwarded-Proto: https`). The `Host` header does
+  not matter; only the bind address does. Binding to `0.0.0.0`, `localhost` or omitting `-H` works.
+  So: Playwright binds to `localhost`, and the container image (P1-28) must keep
+  `HOSTNAME=0.0.0.0` and put any loopback-only restriction in the network layer, not in `-H`.
+  The container smoke test in P1-28 must request `/en/contact`, not only `/de`.
 - Follow-ups: P1-12 and P1-13 build the shell; P1-23 adds SEO primitives.
 
 ## References

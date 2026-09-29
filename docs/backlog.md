@@ -490,7 +490,7 @@ order.
 ---
 
 ## P1-12: Web: next-intl routing, route stubs, static generation
-- [ ] Done
+- [x] Done
 - **Owner:** builder
 - **Why:** every page is bilingual with `de` default; setting routing up once avoids retrofitting
   (ADR-0004).
@@ -907,6 +907,9 @@ order.
   6. README: live link, status badges, architecture/ADR links; architecture §8 matches reality.
 - **Test plan:** dry run with a `0.x` release to production; rollback rehearsal documented in the
   runbook; `docker run` locally.
+- **Note (QA, P1-12):** start the standalone server with `HOSTNAME=0.0.0.0`, never a loopback IP
+  such as `127.0.0.1`: Next.js bug #94745 turns the localized-slug rewrites into a 307 loop
+  (ADR-0004, Consequences). The container smoke test also requests `/en/contact`.
 - **Packages:** `.github/`, `apps/web` (Dockerfile), `docs/runbooks/`, `README.md`
 - **Branch:** `ci/production-release-deploy`
 - **Commits:**

@@ -1,0 +1,25 @@
+{
+  "metadata": {
+    "title": "Vorchain: Materialengpässe erkennen, die Ihr ERP nicht zeigt",
+    "description": "Vorchain rechnet mit der echten Lieferverspätung Ihrer Lieferanten und warnt vor Engpässen, bevor Ihr ERP sie zeigt. Ihre Daten verlassen nie Ihren Browser."
+  },
+  "home": {
+    "title": "Materialengpässe erkennen, die Ihr ERP nicht zeigt",
+    "tagline": "Vorchain rechnet mit der echten Verspätung Ihrer Lieferanten statt mit dem zugesagten Termin."
+  },
+  "demo": {
+    "title": "Interaktive Demo"
+  },
+  "contact": {
+    "title": "Kontakt"
+  },
+  "legalNotice": {
+    "title": "Impressum"
+  },
+  "privacy": {
+    "title": "Datenschutzerklärung"
+  },
+  "stub": {
+    "comingSoon": "Diese Seite ist in Arbeit und folgt in Kürze."
+  }
+}

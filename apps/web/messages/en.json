@@ -1,0 +1,25 @@
+{
+  "metadata": {
+    "title": "Vorchain: see the material shortages your ERP does not show",
+    "description": "Vorchain plans with your suppliers' real delivery delays and warns you about shortages before your ERP shows them. Your data never leaves your browser."
+  },
+  "home": {
+    "title": "See the material shortages your ERP does not show",
+    "tagline": "Vorchain plans with your suppliers' real delays instead of their promised dates."
+  },
+  "demo": {
+    "title": "Interactive demo"
+  },
+  "contact": {
+    "title": "Contact"
+  },
+  "legalNotice": {
+    "title": "Legal notice"
+  },
+  "privacy": {
+    "title": "Privacy policy"
+  },
+  "stub": {
+    "comingSoon": "This page is a work in progress and will follow soon."
+  }
+}
