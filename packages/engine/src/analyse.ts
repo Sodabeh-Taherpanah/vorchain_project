@@ -1,11 +1,14 @@
 /**
  * Public entry of the engine: one analysis run (spec §5.2), ported from `analyse` in
- * `reference/python-prototype/shortage_radar.py`. Explanations (`reasons`, `actions`) follow in
- * P1-05; until then they are empty.
+ * `reference/python-prototype/shortage_radar.py`, including the explanations (`reasons`, `actions`).
+ * Beyond the prototype, it reports overdue POs (ADR-0005 item 5, option B) without letting them
+ * change any number.
  */
 import { diffDays } from './dates.ts';
 import type { DailyQuantities } from './daily-quantities.ts';
+import { explainShortage } from './explanations.ts';
 import type { MaterialId } from './ids.ts';
+import { findOverduePurchaseOrders, overdueReasons } from './overdue.ts';
 import {
   demandByMaterial,
   projectionWindow,
@@ -13,13 +16,14 @@ import {
   type ProjectionWindow,
 } from './projection.ts';
 import { detectShortage, rankByScore, shortageScore } from './ranking.ts';
-import { buildReceipts, type ReceiptSchedule } from './receipts.ts';
+import { buildReceipts, type ReceiptSchedule, type SupplierStatsMap } from './receipts.ts';
 import { pyRound } from './rounding.ts';
 import { computeSupplierStats, statsBySupplier } from './supplier-stats.ts';
 import type {
   AnalysisInput,
   AnalysisOptions,
   Material,
+  PurchaseOrder,
   Report,
   ShortageException,
 } from './types.ts';
@@ -32,6 +36,9 @@ interface AnalysisContext {
   readonly window: ProjectionWindow;
   readonly demand: ReadonlyMap<MaterialId, DailyQuantities>;
   readonly receipts: ReadonlyMap<MaterialId, ReceiptSchedule>;
+  readonly stats: SupplierStatsMap;
+  /** Open POs per material in PO-file order, for the explanations. */
+  readonly purchaseOrders: ReadonlyMap<MaterialId, readonly PurchaseOrder[]>;
 }
 
 /**
@@ -48,12 +55,15 @@ interface AnalysisContext {
  */
 export function analyse(input: AnalysisInput, options: AnalysisOptions): Report {
   const supplierStats = computeSupplierStats(input.supplierHistory, options);
+  const stats = statsBySupplier(supplierStats);
   const context: AnalysisContext = {
     options,
     // Built once: rebuilding the window per projection dominated the run time at 20k materials.
     window: projectionWindow(options.asOf, options.horizonDays),
     demand: demandByMaterial(input.demand),
-    receipts: buildReceipts(input.openPurchaseOrders, statsBySupplier(supplierStats)),
+    receipts: buildReceipts(input.openPurchaseOrders, stats),
+    stats,
+    purchaseOrders: purchaseOrdersByMaterial(input.openPurchaseOrders),
   };
   const exceptions = rankByScore(
     input.materials.flatMap((material) => {
@@ -61,19 +71,26 @@ export function analyse(input: AnalysisInput, options: AnalysisOptions): Report 
       return exception === null ? [] : [exception];
     }),
   );
+  const overduePurchaseOrders = findOverduePurchaseOrders(
+    input.openPurchaseOrders,
+    stats,
+    options,
+    new Set(exceptions.map((e) => e.materialId)),
+  );
   return {
     asOf: options.asOf,
     horizonDays: options.horizonDays,
-    summary: summarise(exceptions),
+    summary: { ...summarise(exceptions), overduePurchaseOrders: overduePurchaseOrders.length },
     exceptions,
     supplierStats,
+    overduePurchaseOrders,
   };
 }
 
 /** The exception for one material row, or `null` if its realistic view shows no problem. */
 function materialException(
   material: Material,
-  { options, window, demand, receipts }: AnalysisContext,
+  { options, window, demand, receipts, stats, purchaseOrders }: AnalysisContext,
 ): ShortageException | null {
   const schedule = receipts.get(material.materialId);
   const view = {
@@ -90,6 +107,13 @@ function materialException(
   if (finding === null) return null;
 
   const daysUntil = diffDays(options.asOf, finding.criticalDate);
+  const orders = purchaseOrders.get(material.materialId) ?? [];
+  const { reasons, actions } = explainShortage({
+    mainSupplierId: material.mainSupplierId,
+    purchaseOrders: orders,
+    stats,
+    finding,
+  });
   return {
     materialId: material.materialId,
     description: material.description,
@@ -109,12 +133,27 @@ function materialException(
       hidden: finding.hidden,
       severity: finding.severity,
     }),
-    reasons: [],
-    actions: [],
+    // Option B: overdue POs trail the prototype's reasons, which stay an unchanged prefix.
+    reasons: [...reasons, ...overdueReasons(orders, stats, options.asOf)],
+    actions,
   };
 }
 
-function summarise(exceptions: readonly ShortageException[]): Report['summary'] {
+function purchaseOrdersByMaterial(
+  purchaseOrders: readonly PurchaseOrder[],
+): ReadonlyMap<MaterialId, readonly PurchaseOrder[]> {
+  const byMaterial = new Map<MaterialId, PurchaseOrder[]>();
+  for (const order of purchaseOrders) {
+    const orders = byMaterial.get(order.materialId);
+    if (orders === undefined) byMaterial.set(order.materialId, [order]);
+    else orders.push(order);
+  }
+  return byMaterial;
+}
+
+function summarise(
+  exceptions: readonly ShortageException[],
+): Omit<Report['summary'], 'overduePurchaseOrders'> {
   const critical = exceptions.filter((e) => e.severity === 'CRITICAL').length;
   return {
     critical,

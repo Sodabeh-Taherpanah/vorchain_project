@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
+import { prototypeText, supplierNames } from './__fixtures__/prototype-text.ts';
 import vectors from './__fixtures__/python-vectors.json' with { type: 'json' };
 import {
   addDays,
@@ -25,7 +26,7 @@ import type { AnalysisInput, DeliveryRecord, Report } from './types.ts';
  * against cases nobody thought to write down (random dates across years 1..9999, random bit
  * patterns for rounding, random delivery histories with weekend dates and missing values, random
  * stock projections, plus the prototype sample dataset and random datasets run through the
- * prototype's `analyse`, down to the ranked exceptions).
+ * prototype's `analyse`, down to the ranked exceptions and their English why / next-action text).
  */
 
 function d(input: string): IsoDate {
@@ -96,7 +97,12 @@ interface ProjectionVector {
   asOf: string;
   horizonDays: number;
   input: {
-    materials: { materialId: string; onHand: number; safetyStock: number }[];
+    materials: {
+      materialId: string;
+      onHand: number;
+      safetyStock: number;
+      mainSupplierId: string | null;
+    }[];
     openPurchaseOrders: {
       poId: string;
       materialId: string;
@@ -106,6 +112,7 @@ interface ProjectionVector {
     }[];
     demand: { materialId: string; date: string; qty: number }[];
     supplierHistory: SupplierStatsVector['history'];
+    suppliers: { supplierId: string; name: string }[];
   };
   expected: {
     materialId: string;
@@ -118,14 +125,35 @@ interface ProjectionVector {
     points: [string, number, number, number, number, number][];
   }[];
   exceptions: ExceptionRow[];
+  /** The prototype's `[why, next_action]` per exception, English, in ranked order. */
+  explanations: [why: string, nextAction: string][];
+  /**
+   * Open POs promised before `asOf` (ADR-0005 option B). The prototype has no such output: the
+   * generator computes them with the prototype's `supplier_stats` and `add_workdays`.
+   */
+  overduePurchaseOrders: {
+    poId: string;
+    materialId: string;
+    supplierId: string;
+    qty: number;
+    promisedDate: string;
+    realisticDate: string;
+    countedInRealisticView: boolean;
+    hasException: boolean;
+  }[];
 }
-/** Datasets built for the ranking: tables and the exceptions `analyse` returned, nothing else. */
+/**
+ * Datasets built for the ranking (and the ADR-0005 overdue example): tables, the exceptions
+ * `analyse` returned and their explanations, nothing else.
+ */
 interface RankingVector {
   name: string;
   asOf: string;
   horizonDays: number;
   input: ProjectionVector['input'];
   exceptions: ExceptionRow[];
+  explanations: ProjectionVector['explanations'];
+  overduePurchaseOrders: ProjectionVector['overduePurchaseOrders'];
 }
 
 const addWorkdaysVectors = vectors.addWorkdays as AddWorkdaysVector[];
@@ -135,11 +163,15 @@ const roundVectors = vectors.round as RoundVector[];
 const percentileVectors = vectors.percentile as PercentileVector[];
 const supplierStatsVectors = vectors.supplierStats as SupplierStatsVector[];
 const projectVectors = vectors.project as ProjectVector[];
-const projectionVectors = vectors.projection as ProjectionVector[];
-const rankingVectors = vectors.ranking as RankingVector[];
+// TypeScript infers the JSON's datasets as a union of differently shaped rows (e.g. with and without
+// a main supplier), which a direct cast rejects; the shape is fixed by the generator script.
+const projectionVectors = vectors.projection as unknown as ProjectionVector[];
+const rankingVectors = vectors.ranking as unknown as RankingVector[];
+const overdueVectors = vectors.overdue as unknown as RankingVector[];
 const analyseVectors: (ProjectionVector | RankingVector)[] = [
   ...projectionVectors,
   ...rankingVectors,
+  ...overdueVectors,
 ];
 
 function toDeliveryRecord(row: SupplierStatsVector['history'][number]): DeliveryRecord {
@@ -168,7 +200,7 @@ function toAnalysisInput({ input }: Pick<ProjectionVector, 'input'>): AnalysisIn
     materials: input.materials.map((m) => ({
       materialId: materialId(m.materialId),
       description: '',
-      mainSupplierId: null,
+      mainSupplierId: m.mainSupplierId === null ? null : supplierId(m.mainSupplierId),
       onHand: m.onHand,
       safetyStock: m.safetyStock,
       unit: null,
@@ -186,7 +218,7 @@ function toAnalysisInput({ input }: Pick<ProjectionVector, 'input'>): AnalysisIn
       qty: line.qty,
     })),
     supplierHistory: input.supplierHistory.map(toDeliveryRecord),
-    suppliers: [],
+    suppliers: input.suppliers.map((s) => ({ supplierId: supplierId(s.supplierId), name: s.name })),
   };
 }
 
@@ -233,6 +265,78 @@ describe('CPython parity vectors', () => {
     expect(rows.filter((r) => !Number.isInteger(r[8])).length).toBeGreaterThan(20);
     const ties = analyseVectors.reduce((n, v) => n + tiesBetweenMaterials(v.exceptions), 0);
     expect(ties).toBeGreaterThan(5);
+    // Every explanation rule, including the combinations the backlog names, is reached.
+    const texts = analyseVectors.flatMap((v) => v.explanations);
+    const why = texts.flatMap(([w]) => w.split('; '));
+    const next = texts.flatMap(([, n]) => n.split('; '));
+    const count = (parts: string[], fragment: string) =>
+      parts.filter((p) => p.includes(fragment)).length;
+    expect(texts.length).toBe(rows.length);
+    expect(count(why, 'no open purchase order')).toBeGreaterThan(20);
+    expect(count(why, 'already AFTER')).toBeGreaterThan(20);
+    expect(count(why, 'working day(s) late')).toBeGreaterThan(20);
+    expect(count(why, 'low confidence')).toBeGreaterThan(10);
+    expect(count(why, 'problem only from')).toBeGreaterThan(5);
+    expect(count(why, 'no problem at all')).toBeGreaterThan(20);
+    expect(count(next, 'Place an order now with ?')).toBeGreaterThan(5);
+    expect(count(next, 'Place an order now with')).toBeGreaterThan(20);
+    expect(count(next, 'pull')).toBeGreaterThan(20);
+    expect(count(next, 'Expedite')).toBeGreaterThan(20);
+    expect(count(next, 'Increase order quantity')).toBeGreaterThan(10);
+    // Late but arriving before the critical date: a PO_LATE reason without EXPEDITE.
+    expect(count(why, 'working day(s) late')).toBeGreaterThan(count(next, 'Expedite'));
+    // Overdue POs (option B) of every kind: with and without an exception, counted or not.
+    const overdue = analyseVectors.flatMap((v) => v.overduePurchaseOrders);
+    expect(overdue.filter((o) => o.hasException).length).toBeGreaterThan(20);
+    expect(overdue.filter((o) => !o.hasException).length).toBeGreaterThan(20);
+    expect(overdue.filter((o) => o.countedInRealisticView).length).toBeGreaterThan(10);
+    expect(overdue.filter((o) => !o.countedInRealisticView).length).toBeGreaterThan(20);
+    expect(overdueVectors.map((v) => v.name)).toEqual(['adr-0005-overdue-example']);
+  });
+
+  it('analyse vectors have exactly the fields their interfaces declare (the casts are unchecked)', () => {
+    // `as unknown as` skips the compile-time check, so a renamed or missing fixture field would
+    // only show up as a confusing failure (or an `undefined` compared with `undefined`) later.
+    const keys = (row: object) => Object.keys(row).sort();
+    const expectKeys = (rows: readonly object[], expected: string[]) => {
+      for (const row of rows) expect(keys(row)).toEqual([...expected].sort());
+    };
+    const top = ['name', 'asOf', 'horizonDays', 'input', 'exceptions', 'explanations'];
+    expectKeys(rankingVectors, [...top, 'overduePurchaseOrders']);
+    expectKeys(overdueVectors, [...top, 'overduePurchaseOrders']);
+    expectKeys(projectionVectors, [...top, 'overduePurchaseOrders', 'expected']);
+    for (const v of analyseVectors) {
+      expectKeys(
+        [v.input],
+        ['materials', 'openPurchaseOrders', 'demand', 'supplierHistory', 'suppliers'],
+      );
+      expectKeys(v.input.materials, ['materialId', 'onHand', 'safetyStock', 'mainSupplierId']);
+      expectKeys(v.input.suppliers, ['supplierId', 'name']);
+      expectKeys(v.overduePurchaseOrders, [
+        'poId',
+        'materialId',
+        'supplierId',
+        'qty',
+        'promisedDate',
+        'realisticDate',
+        'countedInRealisticView',
+        'hasException',
+      ]);
+      for (const m of v.input.materials) {
+        expect(m.mainSupplierId === null || typeof m.mainSupplierId === 'string').toBe(true);
+      }
+      for (const o of v.overduePurchaseOrders) {
+        expect([typeof o.countedInRealisticView, typeof o.hasException]).toEqual([
+          'boolean',
+          'boolean',
+        ]);
+        expect(o.promisedDate < v.asOf).toBe(true);
+      }
+      expect(v.explanations).toHaveLength(v.exceptions.length);
+      for (const pair of v.explanations) {
+        expect(pair.map((text) => typeof text)).toEqual(['string', 'string']);
+      }
+    }
   });
 
   it('addWorkdays matches add_workdays', () => {
@@ -377,12 +481,37 @@ describe('CPython parity vectors', () => {
       });
       // Exact equality (Object.is per number), in the prototype's ranked order.
       expect(toExceptionRows(report)).toEqual(vector.exceptions);
+      // Rendered with the prototype's English templates. PO_OVERDUE (ADR-0005 option B) has no
+      // prototype counterpart, so prototypeText skips it explicitly; everything else must match.
+      const names = supplierNames(toAnalysisInput(vector).suppliers);
+      expect(report.exceptions.map((e) => prototypeText(e, names))).toEqual(vector.explanations);
       const critical = vector.exceptions.filter((r) => r[1] === 'CRITICAL').length;
-      expect(report.summary).toEqual({
+      // summary.overduePurchaseOrders is option B, not prototype output: checked in the next test.
+      expect({ ...report.summary, overduePurchaseOrders: undefined }).toEqual({
         critical,
         warning: vector.exceptions.length - critical,
         hidden: vector.exceptions.filter((r) => r[5]).length,
+        overduePurchaseOrders: undefined,
       });
+    },
+  );
+
+  it.each(analyseVectors.map((v) => [v.name, v] as const))(
+    'analyse reports the overdue POs Python computes from the same input (option B, %s)',
+    (_name, vector) => {
+      const report = analyse(toAnalysisInput(vector), {
+        asOf: d(vector.asOf),
+        horizonDays: vector.horizonDays,
+      });
+      expect(report.overduePurchaseOrders).toEqual(vector.overduePurchaseOrders);
+      expect(report.summary.overduePurchaseOrders).toBe(vector.overduePurchaseOrders.length);
+      // PO_OVERDUE sits on exactly the exceptions of materials with an overdue PO, one per PO.
+      for (const e of report.exceptions) {
+        const expected = vector.overduePurchaseOrders.filter((o) => o.materialId === e.materialId);
+        expect(e.reasons.filter((r) => r.code === 'PO_OVERDUE').map((r) => r.poId)).toEqual(
+          expected.map((o) => o.poId),
+        );
+      }
     },
   );
 });

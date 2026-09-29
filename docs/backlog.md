@@ -264,17 +264,19 @@ order.
   `shortageScore` and `rankByScore`; `analyse.ts` wires them up. The CRITICAL property holds as
   `minProjectedStock < 0` only for whole quantities: with fractional ones `pyRound(-0.4)` is `0`,
   so the property test checks `<= 0` there (as the prototype does). An overdue PO can make the ERP
-  view look worse than the realistic view; the prototype then raises nothing, and so do we
-  (ADR-0005 item 5). Performance (P1-03 QA finding): `projectionWindow` builds the window once per
-  run and `projectOverWindow` reuses it; 20k materials, 100k demand rows, 30k POs, 90 days went
-  from ~3.6 s to ~0.35 s. `analyse.perf.test.ts` guards this with a call-count check and a 3 s
+  view look worse than the realistic view; the prototype then raises no exception, and neither do
+  we (ADR-0005 item 5). Since P1-05 (option B) such a PO is listed in
+  `Report.overduePurchaseOrders` (`hasException: false`), without changing any number.
+  Performance (P1-03 QA finding): `projectionWindow` builds the window once per run and
+  `projectOverWindow` reuses it; 20k materials, 100k demand rows, 30k POs, 90 days went from
+  ~3.6 s to ~0.35 s. `analyse.perf.test.ts` guards this with a call-count check and a 3 s
   timeout. Parity: `python-vectors.test.ts` compares the ranked exceptions with the prototype's
   `analyse` on `sample_data`, the 40 P1-03 datasets and 40 ranking-shaped datasets.
 
 ---
 
 ## P1-05: Engine: structured explanations (reason and action codes)
-- [ ] Done
+- [x] Done
 - **Owner:** builder
 - **Why:** explainability is a core principle; the engine returns codes + params, the UI renders
   them per locale (spec §5.2 step 9, AGENTS.md §2.3).
@@ -296,6 +298,17 @@ order.
 - **Packages:** `packages/engine`
 - **Branch:** `feat/engine-explanations`
 - **Commits:** `feat(engine): add structured reasons and next actions to exceptions`
+- **Note (P1-05):** `explanations.ts` exports `explainShortage`, `REASON_CODES`, `ACTION_CODES`
+  and `explanationPoId` (exhaustive `switch`). Parity: a test helper renders the codes with the
+  prototype's `TXT['en']` templates and `python-vectors.test.ts` compares them with the prototype's
+  `why` / `next_action` strings on all 195 exceptions of the vector datasets (sample data, 40
+  random, 40 ranking-shaped, the ADR-0005 example). **Owner decision 2026-09-29 on overdue POs
+  (ADR-0005 item 5, Q4): option B**, implemented here in `overdue.ts`: `Report.overduePurchaseOrders`
+  (open POs with `promisedDate < asOf`: `poId`, `materialId`, `supplierId`, `qty`, `promisedDate`,
+  `realisticDate`, `countedInRealisticView`, `hasException`), `summary.overduePurchaseOrders` and a
+  `PO_OVERDUE` reason appended after the prototype's reasons. No number, severity, score, order or
+  prototype reason/action changes; the parity comparison skips `PO_OVERDUE` explicitly, and the
+  overdue list is checked against python3 values computed from the prototype's helpers.
 
 ---
 
@@ -617,6 +630,9 @@ order.
   4. Semantic `<table>` with caption and column headers; row activation by keyboard opens the drawer
      (drawer itself in P1-18).
   5. `demo_completed` hook point prepared (no analytics yet).
+  6. The summary shows the overdue-PO note (ADR-0005 option B) from `summary.overduePurchaseOrders`
+     / `overduePurchaseOrders` in both `de` and `en`, including POs of materials without an
+     exception (`hasException: false`); `PO_OVERDUE` reasons render like the other codes.
 - **Test plan:** component tests: rendering of every `Reason`/`Action` code in both locales
   (snapshot of text, not DOM); expansion; Playwright: sample data -> first row equals the first
   golden exception (`M0011`, CRITICAL, 08.10.2026) and at least one hidden-risk badge is visible;

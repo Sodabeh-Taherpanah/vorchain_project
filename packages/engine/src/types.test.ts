@@ -43,22 +43,46 @@ describe('engine contract types', () => {
           deliveries: 8,
         },
         { code: 'HIDDEN_ERP_LATER', erpViewDate: d('2026-10-23') },
+        {
+          code: 'PO_OVERDUE',
+          poId: poId('PO7'),
+          promisedDate: d('2026-10-01'),
+          supplierId: supplierId('S03'),
+          realisticDate: d('2026-10-06'),
+        },
       ],
       actions: [{ code: 'EXPEDITE', poId: poId('PO1'), before: d('2026-10-13') }],
     };
     const report: Report = {
       asOf: d('2026-10-05'),
       horizonDays: 28,
-      summary: { critical: 1, warning: 0, hidden: 1 },
+      summary: { critical: 1, warning: 0, hidden: 1, overduePurchaseOrders: 1 },
       exceptions: [exception],
       supplierStats: [],
+      overduePurchaseOrders: [
+        {
+          poId: poId('PO7'),
+          materialId: materialId('M0030'),
+          supplierId: supplierId('S03'),
+          qty: 40,
+          promisedDate: d('2026-10-01'),
+          realisticDate: d('2026-10-06'),
+          countedInRealisticView: true,
+          hasException: true,
+        },
+      ],
     };
     expect(JSON.parse(JSON.stringify(report))).toEqual(report);
   });
 
   it('model reasons and actions as discriminated unions on `code`', () => {
     expectTypeOf<Reason['code']>().toEqualTypeOf<
-      'NO_OPEN_PO' | 'PO_AFTER_CRITICAL' | 'PO_LATE' | 'HIDDEN_ERP_LATER' | 'HIDDEN_ERP_NONE'
+      | 'NO_OPEN_PO'
+      | 'PO_AFTER_CRITICAL'
+      | 'PO_LATE'
+      | 'HIDDEN_ERP_LATER'
+      | 'HIDDEN_ERP_NONE'
+      | 'PO_OVERDUE'
     >();
     expectTypeOf<Action['code']>().toEqualTypeOf<
       'PLACE_ORDER' | 'PULL_FORWARD' | 'EXPEDITE' | 'REVIEW_QTY_OR_DEMAND'

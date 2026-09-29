@@ -267,9 +267,11 @@ function projectionSeries(input: AnalysisInput, materialId: MaterialId, options:
 
 interface Report {
   asOf: IsoDate; horizonDays: number;
-  summary: { critical: number; warning: number; hidden: number };
+  summary: { critical: number; warning: number; hidden: number;
+             overduePurchaseOrders: number };  // option B: overduePurchaseOrders.length
   exceptions: ShortageException[];       // sorted by score desc, stable
   supplierStats: SupplierStats[];         // order of first complete history row (prototype dict order)
+  overduePurchaseOrders: OverduePurchaseOrder[];  // option B (ADR-0005 item 5), PO-file order
 }
 interface ShortageException {
   materialId: MaterialId; description: string; mainSupplierId: SupplierId | null;
@@ -286,12 +288,22 @@ type Reason =
   | { code: 'PO_LATE'; poId: PoId; promisedDate: IsoDate; supplierId: SupplierId; delayDays: number;
       onTimeRate: number; lowConfidence: boolean; deliveries: number }
   | { code: 'HIDDEN_ERP_LATER'; erpViewDate: IsoDate }
-  | { code: 'HIDDEN_ERP_NONE' };
+  | { code: 'HIDDEN_ERP_NONE' }
+  | { code: 'PO_OVERDUE'; poId: PoId; promisedDate: IsoDate; supplierId: SupplierId;
+      realisticDate: IsoDate };          // option B, after the prototype's reasons
 type Action =
   | { code: 'PLACE_ORDER'; supplierId: SupplierId | null }
   | { code: 'PULL_FORWARD'; supplierId: SupplierId; poId: PoId; before: IsoDate }
   | { code: 'EXPEDITE'; poId: PoId; before: IsoDate }
   | { code: 'REVIEW_QTY_OR_DEMAND' };
+type ReasonCode = Reason['code']; type ActionCode = Action['code'];
+
+interface OverduePurchaseOrder {          // open PO with promisedDate < asOf (not in the prototype)
+  poId: PoId; materialId: MaterialId; supplierId: SupplierId; qty: number; promisedDate: IsoDate;
+  realisticDate: IsoDate;                // addWorkdays(promisedDate, p80)
+  countedInRealisticView: boolean;       // realisticDate in [asOf, asOf + horizonDays)
+  hasException: boolean;                 // the material has an exception in this report
+}
 
 interface SupplierStats {                // prototype: mean, p80, on_time_rate, n, reliable_stats
   supplierId: SupplierId; meanDelayDays: number; p80DelayDays: number;
@@ -333,6 +345,24 @@ function shortageScore(f: { horizonDays; daysUntil; safetyStock; minStock; hidde
 function rankByScore<T extends { score: number }>(items: readonly T[]): T[];  // stable, score desc
 ```
 
+Since P1-05: structured explanations in `explanations.ts` and overdue POs in `overdue.ts`.
+
+```ts
+function explainShortage(c: { mainSupplierId; purchaseOrders /* material's, PO-file order */;
+  stats: SupplierStatsMap; finding: ShortageFinding }): { reasons: Reason[]; actions: Action[] };
+const REASON_CODES: readonly ReasonCode[]; const ACTION_CODES: readonly ActionCode[];
+function explanationPoId(entry: Reason | Action): PoId | null;   // exhaustive switch
+function findOverduePurchaseOrders(pos, stats, { asOf, horizonDays }, flagged): OverduePurchaseOrder[];
+function overdueReasons(pos, stats, asOf): Reason[];              // one PO_OVERDUE per overdue PO
+```
+
+Rules, in the prototype's order (ADR-0005 item 8): no open PO -> `NO_OPEN_PO` + `PLACE_ORDER`
+(main supplier or `null`); per PO in file order: `promised >= criticalDate` -> `PO_AFTER_CRITICAL`
++ `PULL_FORWARD`, else P80 delay > 0 -> `PO_LATE` (+ `EXPEDITE` if `promised + p80 >= criticalDate`);
+hidden -> `HIDDEN_ERP_LATER` / `HIDDEN_ERP_NONE`; no action yet -> `REVIEW_QTY_OR_DEMAND`, so every
+exception has at least one action. Then `analyse` appends one `PO_OVERDUE` per overdue PO of the
+material.
+
 Supplier names are resolved in the UI (`suppliers` table), not in the engine, so the engine output
 stays free of display text.
 
@@ -340,8 +370,9 @@ Known parity quirk (ADR-0005 item 5, backlog Q4): the projection window drops re
 before `asOf`. An overdue PO therefore never arrives in the ERP view, but its realistic date
 (`promised + p80`) can fall inside the window, so the realistic view can look *less* alarming than
 the ERP view, and a material with an ERP-only stock-out is skipped from the report. Kept for
-parity; whether the demo should mention overdue POs is an open owner decision (options in
-ADR-0005).
+parity. The owner chose option B on 2026-09-29: `Report.overduePurchaseOrders`,
+`summary.overduePurchaseOrders` and the `PO_OVERDUE` reason make overdue POs visible without
+changing any number (ADR-0005 item 5); the demo shows the note in P1-17.
 
 ## 8. Deployment view
 
