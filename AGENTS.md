@@ -112,6 +112,8 @@ Overall coverage gate: 80% (web), 95% (engine). Tests must be deterministic: fix
 - [ ] i18n keys in both `de` and `en`
 - [ ] Docs updated (README, ADR if a decision was made, architecture diagram if structure changed)
 - [ ] Conventional commit(s), PR description complete
+- [ ] Task ticked "Done" in `docs/backlog.md` in the same PR (updates `PROJECT_MAP.html`)
+- [ ] PR description has a "Deviations from backlog" section ("None" if there are none)
 
 ## 9. Commands (to be created in Task 0)
 ```
@@ -121,5 +123,21 @@ pnpm coverage     pnpm lhci         pnpm format
 ```
 
 ## 10. How agents collaborate
-`architect` (plan, diagrams, ADRs, backlog) → `builder` (implement one task, TDD) → `qa` (verify, extend tests, review) → `devops` (CI/CD, deploy, release, security).
+`architect` (plan, diagrams, ADRs, backlog) → `builder` (implement one task, TDD) → `qa` (verify, extend tests, review; only when the review rule below requires it) → `devops` (CI/CD, deploy, release, security).
 Each agent ends its turn with: what changed, how it was verified, and the suggested next handoff.
+
+### Review rule after each builder PR
+1. Decide whether a QA review is needed. Run the `qa` agent when ANY of these is true:
+   - the builder reports gaps or open questions
+   - a change is not checked against the Python prototype (parity)
+   - privacy or security code is touched (file handling, Web Worker, network, analytics, headers/CSP, contact form)
+   - UI changes could not be tested
+   - it is a large refactor
+   - tests are deleted, skipped (`.skip` / `.only`) or loosened
+   - coverage thresholds or lint rules are changed
+   - CI workflows (`.github/workflows`), git hooks (`lefthook.yml`), golden files in `reference/`, or dependencies in `package.json` change
+2. Otherwise, review the main code yourself.
+3. In the same PR, tick the task "Done" in `docs/backlog.md` (so `PROJECT_MAP.html` updates).
+4. List any decision that departs from the backlog under a heading "Deviations from backlog" in the PR description. Write "None" if there are none.
+5. When CI is green, tell the owner the PR is ready, with a 3–5 line summary: what changed, whether QA ran (and why or why not), and any deviations.
+6. Do NOT merge. The owner merges the PR on GitHub.
