@@ -479,7 +479,7 @@ order.
 ---
 
 ## P1-12: Web: next-intl routing, route stubs, static generation
-- [ ] Done
+- [x] Done
 - **Owner:** builder
 - **Why:** every page is bilingual with `de` default; setting routing up once avoids retrofitting
   (ADR-0004).

@@ -1,7 +1,7 @@
 # 0004. Next.js App Router with static generation and next-intl
 
 - Status: accepted
-- Date: 2026-09-25
+- Date: 2026-09-25 (amended 2026-09-29: locale via `next/root-params` instead of `setRequestLocale`)
 - Deciders: Sodabeh Taherpanah
 
 ## Context and problem
@@ -33,9 +33,11 @@ We choose **option 1**.
   16 the file is `proxy.ts`). German slugs for German pages (`/de/kontakt`, `/de/datenschutz`,
   `/de/impressum`) via next-intl `pathnames`, English equivalents (`/en/contact`, `/en/privacy`,
   `/en/legal-notice`).
-- Every page is statically generated (`generateStaticParams` returns both locales; call
-  `setRequestLocale`). `/demo` is a static shell with a client component island; the worker loads
-  on demand.
+- Every page is statically generated (`generateStaticParams` in the `[locale]` root layout returns
+  both locales, `dynamicParams = false`). The next-intl request config reads the locale from
+  `next/root-params` (default since Next.js 16.3); next-intl now calls `setRequestLocale` a legacy
+  API, so layouts and pages do not call it (amended 2026-09-29, P1-12). `/demo` is a static shell
+  with a client component island; the worker loads on demand.
 - Messages in `apps/web/messages/{de,en}.json`. A unit test asserts both files have identical key
   sets. Engine `Reason`/`Action` codes map to message keys `demo.reason.<CODE>` / `demo.action.<CODE>`.
 - `output: 'standalone'` is set so the same build can run in a container (ADR-0006).
