@@ -10,6 +10,9 @@ import tseslint from 'typescript-eslint';
 
 const WEB_FILES = ['apps/web/**/*.{js,jsx,mjs,ts,tsx}'];
 const TEST_FILES = ['**/*.test.{ts,tsx}', '**/e2e/**'];
+const WEB_UI_FILES = ['apps/web/src/app/**/*.tsx', 'apps/web/src/components/**/*.tsx'];
+/** Separators that carry no language and may appear as JSX text without a message key. */
+const JSX_ALLOWED_PUNCTUATION = ['·', '–', '—', '/', '|', ':', ',', '.', '(', ')', '*', '&nbsp;'];
 
 /**
  * Architecture elements (AGENTS.md §4), relative to `boundaries/root-path`. Only `src` counts:
@@ -146,6 +149,19 @@ export function createEslintConfig({ rootDir }) {
       settings: { next: { rootDir: `${rootDir}/apps/web` } },
       languageOptions: { globals: { ...globals.browser } },
       rules: { ...jsxA11y.flatConfigs.recommended.rules },
+    },
+    {
+      // Every user-facing string goes through next-intl (AGENTS.md §2.4, P1-12). Props such as
+      // `className` stay allowed; only text children and string expressions in JSX are checked.
+      name: 'vorchain/web/no-jsx-literals',
+      files: WEB_UI_FILES,
+      ignores: TEST_FILES,
+      rules: {
+        'react/jsx-no-literals': [
+          'error',
+          { noStrings: true, ignoreProps: true, allowedStrings: JSX_ALLOWED_PUNCTUATION },
+        ],
+      },
     },
     {
       name: 'vorchain/boundaries',
