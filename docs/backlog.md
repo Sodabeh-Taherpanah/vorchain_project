@@ -274,7 +274,7 @@ order.
 ---
 
 ## P1-05: Engine: structured explanations (reason and action codes)
-- [ ] Done
+- [x] Done
 - **Owner:** builder
 - **Why:** explainability is a core principle; the engine returns codes + params, the UI renders
   them per locale (spec §5.2 step 9, AGENTS.md §2.3).
@@ -296,6 +296,17 @@ order.
 - **Packages:** `packages/engine`
 - **Branch:** `feat/engine-explanations`
 - **Commits:** `feat(engine): add structured reasons and next actions to exceptions`
+- **Note (P1-05):** `explanations.ts` exports `explainShortage`, `REASON_CODES`, `ACTION_CODES`
+  and `explanationPoId` (exhaustive `switch`). Parity: a test helper renders the codes with the
+  prototype's `TXT['en']` templates and `python-vectors.test.ts` compares them with the prototype's
+  `why` / `next_action` strings on all 195 exceptions of the vector datasets (sample data, 40
+  random, 40 ranking-shaped, the ADR-0005 example). **Owner decision 2026-09-29 on overdue POs
+  (ADR-0005 item 5, Q4): option B**, implemented here in `overdue.ts`: `Report.overduePurchaseOrders`
+  (open POs with `promisedDate < asOf`: `poId`, `materialId`, `supplierId`, `qty`, `promisedDate`,
+  `realisticDate`, `countedInRealisticView`, `hasException`), `summary.overduePurchaseOrders` and a
+  `PO_OVERDUE` reason appended after the prototype's reasons. No number, severity, score, order or
+  prototype reason/action changes; the parity comparison skips `PO_OVERDUE` explicitly, and the
+  overdue list is checked against python3 values computed from the prototype's helpers.
 
 ---
 
@@ -617,6 +628,9 @@ order.
   4. Semantic `<table>` with caption and column headers; row activation by keyboard opens the drawer
      (drawer itself in P1-18).
   5. `demo_completed` hook point prepared (no analytics yet).
+  6. The summary shows the overdue-PO note (ADR-0005 option B) from `summary.overduePurchaseOrders`
+     / `overduePurchaseOrders` in both `de` and `en`, including POs of materials without an
+     exception (`hasException: false`); `PO_OVERDUE` reasons render like the other codes.
 - **Test plan:** component tests: rendering of every `Reason`/`Action` code in both locales
   (snapshot of text, not DOM); expansion; Playwright: sample data -> first row equals the first
   golden exception (`M0011`, CRITICAL, 08.10.2026) and at least one hidden-risk badge is visible;

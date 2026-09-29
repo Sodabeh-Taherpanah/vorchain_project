@@ -1,7 +1,7 @@
 # 0005. Engine as a pure TypeScript package with parity tests against the Python prototype
 
 - Status: accepted
-- Date: 2026-09-25 (amended 2026-09-29: overdue-PO consequence in item 5)
+- Date: 2026-09-25 (amended 2026-09-29: overdue-PO consequence in item 5; owner chose option B)
 - Deciders: Sodabeh Taherpanah
 
 ## Context and problem
@@ -60,8 +60,24 @@ Parity requirements (the traps found while reading the prototype):
    `packages/engine/src/projection.test.ts` ("a receipt before asOf never arrives"), and the
    "realistic view is never better than ERP view" property in ADR-0008 is restricted to POs
    promised on or after `asOf`.
-   Whether the demo tells the user about overdue POs is an **owner decision** (see "Open options"
-   below); the engine does not change until then.
+   **Decision (owner, 2026-09-29): option B** ("inform, don't change the numbers", see the options
+   below). Since P1-05 the engine reports overdue POs next to the unchanged results:
+   - `Report.overduePurchaseOrders`: one entry per open PO with `promisedDate < asOf`, in PO-file
+     order: `poId`, `materialId`, `supplierId`, `qty`, `promisedDate`, `realisticDate`
+     (`addWorkdays(promisedDate, p80)`), `countedInRealisticView` (`realisticDate` inside
+     `[asOf, asOf + horizonDays)`) and `hasException` (the material has an exception in the
+     report). This list is the only way to show a material that dropped out of the report, like
+     the one in the example above (`hasException: false`, `countedInRealisticView: true`).
+   - `summary.overduePurchaseOrders`: the length of that list.
+   - Reason `PO_OVERDUE { poId, promisedDate, supplierId, realisticDate }` on the exception of a
+     material with an overdue PO, one per PO, appended **after** the prototype's reasons. No new
+     action, so the default action rule is unchanged.
+   Nothing else changes: numbers, severity, score, order and the prototype's reasons and actions
+   stay bit-identical. The P1-05 parity test skips `PO_OVERDUE` explicitly when it compares the
+   codes with the prototype's `why` text; the overdue list is checked against values computed in
+   python3 from the prototype's `supplier_stats` and `add_workdays` on every vector dataset,
+   including this example. The demo shows the note in the summary (P1-17). Options C and D remain
+   possible later as a versioned behaviour change.
 6. Demand is summed per `(material, date)` as floats; the score uses the **unrounded** minimum stock.
 7. `hidden = erpViewDate === null || erpViewDate > criticalDate`; `erpViewDate` is the ERP-view
    date of the **same kind** (stock-out if realistic is CRITICAL, else below-safety).
@@ -88,9 +104,9 @@ Two parity levels:
   changing them later is a deliberate, versioned behaviour change (new golden files + ADR).
 - Follow-ups: P1-01 to P1-06, P1-10. Coverage gate 95 % lines/branches on `packages/engine`.
 
-### Open options for the owner: overdue POs (item 5, Q4)
-Not decided here; the owner picks one (or a combination) before P1-05 / P1-17 start. Options A and
-B keep parity; C and D change behaviour.
+### Options for the owner: overdue POs (item 5, Q4)
+**Decided 2026-09-29: option B** (see item 5 for what the engine provides). Kept for the record.
+Options A and B keep parity; C and D change behaviour.
 - **A. Do nothing in Phase 1.** Pure parity. Risk: a planner may miss a material the ERP already
   flags, and the realistic view can look better than the ERP view without any hint why.
 - **B. Inform, don't change the numbers (parity-safe).** The UI or report shows a note such as
