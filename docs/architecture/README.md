@@ -122,7 +122,8 @@ flowchart TB
     types["types.ts<br/>IsoDate, MaterialId, AnalysisInput,<br/>Report, ShortageException, Reason, Action"]
     dates["dates.ts<br/>addDays, diffDays, addWorkdays,<br/>workdaysBetween, weekday"]
     rounding["rounding.ts<br/>pyRound (CPython round semantics)"]
-    stats["supplier-stats.ts<br/>percentile, computeSupplierStats"]
+    stats["supplier-stats.ts<br/>percentile, computeSupplierStats,<br/>statsBySupplier"]
+    compare["compare.ts<br/>compareCodePoints (Python str order)"]
     receipts["receipts.ts<br/>erp vs realistic receipt dates"]
     projection["projection.ts<br/>projectStock, projectionSeries"]
     ranking["ranking.ts<br/>detectException, severity,<br/>hidden flag, score, stable sort"]
@@ -131,7 +132,7 @@ flowchart TB
   end
   analyse --> stats & receipts & projection & ranking & explain
   receipts --> stats & dates
-  stats --> dates & rounding
+  stats --> dates & rounding & compare
   ranking --> rounding & dates
   projection --> dates
 ```
@@ -267,14 +268,15 @@ interface Report {
   asOf: IsoDate; horizonDays: number;
   summary: { critical: number; warning: number; hidden: number };
   exceptions: ShortageException[];       // sorted by score desc, stable
-  supplierStats: SupplierStats[];
+  supplierStats: SupplierStats[];         // sorted by supplierId, code point order (Python sorted())
 }
 interface ShortageException {
   materialId: MaterialId; description: string; mainSupplierId: SupplierId | null;
   severity: 'CRITICAL' | 'WARNING';
   criticalDate: IsoDate; erpViewDate: IsoDate | null; daysUntil: number;
   minProjectedStock: number;             // pyRound(x)
-  safetyStock: number; hidden: boolean; score: number;  // pyRound(x, 1)
+  safetyStock: number;                   // pyRound(x), display only (prototype safety_stock)
+  hidden: boolean; score: number;        // pyRound(x, 1)
   reasons: Reason[]; actions: Action[];  // codes + params, never display text
 }
 type Reason =
