@@ -10,13 +10,17 @@ import {
   workdaysBetween,
   type IsoDate,
 } from './dates.ts';
+import { supplierId } from './ids.ts';
 import { pyRound } from './rounding.ts';
+import { computeSupplierStats, percentile } from './supplier-stats.ts';
+import type { DeliveryRecord } from './types.ts';
 
 /**
  * Parity with CPython on seeded, generated inputs (see scripts/generate-python-vectors.py). The
  * hand-written tables in dates.test.ts and rounding.test.ts document intent; these vectors guard
  * against cases nobody thought to write down (random dates across years 1..9999, random bit
- * patterns for rounding).
+ * patterns for rounding, random delivery histories with weekend dates and missing values, plus the
+ * full delivery history of both prototype sample datasets).
  */
 
 function d(input: string): IsoDate {
@@ -36,11 +40,36 @@ type CalendarVector = [
   diff: number,
 ];
 type RoundVector = [x: number, ndigits: number | null, expected: number];
+type PercentileVector = [values: number[], p: number, expected: number];
+interface SupplierStatsVector {
+  name: string;
+  minReliableDeliveries: number;
+  history: { supplierId: string; promisedDate: string | null; actualDate: string | null }[];
+  expected: {
+    supplierId: string;
+    meanDelayDays: number;
+    p80DelayDays: number;
+    onTimeRate: number;
+    deliveries: number;
+    reliable: boolean;
+  }[];
+}
 
 const addWorkdaysVectors = vectors.addWorkdays as AddWorkdaysVector[];
 const betweenVectors = vectors.workdaysBetween as BetweenVector[];
 const calendarVectors = vectors.calendar as CalendarVector[];
 const roundVectors = vectors.round as RoundVector[];
+const percentileVectors = vectors.percentile as PercentileVector[];
+const supplierStatsVectors = vectors.supplierStats as SupplierStatsVector[];
+
+function toDeliveryRecord(row: SupplierStatsVector['history'][number]): DeliveryRecord {
+  return {
+    supplierId: supplierId(row.supplierId),
+    promisedDate: row.promisedDate === null ? null : d(row.promisedDate),
+    actualDate: row.actualDate === null ? null : d(row.actualDate),
+    poId: null,
+  };
+}
 
 describe('CPython parity vectors', () => {
   it('cover every helper with a meaningful number of cases', () => {
@@ -48,6 +77,8 @@ describe('CPython parity vectors', () => {
     expect(betweenVectors.length).toBeGreaterThan(250);
     expect(calendarVectors.length).toBeGreaterThan(100);
     expect(roundVectors.length).toBeGreaterThan(2000);
+    expect(percentileVectors.length).toBeGreaterThan(100);
+    expect(supplierStatsVectors.length).toBeGreaterThan(50);
   });
 
   it('addWorkdays matches add_workdays', () => {
@@ -81,4 +112,22 @@ describe('CPython parity vectors', () => {
     });
     expect(mismatches).toEqual([]);
   });
+
+  it('percentile matches percentile', () => {
+    const mismatches = percentileVectors.filter(
+      ([values, p, expected]) => !Object.is(percentile(values, p), expected),
+    );
+    expect(mismatches).toEqual([]);
+  });
+
+  it.each(supplierStatsVectors.map((v) => [v.name, v] as const))(
+    'computeSupplierStats matches supplier_stats (%s)',
+    (_name, { history, minReliableDeliveries, expected }) => {
+      const actual = computeSupplierStats(history.map(toDeliveryRecord), {
+        minReliableDeliveries,
+      });
+      // Exact equality, including float bits of mean and on-time rate and the Python order.
+      expect(actual).toEqual(expected);
+    },
+  );
 });

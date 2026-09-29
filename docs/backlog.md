@@ -171,7 +171,7 @@ order.
 ---
 
 ## P1-02: Engine: supplier delay statistics
-- [ ] Done
+- [x] Done
 - **Owner:** builder
 - **Why:** the realistic view shifts each PO by its supplier's P80 delay; on-time rate and
   low-confidence flags feed explanations and the supplier table (spec §5.2 step 1).
@@ -180,7 +180,7 @@ order.
      interpolation; empty -> 0).
   2. `computeSupplierStats(history, { minReliableDeliveries = 3 })` returns `SupplierStats[]`
      (`supplierId`, `mean`, `p80 = max(0, pyRound(percentile(delays, 0.8)))`, `onTimeRate` (delay
-     <= 0), `deliveries`, `reliable`) in order of first appearance in the history.
+     <= 0), `deliveries`, `reliable`) sorted by `supplierId` in code point order (see note).
   3. Rows with a missing `promisedDate` or `actualDate` are skipped.
   4. A lookup helper `statsBySupplier(stats)` returns a `Map` for O(1) access.
 - **Test plan:** table tests: all on time -> p80 0, rate 1; delays `[0,1,2,3,10]` -> p80 4;
@@ -190,6 +190,13 @@ order.
 - **Packages:** `packages/engine`
 - **Branch:** `feat/engine-supplier-stats`
 - **Commits:** `feat(engine): compute supplier delay statistics with p80 and on-time rate`
+- **Note (builder, P1-02):** the first draft of AC 2 said "order of first appearance" (the
+  prototype's dict order). The result is sorted by `supplierId` in code point order instead
+  (Python `sorted()`, `compareCodePoints`): the golden files use that order, no prototype output
+  depends on first appearance, and the result no longer depends on history row order. Field names
+  follow the architecture §7 contract (`meanDelayDays`, `p80DelayDays`), not the draft's
+  `mean`/`p80`. An exact `x.5` P80 cannot occur with whole-day delays (`(n - 1) * 0.8` has
+  fractions of 0.2), so the tie case is tested on `percentile` with `p = 0.5` plus a property.
 
 ---
 

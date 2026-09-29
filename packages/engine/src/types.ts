@@ -146,6 +146,10 @@ export interface ShortageException {
   readonly daysUntil: number;
   /** Lowest realistic projected stock in the window, `pyRound(x)`. */
   readonly minProjectedStock: number;
+  /**
+   * The material's safety stock as `pyRound(x)`, like the prototype's `safety_stock` output column.
+   * Display only: the projection and the score use the unrounded `Material.safetyStock`.
+   */
   readonly safetyStock: number;
   /** `erpViewDate === null || erpViewDate > criticalDate`: the ERP does not show this risk yet. */
   readonly hidden: boolean;
@@ -166,6 +170,13 @@ export interface Report {
   };
   /** Sorted by `score` descending; ties keep materials-file order (stable sort). */
   readonly exceptions: readonly ShortageException[];
+  /**
+   * One entry per supplier with at least one complete history row, sorted by `supplierId` in code
+   * point order (Python `sorted()`, the order of the golden files), independent of history row
+   * order. The prototype's dict keeps first appearance, but no output depends on that: the golden
+   * files sort by ID and its Markdown table re-sorts by on-time rate (the UI sorts its own table).
+   * Suppliers without usable history are absent.
+   */
   readonly supplierStats: readonly SupplierStats[];
 }
 

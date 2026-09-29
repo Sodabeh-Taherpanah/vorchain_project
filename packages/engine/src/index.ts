@@ -1,6 +1,7 @@
 /**
  * Public API of the Vorchain engine: pure, deterministic domain logic with no I/O, DOM or Node
- * APIs (AGENTS.md §2, ADR-0005). Analysis functions arrive with P1-02..P1-06.
+ * APIs (AGENTS.md §2, ADR-0005). Analysis functions arrive with P1-02..P1-06;
+ * supplier statistics are in since P1-02.
  */
 export const ENGINE_PACKAGE_NAME = '@vorchain/engine';
 
@@ -20,6 +21,13 @@ export type { Brand, MaterialId, PoId, SupplierId } from './ids.ts';
 export { err, ok } from './result.ts';
 export type { Err, Ok, Result } from './result.ts';
 export { pyRound } from './rounding.ts';
+export {
+  computeSupplierStats,
+  DEFAULT_MIN_RELIABLE_DELIVERIES,
+  percentile,
+  statsBySupplier,
+} from './supplier-stats.ts';
+export type { SupplierStatsOptions } from './supplier-stats.ts';
 export type {
   Action,
   AnalysisInput,

@@ -1,9 +1,9 @@
-"""Generate CPython reference vectors for the engine's date and rounding helpers.
+"""Generate CPython reference vectors for the engine's date, rounding and statistics helpers.
 
-The expected values come straight from the prototype (`add_workdays`, `workdays_between`) and
-from CPython itself (`date.weekday`, `timedelta`, `round`), so `python-vectors.test.ts` checks the
-TypeScript ports against the real thing instead of hand-written tables. Seeded, so reruns are
-byte-identical.
+The expected values come straight from the prototype (`add_workdays`, `workdays_between`,
+`percentile`, `supplier_stats`) and from CPython itself (`date.weekday`, `timedelta`, `round`), so
+`python-vectors.test.ts` checks the TypeScript ports against the real thing instead of
+hand-written tables. Seeded, so reruns are byte-identical.
 
 Run:  python3 packages/engine/scripts/generate-python-vectors.py
       pnpm exec prettier --write packages/engine/src/__fixtures__/python-vectors.json
@@ -17,7 +17,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "reference" / "python-prototype"))
-from shortage_radar import add_workdays, workdays_between  # noqa: E402
+from loaders import load_table  # noqa: E402
+from shortage_radar import add_workdays, percentile, supplier_stats, workdays_between  # noqa: E402
 
 OUT = ROOT / "packages" / "engine" / "src" / "__fixtures__" / "python-vectors.json"
 rng = random.Random(20261005)
@@ -100,6 +101,64 @@ def rounding_vectors():
     return cases
 
 
+def percentile_vectors():
+    cases = [[[], 0.8, percentile([], 0.8)], [[2, 3], 0.5, percentile([2, 3], 0.5)]]
+    for _ in range(150):
+        values = [rng.randint(-15, 40) for _ in range(rng.randint(1, 30))]
+        p = rng.choice([0.0, 0.5, 0.8, 1.0, round(rng.random(), 3)])
+        cases.append([values, p, float(percentile(values, p))])
+    return cases
+
+
+def history_row(supplier, promised, actual):
+    return {"supplierId": supplier, "promisedDate": promised and promised.isoformat(),
+            "actualDate": actual and actual.isoformat()}
+
+
+def random_history():
+    """History rows with weekend dates, early/late deliveries and missing dates."""
+    suppliers = rng.sample(["S01", "S02", "S10", "S9", "A-7", "b", "\uffff", "\U0001f600"],
+                           rng.randint(1, 5))
+    rows = []
+    for _ in range(rng.randint(0, 40)):
+        promised = realistic_date()
+        actual = promised + timedelta(days=rng.choice([0, 0, 1, 2, 3, 5, 9, -1, -3, 16]))
+        if rng.random() < 0.1:
+            promised = None
+        if rng.random() < 0.1:
+            actual = None
+        rows.append(history_row(rng.choice(suppliers), promised, actual))
+    return rows
+
+
+def stats_payload(rows, min_n):
+    history = [{"supplier_id": r["supplierId"],
+                "promised_date": r["promisedDate"] and date.fromisoformat(r["promisedDate"]),
+                "actual_date": r["actualDate"] and date.fromisoformat(r["actualDate"])}
+               for r in rows]
+    stats = supplier_stats(history, min_n)
+    # Python `sorted` orders str by code point: the order the engine promises for supplierStats.
+    return [{"supplierId": sid, "meanDelayDays": s["mean"], "p80DelayDays": s["p80"],
+             "onTimeRate": s["on_time_rate"], "deliveries": s["n"],
+             "reliable": s["reliable_stats"]} for sid, s in sorted(stats.items())]
+
+
+def supplier_stats_vectors():
+    cases = []
+    for name in ("sample_data", "sample_data_de"):
+        rows = [history_row(r["supplier_id"], r["promised_date"], r["actual_date"])
+                for r in load_table(ROOT / "reference" / "python-prototype" / name,
+                                    "supplier_history")]
+        cases.append({"name": name, "minReliableDeliveries": 3, "history": rows,
+                      "expected": stats_payload(rows, 3)})
+    for i in range(60):
+        rows = random_history()
+        min_n = rng.choice([1, 3, 3, 3, 5])
+        cases.append({"name": f"random-{i}", "minReliableDeliveries": min_n, "history": rows,
+                      "expected": stats_payload(rows, min_n)})
+    return cases
+
+
 def main():
     add_workdays_cases, between_cases, calendar_cases = date_vectors()
     payload = {
@@ -108,6 +167,8 @@ def main():
         "workdaysBetween": between_cases,
         "calendar": calendar_cases,
         "round": rounding_vectors(),
+        "percentile": percentile_vectors(),
+        "supplierStats": supplier_stats_vectors(),
     }
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(payload) + "\n", encoding="utf-8")
