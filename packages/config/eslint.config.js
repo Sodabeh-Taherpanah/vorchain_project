@@ -95,6 +95,7 @@ const PARSERS_FORBIDDEN_GLOBALS = [
   'XMLHttpRequest',
   'WebSocket',
   'EventSource',
+  'WebTransport',
   'navigator',
   'importScripts',
   'postMessage',
