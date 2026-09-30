@@ -11,6 +11,9 @@ Writes:
     reason is in `deviation`.
   * `test/fixtures/python-sniff.json`: random quote-free samples and the delimiter the prototype
     picks (`csv.Sniffer`, then its `;`/`,` fallback), for `sniffDelimiter`.
+  * `test/fixtures/python-values.json`: hand-picked and random cell values and what the
+    prototype's `parse_number` / `parse_date` return (value, or `error`), for `parseNumber` and
+    `parseDate`. `parity: false` marks a documented, intended difference (`deviation`).
 
 Seeded, so reruns are byte-identical.
 
@@ -19,6 +22,7 @@ Run:  python3 packages/parsers/scripts/generate-python-fixtures.py
 """
 import csv
 import json
+import math
 import random
 import sys
 from pathlib import Path
@@ -202,6 +206,94 @@ def sniff_cases(count=600):
     return cases
 
 
+NUMBER_INPUTS = [
+    "", " ", "0", "1.234,5", "1,234.5", "12,5", "1234.5", "1.234", "1,234", "1.234.567,89",
+    "1,234,567.89", "1.234.567", "1,234,567", "-12,5", "+3", " 15,0 ", "1 234,5", "1\u00a0234,5",
+    "\u00a015\u00a0", ".5", "5.", ",5", "5,", "1e3", "1,5e3", "1E-2", "1_000", "1__000", "_1",
+    "-0", "-0,0", "abc", "12 Stk", "1,2,3", "1.2.3", "--1", "1-", "\t7\t", "1\t2", "0x10",
+    "1e400", "-1e400", "inf", "-Infinity", "nan", "NaN", "\u0661\u0662", "\uff11\uff12",
+    "0,1", "0.1", "100000000000000000000", "9007199254740993", "1.7976931348623157e308",
+]
+
+DATE_INPUTS = [
+    "", " ", "2026-10-05", "05.10.2026", "5.10.2026", "05.10.26", "05.10.68", "05.10.69",
+    "05.10.99", "05.10.00", "05/10/2026", "5/1/2026", "2026-10-05 13:45:00", "2026-10-05 1:2:3",
+    "2026-10-05\t13:45:00", "2026-10-05  13:45:00", "05.10.2026 13:45", "05.10.2026 7:05",
+    "2026-10-5", "2026-1-05", "2026-10- 5", " 5.10.2026", "31.02.2026", "29.02.2024", "29.02.2025",
+    "30.04.2026", "31.04.2026", "31.12.9999", "01.01.0001", "0000-01-01", "2026-13-01",
+    "2026-00-10", "00.10.2026", "32.10.2026", "2026-10-05 24:00:00", "2026-10-05 23:59:59",
+    "2026-10-05 23:59:60", "2026-10-05 23:59:61", "05.10.2026 23:60", "2026-10-05T13:45:00",
+    "2026/10/05", "10/05/2026", "05-10-2026", "05.10.2026 13:45:00", "2026-10-05 13:45",
+    "next week", "20261005", "05.10.20261", "5.10.26", "05.10.2026 ", "05.10.\u0662\u0660\u0662\u0666",
+    "\u0660\u0665.10.2026",
+]
+
+
+def python_value(parse, raw):
+    try:
+        value = parse(raw)
+    except loaders.DataError:
+        return {"error": True}
+    if value is None:
+        return {"value": None}
+    if isinstance(value, float) and not math.isfinite(value):
+        return {"value": repr(value)}
+    return {"value": value if isinstance(value, float) else value.isoformat()}
+
+
+def has_non_ascii_digit(raw):
+    return any(ch.isdigit() and not ch.isascii() for ch in raw)
+
+
+def value_case(kind, raw):
+    parse = loaders.parse_number if kind == "number" else loaders.parse_date
+    python = python_value(parse, raw)
+    case = {"kind": kind, "input": raw, "parity": True, "python": python}
+    if isinstance(python.get("value"), str) and kind == "number":
+        case["parity"], case["deviation"] = False, "NaN and Infinity are rejected (INVALID_NUMBER)"
+    elif "error" not in python and has_non_ascii_digit(raw):
+        case["parity"], case["deviation"] = False, "non-ASCII digits are rejected"
+    return case
+
+
+def random_number(rng):
+    if rng.random() < 0.5:
+        alphabet = ["0", "1", "5", "9", "9", ".", ",", " ", "\u00a0", "-", "+", "e", "_", "\t"]
+        return "".join(rng.choice(alphabet) for _ in range(rng.randint(0, 8)))
+    whole = f"{rng.randint(0, 10 ** rng.randint(1, 10)):,}"
+    fraction = str(rng.randint(0, 999)) if rng.random() < 0.7 else ""
+    sign = rng.choice(["", "", "-", "+"])
+    if rng.random() < 0.5:  # German style
+        whole = whole.replace(",", rng.choice([".", " ", "\u00a0", ""]))
+        return sign + whole + ("," + fraction if fraction else "")
+    return sign + whole.replace(",", rng.choice([",", ""])) + ("." + fraction if fraction else "")
+
+
+def random_date(rng):
+    day = rng.choice([f"{rng.randint(0, 32):02d}", str(rng.randint(0, 32)), f" {rng.randint(1, 9)}"])
+    month = rng.choice([f"{rng.randint(0, 13):02d}", str(rng.randint(0, 13))])
+    year = rng.choice([str(rng.randint(1, 9999)).zfill(4), f"{rng.randint(0, 99):02d}", "2026"])
+    time = rng.choice(["", "", " 13:45", " 13:45:00", " 7:5", f" {rng.randint(0, 25)}:{rng.randint(0, 61)}",
+                       f" {rng.randint(0, 25)}:{rng.randint(0, 61)}:{rng.randint(0, 62)}"])
+    shape = rng.choice(["iso", "de", "de", "slash", "odd"])
+    if shape == "iso":
+        return f"{year}-{month}-{day}{time}"
+    if shape == "de":
+        return f"{day}.{month}.{year}{time}"
+    if shape == "slash":
+        return f"{day}/{month}/{year}{time}"
+    return rng.choice(["-", ".", "/"]).join([day, month, year]) + rng.choice(["", "x", " ", "T12:00:00"])
+
+
+def value_cases(count=800):
+    rng = random.Random(20261006)
+    cases = [value_case("number", raw) for raw in NUMBER_INPUTS]
+    cases += [value_case("number", random_number(rng)) for _ in range(count)]
+    cases += [value_case("date", raw) for raw in DATE_INPUTS]
+    cases += [value_case("date", random_date(rng)) for _ in range(count)]
+    return cases
+
+
 def compact(value):
     return json.dumps(value, ensure_ascii=False)
 
@@ -238,6 +330,7 @@ def main():
     FIXTURES.mkdir(parents=True, exist_ok=True)
     write_json(FIXTURES / "python-csv.json", csv_cases(), csv_case_lines)
     write_json(FIXTURES / "python-sniff.json", sniff_cases(), lambda case: [f"    {compact(case)}"])
+    write_json(FIXTURES / "python-values.json", value_cases(), lambda case: [f"    {compact(case)}"])
 
 
 if __name__ == "__main__":

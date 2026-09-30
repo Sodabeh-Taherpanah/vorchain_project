@@ -13,13 +13,15 @@ describe('@vorchain/parsers', () => {
     expect(PARSERS_PACKAGE_NAME).toBe('@vorchain/parsers');
   });
 
-  it('exports the P1-07 entry points', () => {
+  it('exports the P1-07 and P1-08 entry points', () => {
     expect(Object.keys(parsers).sort()).toEqual([
       'DATA_ERROR_CODES',
       'PARSERS_PACKAGE_NAME',
       'SNIFF_SAMPLE_LENGTH',
       'decodeText',
       'detectNonText',
+      'parseDate',
+      'parseNumber',
       'readCsv',
       'sniffDelimiter',
       'stripPython',
