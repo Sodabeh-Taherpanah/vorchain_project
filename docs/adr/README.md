@@ -10,7 +10,7 @@ Status `proposed` means the owner still has to confirm (usually cost or an exter
 | [0003](0003-client-side-processing-in-web-worker.md) | Client-side processing in a Web Worker (privacy promise) | accepted |
 | [0004](0004-nextjs-app-router-static-generation-next-intl.md) | Next.js App Router with static generation and next-intl | accepted |
 | [0005](0005-pure-engine-with-python-parity-tests.md) | Engine as a pure TS package with parity tests against the Python prototype | accepted |
-| [0006](0006-hosting-and-deployment-target.md) | Hosting: Vercel Pro (fra1) + portable GHCR Docker image | proposed |
+| [0006](0006-hosting-and-deployment-target.md) | Hosting: Hetzner Cloud (Germany) + Coolify, Docker image | accepted |
 | [0007](0007-contact-form-delivery.md) | Contact form: Server Action + Brevo transactional email (EU) | proposed |
 | [0008](0008-testing-strategy-and-quality-gates.md) | Testing strategy and quality gates | accepted |
 | [0009](0009-conventional-commits-and-release-please.md) | Conventional Commits + release-please | accepted |

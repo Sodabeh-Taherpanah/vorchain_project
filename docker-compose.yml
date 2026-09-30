@@ -1,0 +1,27 @@
+# Runs the production image locally and on the Hetzner server via Coolify (ADR-0006).
+#   docker compose up --build   ->  http://localhost:3000/de
+#
+# Phase 1 has no database: customer files never leave the browser (ADR-0003) and contact-form
+# messages are sent on as email (ADR-0007). Postgres arrives with the first backend feature that
+# stores data (backlog P2-01).
+services:
+  web:
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:3000}
+        NEXT_PUBLIC_ANALYTICS_DOMAIN: ${NEXT_PUBLIC_ANALYTICS_DOMAIN:-}
+    image: vorchain-web:local
+    ports:
+      - '${PORT:-3000}:3000'
+    environment:
+      # Safe defaults: without real Brevo settings, contact-form mails are only logged.
+      MAIL_TRANSPORT: ${MAIL_TRANSPORT:-console}
+      BREVO_API_KEY: ${BREVO_API_KEY:-}
+      CONTACT_TO: ${CONTACT_TO:-}
+      CONTACT_FROM: ${CONTACT_FROM:-}
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL

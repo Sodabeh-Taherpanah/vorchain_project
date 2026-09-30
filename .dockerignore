@@ -1,0 +1,23 @@
+# Keep the build context small and free of secrets and local state.
+**/node_modules
+**/.next
+**/.turbo
+**/coverage
+**/dist
+**/playwright-report
+**/test-results
+.git
+.github
+.claude
+.vscode
+.idea
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+
+# Not needed to build the website (the sample data is bundled in packages/sample-data/src/generated).
+reference
+docs
+PROJECT_MAP.html

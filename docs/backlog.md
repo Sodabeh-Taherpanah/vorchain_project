@@ -33,7 +33,7 @@ ADRs 0001 to 0012, `docs/architecture/README.md`.
 | P1-11 | Sample-data package: bundled datasets and seeded scale generator | builder | P1-10 |
 | P1-12 | Web: next-intl routing, route stubs, static generation | builder | Task 0 |
 | P1-13 | Web: design tokens, fonts, layout, dark mode, 404 and error pages | builder | P1-12 |
-| P1-14 | CD: preview deploy per PR + release-please | devops | P1-13 |
+| P1-14 | CD: deploy-ready container (Hetzner + Coolify) + release-please | devops | P1-13 |
 | P1-15 | Web: analysis Web Worker bridge (Comlink) and `useAnalysis` hook | builder | P1-11, P1-13 |
 | P1-16 | Demo: data source (sample / upload) and map check | builder | P1-15 |
 | P1-17 | Demo: settings, summary tiles, ranked exception table | builder | P1-16 |
@@ -47,7 +47,7 @@ ADRs 0001 to 0012, `docs/architecture/README.md`.
 | P1-25 | Contact form: Server Action, validation, spam protection, mail transport | builder | P1-24 |
 | P1-26 | Cookieless analytics for three funnel events | builder | P1-25 |
 | P1-27 | Hardening: security headers/CSP, Lighthouse CI, a11y on all pages, bundle budget | devops | P1-26 |
-| P1-28 | Production deploy on release, GHCR image, domain, runbooks | devops | P1-27 |
+| P1-28 | Production deploy on Hetzner + Coolify, previews, GHCR image, domain, runbooks | devops | P1-27 |
 
 ```mermaid
 flowchart LR
@@ -542,29 +542,35 @@ order.
 
 ---
 
-## P1-14: CD: preview deploy per PR + release-please
-- [ ] Done
+## P1-14: CD: deploy-ready container (Hetzner + Coolify) + release-please
+- [x] Done
 - **Owner:** devops
-- **Why:** reviewers (and the owner on a phone) should see every PR live; release-please starts
-  collecting the changelog early (ADR-0006, ADR-0009).
+- **Why:** the site must be deployable to the chosen host the day the server exists, and
+  release-please starts collecting the changelog early (ADR-0006, ADR-0009). ADR-0006 was accepted
+  on 2026-09-30 with option C (Hetzner Cloud in Germany + Coolify); the server is rented later, so
+  this task makes the repo deploy-ready without creating accounts or deploying.
 - **Acceptance criteria:**
-  1. Vercel project linked (region `fra1`), Git auto-deploys disabled via `vercel.json`.
-  2. Workflow `preview.yml`: on PR (same-repo branches only; no secrets for forks) runs
-     `vercel pull/build/deploy --prebuilt` and posts/updates one PR comment with the preview URL.
-     Preview env uses `MAIL_TRANSPORT=console` and no analytics.
-  3. `release-please.yml` with config + manifest at the root (`release-type: node`,
+  1. Multi-stage `Dockerfile` at the repo root: Node 24 slim, pnpm via corepack, frozen lockfile,
+     Next.js `output: 'standalone'`, non-root user, `HOSTNAME=0.0.0.0` (Next.js bug #94745),
+     healthcheck, `NEXT_PUBLIC_*` as build arguments, no secrets in the image; `.dockerignore`.
+  2. `docker-compose.yml` with the web app only (no database in Phase 1, see P2-01);
+     `docker compose up --build` serves `/de`, `/en` and `/en/contact` and reports `healthy`.
+  3. `.env.example` lists every variable with build-time/runtime notes and safe defaults.
+  4. `docs/deploy-hetzner.md`: later steps (Hetzner server in Nuremberg/Falkenstein, firewall,
+     Coolify install, GitHub App, env vars, domain, optional preview deployments).
+  5. `release-please.yml` with config + manifest at the root (`release-type: node`,
      `bump-minor-pre-major: true`, initial `0.1.0`), token able to trigger workflows.
-  4. `docs/runbooks/preview-deploys.md`: required secrets (`VERCEL_TOKEN`, `VERCEL_ORG_ID`,
-     `VERCEL_PROJECT_ID`, release token), how to rotate them.
-  5. If ADR-0006 is not yet confirmed by the owner, stop after AC 3 and ask.
-- **Test plan:** open a test PR -> preview URL comment appears and serves `/de`; merge a `feat`
-  PR -> release PR is opened/updated with a changelog entry.
-- **Packages:** `.github/`, root config, `docs/runbooks/`
-- **Branch:** `ci/preview-deploys-release-please`
+- **Test plan:** `docker compose up --build` locally, then `curl` `/de`, `/en`, `/en/contact` and
+  check `docker compose ps` shows `healthy`; merge a `feat` PR -> release PR is opened/updated with
+  a changelog entry.
+- **Moved to P1-28:** per-PR preview URLs (Coolify preview deployments need the server and a
+  wildcard DNS record).
+- **Packages:** root (`Dockerfile`, `docker-compose.yml`, `.env.example`), `.github/`, `docs/`
+- **Branch:** `ci/hetzner-coolify-deploy-ready`
 - **Commits:**
-  - `ci: deploy vercel preview for each pull request`
+  - `docs: accept hetzner and coolify as hosting target`
+  - `build: add docker image and compose file for self-hosting`
   - `ci: add release-please for changelog and versioning`
-  - `docs: add preview deploy runbook`
 
 ---
 
@@ -804,7 +810,7 @@ order.
   1. `/de/impressum`, `/de/datenschutz`, `/en/legal-notice`, `/en/privacy` render structured
      content from MDX or message files; every owner-specific field is a visible, greppable
      `TODO(owner)` placeholder (name, address, contact, VAT ID if any, responsible person).
-  2. Datenschutz sections pre-structured for: hosting (Vercel, fra1, DPF/SCC), contact form
+  2. Datenschutz sections pre-structured for: hosting (Hetzner Online GmbH, Germany, AVV), contact form
      (Brevo, purpose, legal basis Art. 6(1)(b)/(f), retention), analytics (Plausible, cookieless),
      in-browser demo (no transmission of files), rights of data subjects, supervisory authority.
      Text marked as draft, to be checked by the owner/lawyer.
@@ -892,20 +898,22 @@ order.
 
 ---
 
-## P1-28: Production deploy on release, GHCR image, domain, runbooks
+## P1-28: Production deploy on Hetzner + Coolify, previews, GHCR image, domain, runbooks
 - [ ] Done
 - **Owner:** devops
 - **Why:** ship Phase 1 with a repeatable, reversible release process (ADR-0006, ADR-0009).
 - **Acceptance criteria:**
-  1. `deploy-production.yml` on `release: published`: build once, deploy prebuilt to Vercel
-     production, smoke test (`/de`, `/en`, `/de/demo` sample flow via a tagged Playwright subset).
+  1. Hetzner server rented and Coolify installed per `docs/deploy-hetzner.md`; production deploys
+     on `release: published` (the workflow triggers the Coolify deploy webhook for the release
+     tag), smoke test (`/de`, `/en`, `/de/demo` sample flow via a tagged Playwright subset).
+     Coolify preview deployments per PR, URL visible on the PR (moved here from P1-14).
   2. Docker image (`output: 'standalone'`, non-root user, Node 24 slim/distroless, healthcheck)
      pushed to `ghcr.io/<owner>/vorchain-web:vX.Y.Z` and `latest`; CI smoke test runs the
      container and curls `/de`.
   3. Custom domain with HTTPS; `NEXT_PUBLIC_SITE_URL` set; robots allows indexing only in
      production.
-  4. Runbooks: `docs/runbooks/deploy.md`, `docs/runbooks/rollback.md` (Vercel instant rollback +
-     re-deploy previous tag), `docs/runbooks/incident.md` (privacy incident first steps).
+  4. Runbooks: `docs/runbooks/deploy.md`, `docs/runbooks/rollback.md` (Coolify rollback to the
+     previous image + re-deploy previous tag), `docs/runbooks/incident.md` (privacy incident first steps).
   5. `TODO(owner)` check is blocking; legal pages completed by the owner before `1.0.0`.
   6. README: live link, status badges, architecture/ADR links; architecture §8 matches reality.
 - **Test plan:** dry run with a `0.x` release to production; rollback rehearsal documented in the
@@ -922,11 +930,28 @@ order.
 
 ---
 
+## Phase 2 (not scheduled)
+
+### P2-01: Add Postgres (via Coolify) when the first backend feature needs to store data
+- [ ] Done
+- **Owner:** devops
+- **Why:** Phase 1 stores nothing on the server (ADR-0003, ADR-0007), so `docker-compose.yml` runs
+  the web app only (ADR-0006). A database comes with the first feature that needs one.
+- **Acceptance criteria:**
+  1. Postgres added as a Coolify service in the same project (German region), and to
+     `docker-compose.yml` for local runs.
+  2. `DATABASE_URL` in `.env.example` and validated with zod at startup.
+  3. Automated backups (Coolify scheduled backups to EU object storage) and a tested restore,
+     documented in a runbook.
+  4. Datenschutzerklärung updated: what is stored, purpose, legal basis, retention.
+
+---
+
 ## Open questions and assumptions (owner decisions)
 
 | # | Question | Assumption used in the plan | Needed by |
 |---|---|---|---|
-| Q1 | Accept Vercel Pro (~USD 20/month) for commercial hosting? (ADR-0006) | Yes; fallback Cloudflare Workers | P1-14 |
+| Q1 | Hosting target? (ADR-0006) | Decided (owner, 2026-09-30): Hetzner Cloud in Germany + Coolify; Vercel and Cloudflare rejected (US companies, not hosted in Germany). Server rented later | P1-14, P1-28 |
 | Q2 | Brevo account and sender domain for the contact form? (ADR-0007) | Brevo, owner sets up SPF/DKIM | P1-25 |
 | Q3 | Should `1.234` (no comma) mean 1234 in German files? The prototype parses it as 1.234. | Keep prototype behaviour for parity; revisit with a versioned change | P1-08 |
 | Q4 | Overdue POs (promised before the as-of date) are dropped from the ERP view but can arrive in the realistic view after the P80 shift, so the realistic view can look less alarming and a material the ERP flags can drop out of the report. Which of options A-D in ADR-0005 item 5? | Keep for parity (pinned by a test); owner picks A-D, B (inform without changing numbers) is recommended | P1-03, P1-05, P1-17 |

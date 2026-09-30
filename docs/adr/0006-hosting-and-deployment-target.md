@@ -1,7 +1,7 @@
 # 0006. Hosting and deployment target
 
-- Status: proposed (needs owner confirmation of the Vercel Pro cost, see "Open points")
-- Date: 2026-09-25
+- Status: accepted (owner, 2026-09-30); supersedes the earlier proposal of option A
+- Date: 2026-09-25, decided 2026-09-30
 - Deciders: Sodabeh Taherpanah
 
 ## Context and problem
@@ -22,47 +22,72 @@ time in operations.
 | Commercial use | **Hobby plan forbids it**; Pro ~USD 20/month per member | Free plan allows it; Workers Paid ~USD 5/month if limits are hit | ~EUR 5 to 10/month for a small VM |
 | Ops burden | Very low | Low | Medium to high (TLS, patching, monitoring, backups, zero-downtime deploys) |
 | Portfolio value | Standard for Next.js, well understood by reviewers | Shows edge/adapter knowledge | Shows Docker/infra skills, but mostly invisible work |
-| Exit path | Docker image (standalone) | Docker image (standalone) | n/a |
+| Exit path | Docker image (standalone) | Docker image (stand## Decision
+We choose **C. a Docker container on Hetzner Cloud in Germany (Nuremberg or Falkenstein), deployed
+with Coolify** (self-hosted, open-source PaaS). Decided by the owner on 2026-09-30.
 
-## Decision
-We choose **A. Vercel Pro with functions pinned to `fra1`**, plus a **portable Docker image**
-(`output: 'standalone'`) built and pushed to GHCR on every release as the documented exit path.
+Why C:
+- **"Gehostet in Deutschland".** Hetzner is a German company with German data centres. For German
+  Mittelstand buyers this is a selling point, and it keeps the privacy story simple: no US provider
+  sits between the visitor and the site.
+- **Cost.** About EUR 5/month for a small server, against about USD 20/month for Vercel Pro.
+- **Git-push deploys without a US vendor.** Coolify builds the repo's `Dockerfile` on every push to
+  `main`, can build preview deployments for pull requests through its GitHub App, and issues
+  Let's Encrypt certificates.
+
+Rejected:
+- **A. Vercel Pro:** US company (CLOUD Act exposure, DPF + SCCs needed), not hosted in Germany, and
+  the Hobby plan forbids commercial use, so it would cost USD 20/month from day one.
+- **B. Cloudflare Workers:** US company with a global edge, not hosted in Germany (EU-only
+  processing needs Enterprise add-ons), and the OpenNext adapter adds a moving part between Next.js
+  and production.
 
 Details:
-- Deploys are driven from **GitHub Actions with the Vercel CLI** (`vercel pull`, `vercel build`,
-  `vercel deploy --prebuilt`), not from the Vercel Git integration, so CI is the single source of
-  truth and the pipeline is visible in the repo. Automatic Git deployments are disabled in
-  `vercel.json` (`git.deploymentEnabled: false`).
-- PR -> preview deployment, URL posted as a PR comment. Release published (ADR-0009) -> production.
-- `regions: ["fra1"]` for functions. No Vercel Analytics, Speed Insights or Web Analytics scripts
-  (ADR-0012 chooses a separate cookieless tool).
-- A DPA with Vercel is accepted in the dashboard; Vercel and Brevo are listed as processors in the
-  Datenschutzerklärung (placeholder text in P1-24, owner finalises).
-- The GHCR image (`ghcr.io/<owner>/vorchain-web`) is smoke-tested in CI (`docker run` + curl
-  `/de`), so moving to option C for Phase 2 (backend next to the web app, EU hosting as a selling
-  point) is a config change, not a rewrite.
-
-Why not B: good and cheaper, but the adapter adds a moving part between Next.js and production for
-a site whose main risk is shipping on time. Why not C now: preview environments and operations
-would eat Phase 1 time; it becomes attractive in Phase 2 when there is a backend and customer data.
+- The repo is **deploy-ready now; the server is rented later.** The owner cannot open a Hetzner
+  account yet, so no account is created, nothing is bought and nothing is deployed until then.
+  `docs/deploy-hetzner.md` lists the later steps.
+- One image for every environment: a multi-stage `Dockerfile` at the repo root builds the Next.js
+  `output: 'standalone'` server, runs as the unprivileged `node` user, binds `0.0.0.0` (ADR-0004,
+  Next.js bug #94745) and has a healthcheck. `docker compose up --build` runs the same image
+  locally. The GHCR image from P1-28 stays as the portable artefact and exit path.
+- `NEXT_PUBLIC_*` variables are build arguments (inlined at build time); everything else is set in
+  Coolify's environment settings. `.env.example` lists all of them.
+- **No database in Phase 1** (app only in `docker-compose.yml`): customer files never leave the
+  browser (ADR-0003) and contact-form messages are sent on as email (ADR-0007). Postgres is added
+  through Coolify when the first backend feature needs to store data (backlog **P2-01**: add
+  `DATABASE_URL` to `.env.example`, set up backups, update the Datenschutzerklärung).
+- A DPA (AVV) with Hetzner is concluded in the Hetzner console; Hetzner and Brevo are listed as
+  processors in the Datenschutzerklärung (placeholder text in P1-24, owner finalises).
+- No analytics or telemetry from the platform: `NEXT_TELEMETRY_DISABLED=1` in the image; analytics
+  stay with ADR-0012.
 
 ## Consequences
-- Positive: least operational work, first-class Next.js support, preview URLs for every PR,
-  release-driven production deploys, a tested container exit path.
-- Negative / risks: USD 20/month; US provider (mitigated: no customer files on the server, DPF +
-  SCCs, fra1 functions, disclosed in the privacy policy); vendor features must not creep in (no
-  Vercel-only APIs such as Edge Config or KV in Phase 1).
-- Follow-ups: P1-14 (preview deploys + release-please), P1-28 (production deploy, domain, GHCR
-  image, runbooks `docs/runbooks/deploy.md` and `rollback.md`).
+- Positive: data hosted in Germany, lowest running cost, no vendor lock-in (plain Docker), the
+  same image runs on a laptop, in CI and on the server, and the Docker/infra work is visible in the
+  portfolio.
+- Negative / risks: **we operate the server**: OS and Coolify updates, SSH hardening, firewall,
+  monitoring and backups of the Coolify configuration are our job (mitigated: unattended upgrades,
+  Hetzner firewall, runbook). A single small server has no automatic failover; a restart or a bad
+  deploy means minutes of downtime (mitigated: Coolify health checks and rollback to the previous
+  image, a static-first site). Preview deployments need the Coolify GitHub App and a wildcard DNS
+  record, so they only work once the server exists.
+- Follow-ups: P1-14 (deploy-ready container + release-please), P1-28 (rent the server, Coolify,
+  domain, production deploy on release, GHCR image, runbooks), P1-24 (privacy text names Hetzner),
+  P2-01 (Postgres when needed).
 
 ## Open points (owner)
-- Confirm the Vercel Pro subscription. If cost is a blocker, supersede this ADR with option B
-  (Cloudflare Workers free plan); the backlog tasks stay the same except the deploy commands.
+- Rent the Hetzner server and create the Coolify instance when possible (needed for P1-28 and for
+  preview deployments).
 - Domain name and DNS provider (needed for P1-28).
+
+ed for P1-28).
 
 ## References
 - Vercel fair use / commercial usage: https://vercel.com/docs/limits/fair-use-guidelines (read 2026-09-25: "Hobby teams are restricted to non-commercial personal use only")
 - Vercel regions: https://vercel.com/docs/functions/configuring-functions/region
 - Vercel DPF certification: https://vercel.com/changelog/vercel-is-now-certified-under-the-eu-us-data-privacy-framework-dpf
 - OpenNext Cloudflare (supports all Next 16 minors): https://opennext.js.org/cloudflare , `@opennextjs/cloudflare@1.20.6` (checked 2026-09-25)
-- `vercel` CLI: check `pnpm view vercel version` when implementing P1-14
+- Hetzner Cloud locations (Nuremberg `nbg1`, Falkenstein `fsn1`): https://docs.hetzner.com/cloud/general/locations/
+- Coolify installation and requirements: https://coolify.io/docs/get-started/installation
+- Coolify preview deployments: https://coolify.io/docs/applications/ci-cd/github/preview-deploy
+- Next.js standalone output: https://nextjs.org/docs/app/api-reference/config/next-config-js/output

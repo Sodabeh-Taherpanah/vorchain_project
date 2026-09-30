@@ -13,8 +13,8 @@ Customer files are read, parsed and analysed **only inside a Web Worker in the v
 ([ADR-0003](../adr/0003-client-side-processing-in-web-worker.md)). The domain logic is a pure
 TypeScript package (`@vorchain/engine`) that must reproduce the Python prototype exactly
 ([ADR-0005](../adr/0005-pure-engine-with-python-parity-tests.md)). The only server-side code is the
-contact-form Server Action ([ADR-0007](../adr/0007-contact-form-delivery.md)). The site is hosted on
-Vercel in the Frankfurt region, with a portable Docker image as the exit path
+contact-form Server Action ([ADR-0007](../adr/0007-contact-form-delivery.md)). The site runs as a Docker
+container on Hetzner Cloud in Germany, deployed with Coolify
 ([ADR-0006](../adr/0006-hosting-and-deployment-target.md)).
 
 ## 2. C4 Level 1: System context
@@ -72,8 +72,8 @@ flowchart TB
     worker -- "LoadResult, Report, ProjectionSeries (JSON)" --> pages
   end
 
-  subgraph host["Vercel, region fra1 (ADR-0006)"]
-    cdn["CDN: prerendered HTML, JS chunks,<br/>i18n messages, OG images"]
+  subgraph host["Hetzner Cloud, Germany: Coolify + Docker (ADR-0006)"]
+    cdn["Next.js standalone server: prerendered HTML,<br/>JS chunks, i18n messages, OG images"]
     action["Server Action: submitContact<br/>(zod, honeypot, rate limit)"]
   end
 
@@ -382,9 +382,9 @@ changing any number (ADR-0005 item 5); the demo shows the note in P1-17.
 ```mermaid
 flowchart LR
   dev["Developer / agent<br/>branch + PR"] --> gha["GitHub Actions<br/>lint, typecheck, test, e2e, lhci"]
-  gha -- "PR" --> preview["Vercel preview (fra1)<br/>URL posted on PR"]
+  gha -- "PR" --> preview["Coolify preview deployment<br/>(Hetzner, from P1-28)"]
   gha -- "merge to main" --> rp["release-please<br/>release PR"]
-  rp -- "release published" --> prod["Vercel production (fra1)<br/>vorchain domain"]
+  rp -- "release published" --> prod["Coolify production<br/>(Hetzner, Germany), vorchain domain"]
   rp -- "release published" --> ghcr["GHCR image<br/>ghcr.io/&lt;owner&gt;/vorchain-web:vX.Y.Z<br/>(output: standalone)"]
 ```
 
