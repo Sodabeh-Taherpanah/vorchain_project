@@ -613,6 +613,9 @@ order.
   4. Link to download the sample files as templates (local Blob, no network).
   5. Every `DataError` code has `de` and `en` messages (test enforces completeness against the
      parsers' exported code list).
+  6. The `MISSING_VALUE` message names the file, line and column, and hints that ERP totals rows
+     (e.g. `Summe;;1.234`, empty ID) should be deleted before upload (owner decision on P1-09;
+     see Q10).
 - **Test plan:** component tests for each panel state; Playwright: sample -> all tables
   recognised; upload of `bestellungen.csv` alone -> other tables shown as missing; upload of a
   CSV with a renamed required column -> specific missing-column hint.
@@ -932,3 +935,4 @@ order.
 | Q7 | Domain name and final brand assets (logo, colours) | Text logo, tokens per spec §6 | P1-13, P1-28 |
 | Q8 | Licence for the public repo (README says TBD) | Decide before making the repo public | P1-28 |
 | Q9 | Add commitlint scope `sample-data` (not in AGENTS.md §7 list)? | Optional, decided in P1-11 | P1-11 |
+| Q10 | Empty IDs / empty demand dates: error or skip with warning? | Error (owner, 2026-09-30): dropping demand could hide a shortage. Revisit auto-skipping ERP totals rows if users hit it | P1-09, P1-16 |
