@@ -270,8 +270,11 @@ describe('readCsv properties', () => {
         const { error } = result;
         expect(Object.keys(error).sort()).toEqual(allowedKeys.filter((key) => key in error));
         // `detected` is the only parameter so far, and it is an enum, never file content.
+        const params: Readonly<Record<string, unknown>> = error.params;
         expect(
-          Object.values(error.params).every((v) => ['zip', 'utf-16', 'binary'].includes(v)),
+          Object.values(params).every(
+            (v) => typeof v === 'string' && ['zip', 'utf-16', 'binary'].includes(v),
+          ),
         ).toBe(true);
       }),
     );
