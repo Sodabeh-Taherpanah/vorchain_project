@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/Sodabeh-Taherpanah/vorchain_project/compare/v0.3.0...v0.3.1) (2026-09-30)
+
+
+### Bug Fixes
+
+* **i18n:** avoid upload wording in the totals-row hint ([#30](https://github.com/Sodabeh-Taherpanah/vorchain_project/issues/30)) ([2b1764c](https://github.com/Sodabeh-Taherpanah/vorchain_project/commit/2b1764c65f3a592ef82d1a8ebf4b49670ec345f0))
+
 ## [0.3.0](https://github.com/Sodabeh-Taherpanah/vorchain_project/compare/v0.2.0...v0.3.0) (2026-09-30)
 
 
