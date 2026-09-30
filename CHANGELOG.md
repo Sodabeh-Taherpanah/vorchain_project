@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/Sodabeh-Taherpanah/vorchain_project/compare/v0.3.1...v0.4.0) (2026-09-30)
+
+
+### Features
+
+* **demo:** settings, summary tiles and ranked exception table (P1-17) ([#33](https://github.com/Sodabeh-Taherpanah/vorchain_project/issues/33)) ([3010e33](https://github.com/Sodabeh-Taherpanah/vorchain_project/commit/3010e3339834f1914de07bf8d610be00c116b95f))
+
 ## [0.3.1](https://github.com/Sodabeh-Taherpanah/vorchain_project/compare/v0.3.0...v0.3.1) (2026-09-30)
 
 
