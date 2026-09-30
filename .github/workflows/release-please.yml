@@ -1,0 +1,33 @@
+# Opens and updates the release PR from Conventional Commits on main; merging it tags vX.Y.Z,
+# updates CHANGELOG.md and publishes a GitHub release (ADR-0009). The first release is 0.1.0
+# (empty manifest, release-type node). Production deploys on `release: published` follow in P1-28.
+name: Release Please
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-please
+  cancel-in-progress: false
+
+jobs:
+  release-please:
+    name: Release PR
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write # labels on the release PR
+    steps:
+      - uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
+        with:
+          # GITHUB_TOKEN cannot trigger other workflows, so CI would not run on the release PR and
+          # P1-28's `release: published` deploy would not fire. RELEASE_PLEASE_TOKEN (fine-grained
+          # PAT, see docs/runbooks/ci.md) fixes both; without it the release PR still works.
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN || github.token }}
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json

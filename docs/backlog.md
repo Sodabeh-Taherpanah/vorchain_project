@@ -543,7 +543,7 @@ order.
 ---
 
 ## P1-14: CD: deploy-ready container (Hetzner + Coolify) + release-please
-- [ ] Done
+- [x] Done
 - **Owner:** devops
 - **Why:** the site must be deployable to the chosen host the day the server exists, and
   release-please starts collecting the changelog early (ADR-0006, ADR-0009). ADR-0006 was accepted

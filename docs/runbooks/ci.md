@@ -1,7 +1,8 @@
 # CI runbook
 
-Pipelines for pull requests and `main`, set up in Task 0. Preview deploys and release-please
-arrive with P1-14, production deploys and the GHCR image with P1-28, Lighthouse CI with P1-27.
+Pipelines for pull requests and `main`, set up in Task 0. Release-please arrived with P1-14;
+production deploys to Hetzner + Coolify, preview deployments and the GHCR image follow with P1-28
+(ADR-0006, `docs/deploy-hetzner.md`), Lighthouse CI with P1-27.
 
 ## Workflows
 
@@ -9,6 +10,7 @@ arrive with P1-14, production deploys and the GHCR image with P1-28, Lighthouse 
 |---|---|---|
 | `.github/workflows/ci.yml` | every PR, push to `main` | `lint`, `pr-title`, `typecheck`, `test`, `build`, `e2e`, `secrets`, `audit` |
 | `.github/workflows/codeql.yml` | PRs to `main`, push to `main`, weekly | CodeQL for `javascript-typescript` and `actions` |
+| `.github/workflows/release-please.yml` | push to `main` | opens/updates the release PR; merging it tags `vX.Y.Z` and publishes a GitHub release |
 | `.github/dependabot.yml` | weekly (npm), monthly (actions) | grouped update PRs |
 
 ### `ci.yml` jobs
@@ -47,6 +49,24 @@ no force pushes or deletions, and these required checks:
 `Lint`, `PR title (Conventional Commit)`, `Typecheck`, `Unit tests (coverage)`, `Build`,
 `E2E (Playwright, Chromium)`, `Secret scan (gitleaks)`,
 `Analyze (javascript-typescript)`, `Analyze (actions)`.
+
+## Releases (release-please, ADR-0009)
+- Every push to `main` updates one open release PR (`chore(main): release X.Y.Z`) with the next
+  version and the `CHANGELOG.md` entry, computed from the Conventional Commit PR titles. `feat`
+  bumps the minor version and `fix` the patch until `1.0.0` (`bump-minor-pre-major`). The first
+  release is `0.1.0`.
+- Merging the release PR tags `vX.Y.Z`, updates `package.json` and publishes a GitHub release.
+  Config: `release-please-config.json`, state: `.release-please-manifest.json` (do not edit by
+  hand, except to force a version). `CHANGELOG.md` is generated, so Prettier ignores it.
+- **Secret `RELEASE_PLEASE_TOKEN`** (repository secret). Without it the workflow falls back to
+  `GITHUB_TOKEN`, which works but cannot trigger other workflows: CI does not run on the release PR
+  and the `release: published` deploy (P1-28) does not fire. To set it up, create a
+  **fine-grained personal access token** limited to this repository with *Contents: read and
+  write* and *Pull requests: read and write*, expiry 1 year, and save it under Settings ->
+  Secrets and variables -> Actions.
+- **Rotation:** before the token expires (calendar reminder), create a new one with the same
+  permissions, replace the secret value, then delete the old token in GitHub settings. If a token
+  leaks, delete it first; the workflow keeps working on the fallback until the new one is set.
 
 ## Common failures
 | Symptom | Fix |
