@@ -575,7 +575,7 @@ order.
 ---
 
 ## P1-15: Web: analysis Web Worker bridge (Comlink) and `useAnalysis` hook
-- [ ] Done
+- [x] Done
 - **Owner:** builder
 - **Why:** keeps files in the browser and the UI responsive (ADR-0003).
 - **Acceptance criteria:**

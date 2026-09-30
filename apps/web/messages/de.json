@@ -8,7 +8,21 @@
     "tagline": "Vorchain rechnet mit der echten Verspätung Ihrer Lieferanten statt mit dem zugesagten Termin."
   },
   "demo": {
-    "title": "Interaktive Demo"
+    "title": "Interaktive Demo",
+    "preview": {
+      "loadSample": "Beispieldaten laden",
+      "loading": "Daten werden im Browser gelesen …",
+      "analysing": "Analyse läuft …",
+      "loadFailed": "Die Daten konnten nicht vollständig gelesen werden.",
+      "summary": "Ergebnis der Beispieldaten",
+      "critical": "Kritisch",
+      "warning": "Warnung",
+      "hidden": "Versteckte Risiken",
+      "errors": {
+        "ANALYSIS_TIMEOUT": "Die Analyse hat länger als 30 Sekunden gedauert und wurde abgebrochen. Bitte versuchen Sie es mit kleineren Dateien erneut.",
+        "WORKER_FAILED": "Die Analyse ist unerwartet fehlgeschlagen. Bitte laden Sie die Seite neu und versuchen Sie es erneut."
+      }
+    }
   },
   "contact": {
     "title": "Kontakt"

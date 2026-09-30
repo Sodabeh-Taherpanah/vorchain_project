@@ -8,7 +8,21 @@
     "tagline": "Vorchain plans with your suppliers' real delays instead of their promised dates."
   },
   "demo": {
-    "title": "Interactive demo"
+    "title": "Interactive demo",
+    "preview": {
+      "loadSample": "Load sample data",
+      "loading": "Reading data in your browser …",
+      "analysing": "Analysing …",
+      "loadFailed": "The data could not be read completely.",
+      "summary": "Result for the sample data",
+      "critical": "Critical",
+      "warning": "Warning",
+      "hidden": "Hidden risks",
+      "errors": {
+        "ANALYSIS_TIMEOUT": "The analysis took longer than 30 seconds and was stopped. Please try again with smaller files.",
+        "WORKER_FAILED": "The analysis failed unexpectedly. Please reload the page and try again."
+      }
+    }
   },
   "contact": {
     "title": "Contact"
