@@ -11,8 +11,9 @@
   "scripts": {
     "lint": "eslint .",
     "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.pure.json && tsc --noEmit -p test",
-    "test": "vitest run",
-    "coverage": "vitest run --coverage"
+    "test": "vitest run --project unit",
+    "coverage": "vitest run --project unit --coverage",
+    "bench": "vitest run --project bench --reporter=verbose"
   },
   "devDependencies": {
     "@types/node": "^24.13.6",

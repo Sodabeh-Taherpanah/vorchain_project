@@ -51,7 +51,7 @@ no force pushes or deletions, and these required checks:
 `Analyze (javascript-typescript)`, `Analyze (actions)`.
 
 ## Releases (release-please, ADR-0009)
-- Every push to `main` updates one open release PR (`chore(main): release X.Y.Z`) with the next
+- Every push to `main` updates one open release PR (`chore: release X.Y.Z`) with the next
   version and the `CHANGELOG.md` entry, computed from the Conventional Commit PR titles. `feat`
   bumps the minor version and `fix` the patch until `1.0.0` (`bump-minor-pre-major`). The first
   release is `0.1.0`.

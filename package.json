@@ -19,7 +19,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lhci": "node -e \"console.log('Lighthouse CI is not set up yet; it arrives with P1-27 (docs/backlog.md).')\"",
-    "bench": "pnpm --filter @vorchain/sample-data bench",
+    "bench": "pnpm --filter @vorchain/engine bench && pnpm --filter @vorchain/sample-data bench",
     "check": "turbo run lint typecheck test",
     "check:all": "prettier --check . && turbo run lint typecheck test build test:e2e",
     "map": "node scripts/update-map.mjs",
