@@ -8,7 +8,7 @@ Cells are converted with the prototype's own `parse_number` / `parse_date`.
 It then runs the prototype (`shortage_radar.analyse`, which reads `.xlsx` through `loaders.py`
 `_read_xlsx_rows` / openpyxl) on each generated folder and fails unless the exceptions equal
 `reference/python-prototype/golden/*.json`. So the fixtures are golden-equivalent per the
-prototype's own XLSX loader, and `test/python-xlsx.test.ts` can hold `parseFile` to the same bar.
+prototype's own XLSX loader, and `test/python-tables.test.ts` can hold `parseFile` to the same bar.
 
 Needs openpyxl (`pip install openpyxl`). Workbook metadata and ZIP timestamps are fixed, so
 reruns are byte-identical.

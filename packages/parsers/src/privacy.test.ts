@@ -1,13 +1,16 @@
 /**
- * Privacy guarantee of `loadTables` (AGENTS.md §2): errors and warnings name the file, line and
- * column header and hold at most the one offending cell, never whole rows. Every cell is a unique
+ * Privacy guarantee of `loadTables` (AGENTS.md §2), for tables read from CSV or XLSX: errors and
+ * warnings name the file, line and column header and hold at most the one offending cell, never
+ * whole rows. Every cell is a unique
  * token, so any token found in an error or warning can be traced back to where it came from.
  */
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
 
 import { loadTables } from './assemble.ts';
+import { workbookBytes } from '../test/support/workbook.ts';
 import { COLUMN_ALIASES, OPTIONAL, REQUIRED, TABLE_FILE_STEMS, TABLE_NAMES } from './columns.ts';
+import { parseFile } from './file.ts';
 import type { RawTable } from './table.ts';
 
 const ALLOWED_KEYS = new Set(['code', 'fileName', 'row', 'column', 'params']);
@@ -51,28 +54,55 @@ function buildFile(
   };
 }
 
+/** Asserts the privacy rule for every error and warning of `loadTables(files)`. */
+function expectPrivateIssues(files: readonly RawTable[]): void {
+  const result = loadTables(files);
+  for (const issue of [...result.errors, ...result.warnings]) {
+    for (const key of Object.keys(issue)) expect(ALLOWED_KEYS.has(key), key).toBe(true);
+    const file = files.find((f) => f.fileName === issue.fileName);
+    if (issue.column !== undefined) expect(file?.headers).toContain(issue.column);
+
+    const tokens = [...JSON.stringify(issue).matchAll(TOKEN)];
+    expect(tokens.length, JSON.stringify(issue)).toBeLessThanOrEqual(1);
+    const [token] = tokens;
+    if (token === undefined) continue;
+    const [, fileIndex, row, col] = token.map(Number);
+    expect(files[fileIndex ?? -1]?.fileName).toBe(issue.fileName);
+    expect(row).toBe(issue.row);
+    if (issue.column !== undefined) expect(file?.headers[col ?? -1]).toBe(issue.column);
+  }
+}
+
+/** The same table as an XLSX workbook, read back by `parseFile` (text cells stay text). */
+async function viaXlsx(file: RawTable): Promise<RawTable> {
+  const sheet = [[...file.headers], ...file.rows.map((row) => [...row.cells])];
+  const name = file.fileName.replace(/\.csv$/u, '.xlsx');
+  const result = await parseFile({ name, bytes: workbookBytes({ Tabelle: sheet }) });
+  // A sheet without a single header gives EMPTY_FILE, which holds no cell either.
+  if (!result.ok) {
+    expect(Object.keys(result.error.params)).toEqual([]);
+    return { ...file, fileName: name, headers: [], rows: [] };
+  }
+  return result.value;
+}
+
 describe('loadTables privacy', () => {
   it('puts at most the one offending cell of the reported line and column into each issue', () => {
     fc.assert(
       fc.property(fc.array(fileSpec, { maxLength: 7 }), (specs) => {
-        const files = specs.map((spec, i) => buildFile(i, spec));
-        const result = loadTables(files);
-        for (const issue of [...result.errors, ...result.warnings]) {
-          for (const key of Object.keys(issue)) expect(ALLOWED_KEYS.has(key), key).toBe(true);
-          const file = files.find((f) => f.fileName === issue.fileName);
-          if (issue.column !== undefined) expect(file?.headers).toContain(issue.column);
-
-          const tokens = [...JSON.stringify(issue).matchAll(TOKEN)];
-          expect(tokens.length, JSON.stringify(issue)).toBeLessThanOrEqual(1);
-          const [token] = tokens;
-          if (token === undefined) continue;
-          const [, fileIndex, row, col] = token.map(Number);
-          expect(files[fileIndex ?? -1]?.fileName).toBe(issue.fileName);
-          expect(row).toBe(issue.row);
-          if (issue.column !== undefined) expect(file?.headers[col ?? -1]).toBe(issue.column);
-        }
+        expectPrivateIssues(specs.map((spec, i) => buildFile(i, spec)));
       }),
       { seed: 20260930, numRuns: 300 },
+    );
+  });
+
+  // Fewer runs: each one writes and reads up to seven workbooks.
+  it('keeps the same guarantee for files read from XLSX', { timeout: 30_000 }, async () => {
+    await fc.assert(
+      fc.asyncProperty(fc.array(fileSpec, { maxLength: 7 }), async (specs) => {
+        expectPrivateIssues(await Promise.all(specs.map((spec, i) => viaXlsx(buildFile(i, spec)))));
+      }),
+      { seed: 20260930, numRuns: 25 },
     );
   });
 });
