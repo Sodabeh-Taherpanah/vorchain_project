@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/Sodabeh-Taherpanah/vorchain_project/compare/v0.1.0...v0.1.1) (2026-09-30)
+
+
+### Bug Fixes
+
+* **ci:** run the engine spec-scale timing in bench and fix the release pr checks ([#24](https://github.com/Sodabeh-Taherpanah/vorchain_project/issues/24)) ([d6d4638](https://github.com/Sodabeh-Taherpanah/vorchain_project/commit/d6d46389c5d5f8de737e49efaa0ac9441cd1d2a1))
+
 ## 0.1.0 (2026-09-30)
 
 
