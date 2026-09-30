@@ -1,8 +1,18 @@
 import { readFileSync } from 'node:fs';
 
+import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page, type Request } from '@playwright/test';
 
 import de from '../messages/de.json' with { type: 'json' };
+import en from '../messages/en.json' with { type: 'json' };
+
+const TABLES = [
+  'materials',
+  'open_purchase_orders',
+  'demand',
+  'supplier_history',
+  'suppliers',
+] as const;
 
 const bestellungen = readFileSync(new URL('./fixtures/bestellungen.csv', import.meta.url));
 
@@ -51,6 +61,10 @@ test('the sample loads in the Web Worker and all required tables are recognised'
 
   await worker;
   await expect(page.getByRole('status')).toHaveText(de.demo.status.complete);
+  for (const table of TABLES) {
+    await expect(page.getByTestId(`table-${table}`)).toHaveAttribute('data-status', 'recognised');
+  }
+  await expect(page.getByTestId('table-demand')).toContainText('bedarf.csv');
   // The worker, parsers and sample data load only on demand, not with the page.
   expect(scripts.length).toBeGreaterThan(scriptsOnLoad);
   expectNothingSent(page, sent);
@@ -66,5 +80,62 @@ test('an uploaded file stays in the browser; missing tables are reported', async
   });
 
   await expect(page.getByRole('status')).toContainText('3 Probleme gefunden');
+  await expect(page.getByTestId('table-open_purchase_orders')).toHaveAttribute(
+    'data-status',
+    'recognised',
+  );
+  for (const table of ['materials', 'demand', 'supplier_history'] as const) {
+    await expect(page.getByTestId(`table-${table}`)).toHaveAttribute('data-status', 'missing');
+  }
+  await expect(page.getByTestId('table-suppliers')).toHaveAttribute('data-status', 'absent');
   expectNothingSent(page, sent);
 });
+
+test('a renamed required column gets a specific hint; removing the file clears it', async ({
+  page,
+}) => {
+  await openDemo(page);
+  const renamed = bestellungen.toString('utf8').replace('Liefertermin', 'Termin_neu');
+
+  await page.getByTestId('file-input').setInputFiles({
+    name: 'bestellungen.csv',
+    mimeType: 'text/csv',
+    buffer: Buffer.from(renamed, 'utf8'),
+  });
+
+  const orders = page.getByTestId('table-open_purchase_orders');
+  await expect(orders).toHaveAttribute('data-status', 'invalid');
+  await expect(orders).toContainText(
+    'bestellungen.csv: Spalte Liefertermin nicht gefunden – gefundene Spalten: Bestellnummer, ' +
+      'Artikelnummer, Lieferant, Bestellmenge und Termin_neu.',
+  );
+
+  await page.getByRole('button', { name: 'bestellungen.csv entfernen' }).click();
+  await expect(orders).toHaveCount(0);
+  await expect(page.getByRole('status')).toHaveText('');
+});
+
+for (const [locale, messages] of [
+  ['de', de],
+  ['en', en],
+] as const) {
+  test(`/${locale}/demo has no serious axe violations with the map check shown`, async ({
+    page,
+  }) => {
+    await page.goto(`/${locale}/demo`);
+    await page.getByTestId('file-input').setInputFiles({
+      name: 'bestellungen.csv',
+      mimeType: 'text/csv',
+      buffer: bestellungen,
+    });
+    await expect(page.getByTestId('table-demand')).toHaveAttribute('data-status', 'missing');
+    await page.getByRole('button', { name: messages.demo.dataSource.templates }).click();
+    await expect(page.getByRole('link', { name: /\.csv$/ })).toHaveCount(5);
+
+    const results = await new AxeBuilder({ page }).analyze();
+    const serious = results.violations.filter(
+      (v) => v.impact === 'serious' || v.impact === 'critical',
+    );
+    expect(serious).toEqual([]);
+  });
+}

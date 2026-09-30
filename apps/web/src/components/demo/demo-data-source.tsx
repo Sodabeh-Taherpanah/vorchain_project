@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button.tsx';
 
 import { useAnalysis, type AnalysisState } from '../../hooks/use-analysis.ts';
 import { FileDropzone } from './file-dropzone.tsx';
+import { MapCheckPanel } from './map-check-panel.tsx';
 import { addFiles, NO_SOURCE, removeFileAt, type DataSource } from './file-selection.ts';
 import { SampleTemplates } from './sample-templates.tsx';
 
@@ -95,6 +96,7 @@ export function DemoDataSource() {
           {t(`errors.${state.error}`)}
         </p>
       )}
+      {'load' in state && <MapCheckPanel load={state.load} />}
     </div>
   );
 }

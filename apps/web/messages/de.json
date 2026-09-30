@@ -26,9 +26,81 @@
       "complete": "Alle Pflichttabellen erkannt. Die Daten sind bereit für die Analyse.",
       "incomplete": "{count, plural, one {# Problem gefunden} other {# Probleme gefunden}}. Details stehen bei den Tabellen unten."
     },
+    "mapCheck": {
+      "heading": "2. Erkannte Tabellen",
+      "intro": "So wurden Ihre Dateien zugeordnet. Hinweise zur Behebung stehen direkt bei der betroffenen Tabelle.",
+      "required": "Pflicht",
+      "optional": "Optional",
+      "status": {
+        "recognised": "Erkannt",
+        "invalid": "Fehlerhaft",
+        "missing": "Fehlt",
+        "absent": "Nicht vorhanden"
+      },
+      "file": "Datei",
+      "rows": "{count, plural, one {# Zeile} other {# Zeilen}}",
+      "columns": "Zugeordnete Spalten",
+      "fileErrors": "Nicht zugeordnete Dateien",
+      "errorLabel": "Fehler:",
+      "warningLabel": "Hinweis:"
+    },
+    "tables": {
+      "materials": "Materialstamm",
+      "open_purchase_orders": "Offene Bestellungen",
+      "demand": "Bedarf",
+      "supplier_history": "Lieferhistorie",
+      "suppliers": "Lieferanten"
+    },
+    "tableExamples": {
+      "materials": "artikel.csv",
+      "open_purchase_orders": "bestellungen.csv",
+      "demand": "bedarf.csv",
+      "supplier_history": "lieferhistorie.csv",
+      "suppliers": "lieferanten.csv"
+    },
+    "columns": {
+      "material_id": "Artikelnummer",
+      "description": "Bezeichnung",
+      "main_supplier_id": "Hauptlieferant",
+      "on_hand": "Lagerbestand",
+      "safety_stock": "Sicherheitsbestand",
+      "unit": "Mengeneinheit",
+      "po_id": "Bestellnummer",
+      "supplier_id": "Lieferant",
+      "qty": "Menge",
+      "promised_date": "Liefertermin",
+      "actual_date": "Wareneingang",
+      "date": "Bedarfsdatum",
+      "name": "Name"
+    },
+    "location": {
+      "file": "{file}",
+      "row": "Zeile {row}",
+      "column": "Spalte „{column}“"
+    },
     "errors": {
+      "EMPTY_FILE": "Die Datei ist leer. Bitte exportieren Sie die Tabelle erneut aus dem ERP.",
+      "NOT_TEXT": "Das ist keine CSV-Textdatei ({detected, select, zip {vermutlich eine Excel-Datei mit der Endung .csv; benennen Sie sie in .xlsx um} utf16 {UTF-16-kodiert; speichern Sie sie als CSV UTF-8} other {Binärdaten; speichern Sie die Tabelle als CSV oder .xlsx}}).",
+      "UNCLOSED_QUOTE": "Ein Anführungszeichen wird nicht geschlossen, dadurch wäre der Rest der Datei eine Zelle. Bitte prüfen Sie diese Zeile.",
+      "MALFORMED_QUOTE": "Nach dem schließenden Anführungszeichen folgt noch Text (z. B. \"12\" Zoll\"). Bitte verdoppeln Sie Anführungszeichen innerhalb eines Feldes oder entfernen Sie sie.",
+      "INVALID_NUMBER": "„{value}“ ist keine gültige Zahl. Erlaubt sind z. B. 1234,5 oder 1.234,5.",
+      "INVALID_DATE": "„{value}“ ist kein gültiges Datum. Erlaubt sind z. B. 05.10.2026, 05.10.26 oder 2026-10-05.",
+      "UNKNOWN_TABLE": "Die Tabelle wurde nicht erkannt – gefundene Spalten: {found}. Benennen Sie die Datei z. B. in artikel.csv, bestellungen.csv, bedarf.csv, lieferhistorie.csv oder lieferanten.csv um.",
+      "AMBIGUOUS_TABLE": "Die Spalten passen zu mehreren Tabellen ({candidates}). Bitte benennen Sie die Datei eindeutig, z. B. bestellungen.csv.",
+      "MISSING_COLUMNS": "{count, plural, one {Spalte <b>{missing}</b> nicht gefunden} other {Spalten <b>{missing}</b> nicht gefunden}} – gefundene Spalten: {found}. Bitte benennen Sie die Spalte in der Kopfzeile entsprechend um.",
+      "MISSING_VALUE": "Pflichtwert fehlt. Summenzeilen aus dem ERP (z. B. „Summe;;1.234“ ohne ID) bitte vor dem Hochladen löschen.",
+      "TOO_MANY_ERRORS": "Mehr als {limit} fehlerhafte Zeilen; nur die ersten {limit} werden angezeigt. Bitte prüfen Sie Trennzeichen, Zahlen- und Datumsformat des Exports.",
+      "DUPLICATE_TABLE": "Die Tabelle {table} ist bereits in {other} enthalten. Bitte entfernen Sie eine der beiden Dateien.",
+      "MISSING_TABLE": "Die Tabelle {table} fehlt. Bitte fügen Sie eine Datei hinzu, z. B. {example}.",
+      "UNSUPPORTED_FILE_TYPE": "Dateien {extension, select, none {ohne Endung} other {mit der Endung .{extension}}} werden nicht unterstützt. Bitte speichern Sie die Tabelle als CSV oder Excel-Arbeitsmappe (.xlsx).",
+      "PASSWORD_PROTECTED": "Die Excel-Datei ist passwortgeschützt. Bitte speichern Sie eine Kopie ohne Passwort.",
+      "CORRUPT_FILE": "Die Excel-Datei ist beschädigt oder unvollständig. Bitte exportieren Sie sie erneut.",
+      "FILE_TOO_LARGE": "{unit, select, bytes {Die Daten sind größer als {limit, number} MB.} unpackedBytes {Die Excel-Datei ist entpackt größer als {limit, number} MB.} other {Die Tabelle hat mehr als {limit, number} Zeilen.}} Bitte exportieren Sie nur die benötigten Spalten und Zeilen.",
       "ANALYSIS_TIMEOUT": "Die Analyse hat länger als 30 Sekunden gedauert und wurde abgebrochen. Bitte versuchen Sie es mit kleineren Dateien erneut.",
       "WORKER_FAILED": "Die Analyse ist unerwartet fehlgeschlagen. Bitte laden Sie die Seite neu und versuchen Sie es erneut."
+    },
+    "warnings": {
+      "DUPLICATE_MATERIAL": "Artikelnummer „{value}“ kommt mehrfach vor (zuerst in Zeile {firstRow}). Beide Zeilen werden analysiert; bitte prüfen Sie den Export."
     }
   },
   "contact": {

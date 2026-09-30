@@ -604,7 +604,7 @@ order.
 ---
 
 ## P1-16: Demo: data source (sample / upload) and map check
-- [ ] Done
+- [x] Done
 - **Owner:** builder
 - **Why:** step 1 and 2 of the demo flow: choose data and understand what was recognised
   (spec §4.1).
