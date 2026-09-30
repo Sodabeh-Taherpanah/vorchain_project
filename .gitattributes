@@ -7,3 +7,4 @@
 packages/parsers/test/fixtures/csv/** -text
 packages/parsers/test/fixtures/python-*.json linguist-generated=true
 pnpm-lock.yaml linguist-generated=true -diff
+packages/sample-data/src/generated/** linguist-generated=true

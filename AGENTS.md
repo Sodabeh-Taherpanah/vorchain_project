@@ -99,7 +99,7 @@ Overall coverage gate: 80% (web), 95% (engine). Tests must be deterministic: fix
 - Branch names: `feat/<scope>-<short>`, `fix/…`, `chore/…`, `docs/…`, `test/…`, `ci/…`, `refactor/…`.
 - **Conventional Commits** (enforced by commitlint): `type(scope): imperative summary`
   - types: `feat fix docs style refactor perf test build ci chore revert`
-  - scopes: `engine parsers web demo i18n seo ui ci infra docs deps`
+  - scopes: `engine parsers sample-data web demo i18n seo ui ci infra docs deps`
   - example: `feat(engine): flag hidden risk when ERP view shows shortage later`
   - breaking change: `feat(engine)!: …` + `BREAKING CHANGE:` footer
 - Every PR uses the template: What / Why / How tested / Screenshots / Checklist. Link the task ID from `docs/backlog.md`.
