@@ -5,6 +5,8 @@
 *.xlsx binary
 # Parser fixtures test exact bytes (CRLF, BOM, Windows-1252): never normalise them.
 packages/parsers/test/fixtures/csv/** -text
+# The prototype's sample CSVs (CRLF, BOM) are compared byte for byte by parsers and sample-data.
+reference/python-prototype/sample_data*/** -text
 packages/parsers/test/fixtures/python-*.json linguist-generated=true
 pnpm-lock.yaml linguist-generated=true -diff
 packages/sample-data/src/generated/** linguist-generated=true
