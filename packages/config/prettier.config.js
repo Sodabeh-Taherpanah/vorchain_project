@@ -1,5 +1,5 @@
 /**
- * Shared Prettier config. `prettier-plugin-tailwindcss` is added with Tailwind in P1-13.
+ * Shared Prettier config. The root `prettier.config.js` adds `prettier-plugin-tailwindcss`.
  * @type {import('prettier').Config}
  */
 const config = {

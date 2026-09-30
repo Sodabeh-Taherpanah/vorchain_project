@@ -1,0 +1,182 @@
+/*
+ * Vorchain design tokens (spec §6, P1-13). Industrial and calm: cool neutrals, one amber signal
+ * accent for "hidden risk", semantic red/amber/green for severity.
+ *
+ * Every colour lives here as a CSS variable; components use the Tailwind utilities generated from
+ * `@theme inline` (`bg-background`, `text-signal-strong`, ...) and never raw colour values.
+ * `src/app/design-tokens.test.ts` checks the WCAG contrast of the token pairs in both themes.
+ */
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+
+/*
+ * Dark mode follows `prefers-color-scheme` without JavaScript. An explicit choice from the theme
+ * toggle adds `.light` or `.dark` to <html> (see `src/lib/theme.ts`) and wins over the system.
+ */
+@custom-variant dark {
+  &:where(.dark, .dark *) {
+    @slot;
+  }
+  @media (prefers-color-scheme: dark) {
+    &:where(:not(.light, .light *)) {
+      @slot;
+    }
+  }
+}
+
+@theme inline {
+  /* next/font exposes the self-hosted families as CSS variables on <html> (src/lib/fonts.ts). */
+  --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  --font-heading: var(--font-sans);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-signal: var(--signal);
+  --color-signal-foreground: var(--signal-foreground);
+  --color-signal-strong: var(--signal-strong);
+  --color-critical: var(--critical);
+  --color-critical-foreground: var(--critical-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-ok: var(--ok);
+  --color-ok-foreground: var(--ok-foreground);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+}
+
+:root {
+  color-scheme: light;
+  --radius: 0.5rem;
+
+  /* Neutrals (cool slate). */
+  --background: oklch(0.99 0.002 250);
+  --foreground: oklch(0.21 0.02 255);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.21 0.02 255);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.21 0.02 255);
+  --primary: oklch(0.28 0.03 255);
+  --primary-foreground: oklch(0.985 0.002 250);
+  --secondary: oklch(0.955 0.006 250);
+  --secondary-foreground: oklch(0.28 0.03 255);
+  --muted: oklch(0.955 0.006 250);
+  --muted-foreground: oklch(0.47 0.02 255);
+  --accent: oklch(0.94 0.008 250);
+  --accent-foreground: oklch(0.21 0.02 255);
+  --border: oklch(0.89 0.008 250);
+  --input: oklch(0.64 0.02 250);
+  --ring: oklch(0.28 0.03 255);
+
+  /* Signal accent: amber marks a hidden risk. `-strong` is the variant safe for text on neutrals. */
+  --signal: oklch(0.8 0.16 75);
+  --signal-foreground: oklch(0.26 0.05 60);
+  --signal-strong: oklch(0.53 0.14 55);
+
+  /* Severity (semantic): critical = red, warning = amber, ok = green. */
+  --critical: oklch(0.51 0.19 27);
+  --critical-foreground: oklch(0.985 0.002 250);
+  --warning: oklch(0.83 0.16 85);
+  --warning-foreground: oklch(0.26 0.05 60);
+  --ok: oklch(0.52 0.13 150);
+  --ok-foreground: oklch(0.985 0.002 250);
+  --destructive: var(--critical);
+
+  /* Charts: 1 = ERP view (neutral), 2 = realistic view (signal), then severities. */
+  --chart-1: oklch(0.55 0.02 255);
+  --chart-2: var(--signal-strong);
+  --chart-3: var(--critical);
+  --chart-4: var(--ok);
+  --chart-5: var(--muted-foreground);
+
+  @variant dark {
+    color-scheme: dark;
+
+    --background: oklch(0.17 0.015 255);
+    --foreground: oklch(0.96 0.005 250);
+    --card: oklch(0.21 0.018 255);
+    --card-foreground: oklch(0.96 0.005 250);
+    --popover: oklch(0.21 0.018 255);
+    --popover-foreground: oklch(0.96 0.005 250);
+    --primary: oklch(0.93 0.008 250);
+    --primary-foreground: oklch(0.21 0.02 255);
+    --secondary: oklch(0.27 0.02 255);
+    --secondary-foreground: oklch(0.96 0.005 250);
+    --muted: oklch(0.27 0.02 255);
+    --muted-foreground: oklch(0.72 0.015 250);
+    --accent: oklch(0.29 0.02 255);
+    --accent-foreground: oklch(0.96 0.005 250);
+    --border: oklch(0.32 0.02 255);
+    --input: oklch(0.5 0.02 255);
+    --ring: oklch(0.93 0.008 250);
+
+    --signal: oklch(0.8 0.15 75);
+    --signal-foreground: oklch(0.2 0.03 60);
+    --signal-strong: oklch(0.82 0.15 80);
+
+    --critical: oklch(0.66 0.2 25);
+    --critical-foreground: oklch(0.17 0.015 255);
+    --warning: oklch(0.83 0.15 85);
+    --warning-foreground: oklch(0.2 0.03 60);
+    --ok: oklch(0.74 0.15 150);
+    --ok-foreground: oklch(0.17 0.015 255);
+
+    --chart-1: oklch(0.7 0.015 250);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    @apply bg-background font-sans text-foreground antialiased;
+  }
+  body {
+    @apply min-h-dvh;
+  }
+  /* One visible, high-contrast focus ring for every interactive element (WCAG 2.4.7). */
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-ring;
+  }
+}
+
+/* Motion is decoration only: honour the OS setting everywhere, including third-party CSS. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
