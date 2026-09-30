@@ -21,5 +21,48 @@
   },
   "stub": {
     "comingSoon": "This page is a work in progress and will follow soon."
+  },
+  "site": {
+    "name": "Vorchain",
+    "home": "Vorchain, go to the home page"
+  },
+  "layout": {
+    "skipLink": "Skip to content"
+  },
+  "nav": {
+    "label": "Main navigation",
+    "demo": "Demo",
+    "contact": "Contact"
+  },
+  "localeSwitcher": {
+    "label": "Choose language",
+    "de": "Deutsch",
+    "en": "English"
+  },
+  "theme": {
+    "toggle": "Dark colour scheme"
+  },
+  "footer": {
+    "label": "Legal and links",
+    "promise": "Your data never leaves your browser.",
+    "legalNotice": "Legal notice",
+    "privacy": "Privacy",
+    "github": "Source code on GitHub",
+    "external": "(external site)"
+  },
+  "notFound": {
+    "code": "Error 404",
+    "title": "Page not found",
+    "description": "This page does not exist or no longer exists. Check the address or start on the home page.",
+    "home": "Go to the home page",
+    "demo": "Open the demo"
+  },
+  "error": {
+    "code": "Unexpected error",
+    "title": "Something went wrong",
+    "description": "This page could not be displayed. Try again. If that does not help, start on the home page.",
+    "retry": "Try again",
+    "home": "Go to the home page",
+    "reference": "Error ID: {digest}"
   }
 }
