@@ -21,7 +21,15 @@ function renderPanel(load: Partial<LoadSummary>) {
   render(
     <NextIntlClientProvider locale="de" messages={de}>
       <MapCheckPanel
-        load={{ tables: [], errors: [], warnings: [], ready: false, asOf: null, ...load }}
+        load={{
+          tables: [],
+          errors: [],
+          warnings: [],
+          ready: false,
+          asOf: null,
+          supplierNames: {},
+          ...load,
+        }}
       />
     </NextIntlClientProvider>,
   );

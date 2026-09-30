@@ -43,6 +43,15 @@ describe('createAnalysisService', () => {
     expect(load).not.toHaveProperty('input');
   });
 
+  it('returns the supplier names so the page can show names instead of IDs', async () => {
+    const service = createAnalysisService();
+
+    const load = await service.loadSample('de');
+
+    expect(load.supplierNames.S01).toBe('Metallbau Krüger GmbH');
+    expect(Object.keys(load.supplierNames).length).toBeGreaterThan(1);
+  });
+
   it('analyses the German sample with the golden summary counts', async () => {
     const service = createAnalysisService();
     await service.loadSample('de');

@@ -36,6 +36,11 @@ export interface LoadSummary {
   readonly ready: boolean;
   /** The sample's analysis date; `null` for uploads (the user picks the date). */
   readonly asOf: IsoDate | null;
+  /**
+   * Supplier ID to name from the optional suppliers table, for the explanations (the engine's
+   * output stays ID-based). Empty when the table is missing or the load failed.
+   */
+  readonly supplierNames: Readonly<Record<string, string>>;
 }
 
 export interface AnalysisService {
@@ -50,6 +55,12 @@ export interface AnalysisService {
  * read; it shares the parsers' per-file limit so there is one number to document.
  */
 export const MAX_TOTAL_BYTES = MAX_FILE_BYTES;
+
+function namesOf(input: AnalysisInput | null): Readonly<Record<string, string>> {
+  const names: Record<string, string> = {};
+  for (const { supplierId, name } of input?.suppliers ?? []) names[supplierId] = name;
+  return names;
+}
 
 function tooLarge(): LoadResult {
   const error: DataError = {
@@ -86,10 +97,12 @@ export function createAnalysisService(): AnalysisService {
 
   const remember = (load: number, result: LoadResult, asOf: IsoDate | null): LoadSummary => {
     const { tables, errors, warnings } = result;
-    if (load !== latestLoad) return { tables, errors, warnings, ready: false, asOf };
+    if (load !== latestLoad) {
+      return { tables, errors, warnings, ready: false, asOf, supplierNames: {} };
+    }
     input = result.input;
     lastOptions = null;
-    return { tables, errors, warnings, ready: input !== null, asOf };
+    return { tables, errors, warnings, ready: input !== null, asOf, supplierNames: namesOf(input) };
   };
 
   const requireInput = (): AnalysisInput => {
