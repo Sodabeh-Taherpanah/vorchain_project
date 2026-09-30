@@ -112,4 +112,31 @@ describe('createAnalysisService', () => {
 
     await expect(service.getProjection(materialId('M0011'))).rejects.toThrow(/analyse/i);
   });
+
+  it('keeps the newest load when an older one finishes later', async () => {
+    const service = createAnalysisService();
+    const slow = sampleFiles();
+    let release: () => void = () => undefined;
+    const gate = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    for (const file of slow) {
+      const read = file.arrayBuffer.bind(file);
+      vi.spyOn(file, 'arrayBuffer').mockImplementation(async () => {
+        await gate;
+        return read();
+      });
+    }
+
+    const older = service.loadFiles(slow);
+    const newer = await service.loadFiles([new File(['%PDF'], 'bestand.pdf')]);
+    release();
+    const late = await older;
+
+    expect(newer.ready).toBe(false);
+    expect(late.ready).toBe(false);
+    await expect(service.analyse({ asOf: golden.asOf, horizonDays: 28 })).rejects.toThrow(
+      /no input/i,
+    );
+  });
 });

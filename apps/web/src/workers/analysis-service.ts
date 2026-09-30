@@ -81,11 +81,14 @@ async function readUploads(files: readonly File[]): Promise<LoadResult> {
 export function createAnalysisService(): AnalysisService {
   let input: AnalysisInput | null = null;
   let lastOptions: AnalysisOptions | null = null;
+  // Loads await file reads, so an older load can finish after a newer one; only the newest counts.
+  let latestLoad = 0;
 
-  const remember = (result: LoadResult, asOf: IsoDate | null): LoadSummary => {
+  const remember = (load: number, result: LoadResult, asOf: IsoDate | null): LoadSummary => {
+    const { tables, errors, warnings } = result;
+    if (load !== latestLoad) return { tables, errors, warnings, ready: false, asOf };
     input = result.input;
     lastOptions = null;
-    const { tables, errors, warnings } = result;
     return { tables, errors, warnings, ready: input !== null, asOf };
   };
 
@@ -96,10 +99,12 @@ export function createAnalysisService(): AnalysisService {
 
   return {
     async loadFiles(files) {
-      return remember(await readUploads(files), null);
+      const load = ++latestLoad;
+      return remember(load, await readUploads(files), null);
     },
 
     async loadSample(locale) {
+      const load = ++latestLoad;
       // Loaded on demand so the sample text is only in the worker's lazy chunk.
       const { sampleDatasets } = await import('@vorchain/sample-data');
       const dataset = sampleDatasets[locale];
@@ -108,7 +113,7 @@ export function createAnalysisService(): AnalysisService {
         name: f.name,
         bytes: encoder.encode(f.content),
       }));
-      return remember(await parseAll(sources), dataset.asOf);
+      return remember(load, await parseAll(sources), dataset.asOf);
     },
 
     // eslint-disable-next-line @typescript-eslint/require-await -- Comlink calls are async anyway; a rejected promise is the uniform error channel.

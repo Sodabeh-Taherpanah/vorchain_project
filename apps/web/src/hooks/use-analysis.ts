@@ -77,7 +77,10 @@ export interface UseAnalysisOptions {
 
 export interface UseAnalysis {
   readonly state: AnalysisState;
-  /** Hands the `File` objects to the worker; this thread never reads their content. */
+  /**
+   * Hands the `File` objects to the worker; this thread never reads their content. Loads resolve
+   * `null` when the worker failed or a newer load replaced them.
+   */
   readonly loadFiles: (files: readonly File[]) => Promise<LoadSummary | null>;
   readonly loadSample: (locale: SampleLocale) => Promise<LoadSummary | null>;
   /** Runs only after a complete load (`mapped` or `ready`); resolves `null` otherwise. */
@@ -98,6 +101,8 @@ export function useAnalysis({
   // The last load, readable right after `await loadSample()` in the same event handler, where
   // `state` from the closure is still the old one.
   const loaded = useRef<LoadSummary | null>(null);
+  // Counts loads so that only the newest one reaches the state; an older load may finish later.
+  const loadGeneration = useRef(0);
 
   useEffect(
     () => () => {
@@ -114,8 +119,11 @@ export function useAnalysis({
       try {
         return await withTimeout(task(current.service), ANALYSIS_TIMEOUT_MS);
       } catch (error) {
+        // Unmount or another call already stopped this worker (a second release would throw);
+        // a stale failure must not replace the state of a newer worker either.
+        if (connection.current !== current) return null;
+        connection.current = null;
         current.terminate();
-        if (connection.current === current) connection.current = null;
         loaded.current = null;
         const code = error instanceof AnalysisTimeoutError ? 'ANALYSIS_TIMEOUT' : 'WORKER_FAILED';
         dispatch({ type: 'failed', error: code });
@@ -127,9 +135,11 @@ export function useAnalysis({
 
   const load = useCallback(
     async (task: (service: AnalysisService) => Promise<LoadSummary>) => {
+      const generation = ++loadGeneration.current;
       loaded.current = null;
       dispatch({ type: 'load' });
       const result = await call(task);
+      if (generation !== loadGeneration.current) return null;
       if (result !== null) {
         loaded.current = result;
         dispatch({ type: 'loaded', load: result });
