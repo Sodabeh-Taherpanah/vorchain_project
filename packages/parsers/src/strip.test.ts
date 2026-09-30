@@ -27,8 +27,11 @@ describe('stripPython', () => {
 
   it('removes every Python whitespace character and nothing else at the edges', () => {
     const space = fc.constantFrom(...PYTHON_SPACES);
+    // Any code point, lone surrogates included. Built from integers because fast-check's
+    // `unit: 'binary'` strings take ~30 ms each to generate, which pushed this test past 5 s.
     const core = fc
-      .string({ unit: 'binary', minLength: 1, maxLength: 12 })
+      .array(fc.integer({ min: 0, max: 0x10ffff }), { minLength: 1, maxLength: 12 })
+      .map((codePoints) => String.fromCodePoint(...codePoints))
       .filter((text) => !PYTHON_SPACES.includes(text.at(0) ?? ' '))
       .filter((text) => !PYTHON_SPACES.includes(text.at(-1) ?? ' '));
     fc.assert(
