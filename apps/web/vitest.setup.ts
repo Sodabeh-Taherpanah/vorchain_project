@@ -13,18 +13,21 @@ vi.mock('next/font/google', () => {
 });
 
 // jsdom has no matchMedia. Default: a light OS scheme that never changes; tests that need another
-// scheme replace it with `vi.stubGlobal('matchMedia', ...)`.
-window.matchMedia = (query: string) =>
-  ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addEventListener: () => undefined,
-    removeEventListener: () => undefined,
-    addListener: () => undefined,
-    removeListener: () => undefined,
-    dispatchEvent: () => false,
-  }) satisfies MediaQueryList;
+// scheme replace it with `vi.stubGlobal('matchMedia', ...)`. Worker tests run in the node
+// environment, which has no window.
+if (typeof window !== 'undefined') {
+  window.matchMedia = (query: string) =>
+    ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addEventListener: () => undefined,
+      removeEventListener: () => undefined,
+      addListener: () => undefined,
+      removeListener: () => undefined,
+      dispatchEvent: () => false,
+    }) satisfies MediaQueryList;
+}
 
 // Vitest runs without globals, so Testing Library cannot register its automatic cleanup.
 afterEach(() => {
