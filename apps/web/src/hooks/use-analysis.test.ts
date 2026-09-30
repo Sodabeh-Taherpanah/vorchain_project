@@ -8,7 +8,14 @@ import { ANALYSIS_TIMEOUT_MS, useAnalysis } from './use-analysis.ts';
 
 const asOf = '2026-10-05' as IsoDate;
 const options = { asOf, horizonDays: 28 };
-const loaded: LoadSummary = { tables: [], errors: [], warnings: [], ready: true, asOf };
+const loaded: LoadSummary = {
+  tables: [],
+  errors: [],
+  warnings: [],
+  ready: true,
+  asOf,
+  supplierNames: {},
+};
 const report = {
   asOf,
   horizonDays: 28,
@@ -201,6 +208,64 @@ describe('useAnalysis', () => {
 
     expect(hook.result.current.state).toEqual({ status: 'mapped', load: loaded });
     await expect(first).resolves.toBeNull();
+  });
+
+  it('shows the newest analysis when the settings change while one is running', async () => {
+    const older = deferred<Report>();
+    const newer = deferred<Report>();
+    const newerReport = { ...report, horizonDays: 7 };
+    const runs = [older.promise, newer.promise];
+    const { hook } = setup(fakeService({ analyse: () => runs.shift() ?? never() }));
+    await act(() => hook.result.current.loadSample('de'));
+
+    let first: Promise<Report | null> = Promise.resolve(null);
+    let second: Promise<Report | null> = Promise.resolve(null);
+    act(() => {
+      first = hook.result.current.analyse(options);
+      second = hook.result.current.analyse({ ...options, horizonDays: 7 });
+    });
+    await act(async () => {
+      older.resolve(report);
+      await first;
+    });
+    expect(hook.result.current.state).toEqual({ status: 'analysing', load: loaded });
+    await act(async () => {
+      newer.resolve(newerReport);
+      await second;
+    });
+
+    expect(hook.result.current.state).toEqual({
+      status: 'ready',
+      load: loaded,
+      report: newerReport,
+    });
+    await expect(first).resolves.toBeNull();
+  });
+
+  it('keeps its functions stable even when `connect` changes on every render', () => {
+    const service = fakeService();
+    const hook = renderHook(() =>
+      useAnalysis({ connect: () => ({ service, terminate: vi.fn() }) }),
+    );
+    const first = hook.result.current;
+
+    hook.rerender();
+
+    // Callers use `analyse` as an effect dependency; a new identity would re-run the analysis.
+    expect(hook.result.current.analyse).toBe(first.analyse);
+    expect(hook.result.current.loadSample).toBe(first.loadSample);
+    expect(hook.result.current.getProjection).toBe(first.getProjection);
+  });
+
+  it('re-runs the analysis from ready without reloading the data', async () => {
+    const { hook, service } = setup();
+    await act(() => hook.result.current.loadSample('de'));
+    await act(() => hook.result.current.analyse(options));
+    await act(() => hook.result.current.analyse({ ...options, horizonDays: 7 }));
+
+    expect(service.loadSample).toHaveBeenCalledOnce();
+    expect(service.analyse).toHaveBeenLastCalledWith({ asOf, horizonDays: 7 });
+    expect(hook.result.current.state).toMatchObject({ status: 'ready' });
   });
 
   it('resets to idle and ignores a load that finishes after the reset', async () => {
