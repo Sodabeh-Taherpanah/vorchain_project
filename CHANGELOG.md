@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/Sodabeh-Taherpanah/vorchain_project/compare/v0.2.0...v0.3.0) (2026-09-30)
+
+
+### Features
+
+* **demo:** data source and map check (P1-16) ([#28](https://github.com/Sodabeh-Taherpanah/vorchain_project/issues/28)) ([1d7264b](https://github.com/Sodabeh-Taherpanah/vorchain_project/commit/1d7264be924e5bc8ccfe8f42cc290c1b07f11371))
+
 ## [0.2.0](https://github.com/Sodabeh-Taherpanah/vorchain_project/compare/v0.1.1...v0.2.0) (2026-09-30)
 
 
