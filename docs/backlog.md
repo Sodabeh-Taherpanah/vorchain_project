@@ -351,7 +351,7 @@ order.
 ---
 
 ## P1-07: Parsers: byte decoding, delimiter sniffing, CSV reading
-- [ ] Done
+- [x] Done
 - **Owner:** builder
 - **Why:** real German ERP exports come as `;`-separated Windows-1252 or UTF-8-BOM files; this is
   where most "it doesn't work with my file" problems start (spec §5.1).

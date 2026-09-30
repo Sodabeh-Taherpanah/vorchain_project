@@ -1,0 +1,13 @@
+{
+  // Purity check (AGENTS.md §2, ADR-0003): only the shipped parser code, without tests or tool
+  // config, against the Web Worker's APIs (`TextDecoder`) and no Node types. `tsconfig.json` also
+  // covers `*.test.ts`, whose Vitest types pull in `@types/node`, so `process` or `Buffer` would
+  // compile there. Network and storage globals exist in a Worker too; ESLint forbids them in `src`.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "lib": ["ES2023", "WebWorker"],
+    "types": []
+  },
+  "include": ["src", "types"],
+  "exclude": ["src/**/*.test.ts"]
+}

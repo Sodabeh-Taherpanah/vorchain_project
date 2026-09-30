@@ -1,4 +1,4 @@
 {
   "extends": "@vorchain/config/tsconfig.base.json",
-  "include": ["src", "vitest.config.ts"]
+  "include": ["src", "types", "vitest.config.ts"]
 }

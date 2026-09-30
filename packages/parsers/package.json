@@ -10,16 +10,19 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.pure.json && tsc --noEmit -p test",
     "test": "vitest run",
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@vorchain/engine": "workspace:*"
+    "@vorchain/engine": "workspace:*",
+    "papaparse": "~5.7.0"
   },
   "devDependencies": {
+    "@types/node": "^24.13.6",
     "@vitest/coverage-v8": "^5.0.2",
     "@vorchain/config": "workspace:*",
+    "fast-check": "^4.10.2",
     "typescript": "~6.0.3",
     "vite": "^8.3.1",
     "vitest": "^5.0.2"
