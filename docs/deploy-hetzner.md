@@ -47,7 +47,10 @@ becomes admin), and turn on two-factor authentication. Official guide:
 1. In Coolify: **Sources → Add → GitHub App**, install it on the `vorchain_project` repository only.
 2. **Projects → New → Application**, pick the repo and branch `main`.
 3. Build pack: **Dockerfile** (the `Dockerfile` at the repo root). Exposed port: **3000**.
-4. Health check: path `/de`, port `3000`.
+4. Health check: nothing to configure. Coolify uses the image's own `HEALTHCHECK` (Node `fetch`
+   on `/de`) instead of the dashboard setting. Do not enable a dashboard check: it runs `curl` or
+   `wget` inside the container, and the slim image has neither
+   (<https://coolify.io/docs/knowledge-base/health-checks>).
 5. Turn on **automatic deployment** on push to `main`. Production deploys move to published
    releases in P1-28.
 6. Optional: turn on **Preview Deployments** so every pull request gets its own URL

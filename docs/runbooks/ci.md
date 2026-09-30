@@ -61,8 +61,8 @@ no force pushes or deletions, and these required checks:
 - **Secret `RELEASE_PLEASE_TOKEN`** (repository secret). Without it the workflow falls back to
   `GITHUB_TOKEN`, which works but cannot trigger other workflows: CI does not run on the release PR
   and the `release: published` deploy (P1-28) does not fire. To set it up, create a
-  **fine-grained personal access token** limited to this repository with *Contents: read and
-  write* and *Pull requests: read and write*, expiry 1 year, and save it under Settings ->
+  **fine-grained personal access token** limited to this repository with *Contents*, *Pull requests*
+  and *Issues* (labels on the release PR), each *read and write*, expiry 1 year, and save it under Settings ->
   Secrets and variables -> Actions.
 - **Rotation:** before the token expires (calendar reminder), create a new one with the same
   permissions, replace the secret value, then delete the old token in GitHub settings. If a token

@@ -1,6 +1,7 @@
 # Opens and updates the release PR from Conventional Commits on main; merging it tags vX.Y.Z,
 # updates CHANGELOG.md and publishes a GitHub release (ADR-0009). The first release is 0.1.0
-# (empty manifest, release-type node). Production deploys on `release: published` follow in P1-28.
+# (`initial-version` in the config; without it an empty manifest starts at 1.0.0).
+# Production deploys on `release: published` follow in P1-28.
 name: Release Please
 
 on:
