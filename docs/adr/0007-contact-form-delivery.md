@@ -53,7 +53,8 @@ transactional email HTTP API**, behind a small `MailTransport` interface.
 - Negative / risks: in-memory rate limiting resets per instance; if spam becomes a problem, add a
   durable limiter (Upstash, EU region) via a new ADR. Brevo account/API key setup is manual.
 - Follow-ups: P1-25. Owner: create Brevo account, verify sender domain (SPF/DKIM/DMARC), put
-  `BREVO_API_KEY` into Vercel env (production + preview uses `console` transport).
+  `BREVO_API_KEY` into the Coolify environment (ADR-0006; production + preview uses `console`
+  transport).
 
 ## References
 - Brevo transactional API: https://developers.brevo.com/reference/sendtransacemail ; EU hosting (France/Germany): https://www.brevo.com/features/email-api/ (checked 2026-09-25)

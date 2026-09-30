@@ -40,7 +40,7 @@ Always check the latest stable version (`pnpm view <pkg> version`) and the offic
 | Lint / format | ESLint 9 flat config (`typescript-eslint`, `eslint-plugin-jsx-a11y`, Next config) + Prettier (+ `prettier-plugin-tailwindcss`). Oxlint as an optional fast pre-pass |
 | Git hooks | **lefthook** (pre-commit: lint-staged-style format + lint on staged files; commit-msg: commitlint) |
 | Release | **release-please** (Conventional Commits → CHANGELOG + SemVer tags) |
-| CI/CD | **GitHub Actions**. Preview deploy per PR, production deploy on release. Hosting per ADR (Vercel or Cloudflare Pages; EU data considerations) + a Docker image (`output: 'standalone'`) pushed to GHCR for portability |
+| CI/CD | **GitHub Actions**. Preview deploy per PR, production deploy on release. Hosting per ADR-0006: Docker container (`output: 'standalone'`) on Hetzner Cloud in Germany, deployed with Coolify; image also pushed to GHCR for portability |
 | Security | Dependabot or Renovate, CodeQL, gitleaks, `pnpm audit` in CI, strict security headers / CSP |
 | Analytics | Privacy-friendly and cookieless only (Plausible or Umami, EU-hosted), and **never** on demo data events |
 
