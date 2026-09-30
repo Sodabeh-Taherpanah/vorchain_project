@@ -5,8 +5,11 @@ import { NextIntlClientProvider } from 'next-intl';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import de from '../../../messages/de.json';
+import en from '../../../messages/en.json';
 import type { AnalysisService, LoadSummary } from '../../workers/analysis-service.ts';
 import { DemoDataSource } from './demo-data-source.tsx';
+import { trackDemoEvent } from './demo-events.ts';
+import { testReport } from './test-report.ts';
 
 const complete: LoadSummary = {
   tables: [],
@@ -14,6 +17,7 @@ const complete: LoadSummary = {
   warnings: [],
   ready: true,
   asOf: '2026-10-05' as IsoDate,
+  supplierNames: { S01: 'Metallbau Krüger GmbH' },
 };
 const incomplete: LoadSummary = {
   tables: [],
@@ -21,18 +25,24 @@ const incomplete: LoadSummary = {
   warnings: [],
   ready: false,
   asOf: null,
+  supplierNames: {},
 };
 
 const service = {
   loadFiles: vi.fn<AnalysisService['loadFiles']>(() => Promise.resolve(incomplete)),
   loadSample: vi.fn(() => Promise.resolve(complete)),
-  analyse: vi.fn(),
+  analyse: vi.fn<AnalysisService['analyse']>((options) =>
+    Promise.resolve(testReport({ asOf: options.asOf, horizonDays: options.horizonDays })),
+  ),
   getProjection: vi.fn(),
 } satisfies AnalysisService;
 
 vi.mock('../../workers/connect-analysis-worker.ts', () => ({
   connectAnalysisWorker: () => ({ service, terminate: vi.fn() }),
 }));
+vi.mock('./demo-events.ts', () => ({ trackDemoEvent: vi.fn() }));
+
+const reportMessages = { de: de.demo.report, en: en.demo.report };
 
 const csv = (name: string) => new File(['a;b\n1;2\n'], name, { type: 'text/csv' });
 const loadedNames = () => service.loadFiles.mock.lastCall?.[0].map((f) => f.name);
@@ -40,7 +50,7 @@ const loadedNames = () => service.loadFiles.mock.lastCall?.[0].map((f) => f.name
 function renderDemo() {
   render(
     <NextIntlClientProvider locale="de" messages={de}>
-      <DemoDataSource />
+      <DemoDataSource reportMessages={reportMessages} />
     </NextIntlClientProvider>,
   );
   return { input: screen.getByTestId<HTMLInputElement>('file-input') };
@@ -117,6 +127,102 @@ describe('DemoDataSource', () => {
     await screen.findByText('1 Problem gefunden', { exact: false });
   });
 
+  it('analyses a complete load with the sample date and a 28-day horizon', async () => {
+    renderDemo();
+
+    await userEvent.click(screen.getByRole('button', { name: de.demo.dataSource.loadSample }));
+
+    const results = await screen.findByTestId('demo-results');
+    expect(service.analyse).toHaveBeenCalledWith({ asOf: '2026-10-05', horizonDays: 28 });
+    expect(within(results).getByRole('heading', { name: de.demo.report.heading })).toBeDefined();
+    expect(await within(results).findByRole('table')).toBeDefined();
+    expect(within(results).getByTestId('tile-critical').textContent).toContain('2');
+    // Showing the report must not start another analysis.
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    expect(service.analyse).toHaveBeenCalledOnce();
+  });
+
+  it('re-runs the analysis when a setting changes, without reloading the files', async () => {
+    renderDemo();
+    await userEvent.click(screen.getByRole('button', { name: de.demo.dataSource.loadSample }));
+    await screen.findByRole('table');
+
+    const horizon = screen.getByLabelText(de.demo.settings.horizon);
+    await userEvent.clear(horizon);
+    await userEvent.type(horizon, '7');
+    await vi.waitFor(() => {
+      expect(service.analyse).toHaveBeenLastCalledWith({ asOf: '2026-10-05', horizonDays: 7 });
+    });
+    fireEvent.change(screen.getByLabelText(de.demo.settings.asOf), {
+      target: { value: '2026-10-12' },
+    });
+    await vi.waitFor(() => {
+      expect(service.analyse).toHaveBeenLastCalledWith({ asOf: '2026-10-12', horizonDays: 7 });
+    });
+
+    expect(service.loadSample).toHaveBeenCalledOnce();
+    expect(await screen.findByText('Stichtag 12.10.2026, Horizont 7 Tage.')).toBeDefined();
+  });
+
+  it('does not analyse while the horizon is out of range and says why', async () => {
+    renderDemo();
+    await userEvent.click(screen.getByRole('button', { name: de.demo.dataSource.loadSample }));
+    await screen.findByRole('table');
+    const calls = service.analyse.mock.calls.length;
+
+    const horizon = screen.getByLabelText(de.demo.settings.horizon);
+    await userEvent.clear(horizon);
+    await userEvent.type(horizon, '5');
+
+    expect(horizon.getAttribute('aria-invalid')).toBe('true');
+    expect(screen.getByText('Bitte geben Sie eine ganze Zahl von 7 bis 90 ein.')).toBeDefined();
+    // Clearing the field left it empty, which is out of range too.
+    expect(service.analyse.mock.calls.length).toBe(calls);
+  });
+
+  it('switches the report language without changing the page language', async () => {
+    renderDemo();
+    await userEvent.click(screen.getByRole('button', { name: de.demo.dataSource.loadSample }));
+    await screen.findByRole('table');
+    const calls = service.analyse.mock.calls.length;
+
+    await userEvent.selectOptions(screen.getByLabelText(de.demo.settings.reportLanguage), 'en');
+
+    expect(screen.getByRole('heading', { name: en.demo.report.heading })).toBeDefined();
+    expect(screen.getByText('As of 2026-10-05, horizon 28 days.')).toBeDefined();
+    expect(screen.getByRole('heading', { name: de.demo.settings.heading })).toBeDefined();
+    expect(service.analyse.mock.calls.length).toBe(calls);
+  });
+
+  it("uses today in the user's time zone for uploads, which carry no date", async () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date(2026, 9, 1, 9, 0));
+    service.loadFiles.mockResolvedValueOnce({ ...complete, asOf: null });
+    const { input } = renderDemo();
+
+    await userEvent.upload(input, csv('artikel.csv'));
+
+    await vi.waitFor(() => {
+      expect(service.analyse).toHaveBeenCalledWith({ asOf: '2026-10-01', horizonDays: 28 });
+    });
+    vi.useRealTimers();
+  });
+
+  it('fires the demo_completed hook once per load, with no data attached', async () => {
+    renderDemo();
+    await userEvent.click(screen.getByRole('button', { name: de.demo.dataSource.loadSample }));
+    await screen.findByRole('table');
+    const horizon = screen.getByLabelText(de.demo.settings.horizon);
+    await userEvent.clear(horizon);
+    await userEvent.type(horizon, '14');
+    await vi.waitFor(() => {
+      expect(service.analyse).toHaveBeenLastCalledWith({ asOf: '2026-10-05', horizonDays: 14 });
+    });
+
+    expect(trackDemoEvent).toHaveBeenCalledOnce();
+    expect(trackDemoEvent).toHaveBeenCalledWith('demo_completed');
+  });
+
   it('shows a worker failure as an alert', async () => {
     service.loadSample.mockRejectedValueOnce(new Error('crash'));
     renderDemo();
@@ -144,7 +250,7 @@ describe('sample templates', () => {
   it('offers the sample files of the locale as local downloads', async () => {
     const { unmount } = render(
       <NextIntlClientProvider locale="de" messages={de}>
-        <DemoDataSource />
+        <DemoDataSource reportMessages={reportMessages} />
       </NextIntlClientProvider>,
     );
     const toggle = screen.getByRole('button', { name: de.demo.dataSource.templates });
