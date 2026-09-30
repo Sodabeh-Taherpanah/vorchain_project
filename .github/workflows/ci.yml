@@ -83,7 +83,7 @@ jobs:
       - run: pnpm coverage
       - name: Bundled sample data matches reference/ (P1-11)
         run: pnpm --filter @vorchain/sample-data check
-      - name: Benchmark parse + analyse 20k/100k, fails above 6 s (P1-11)
+      - name: Benchmarks, alone and without coverage (engine 3 s, parse + analyse 6 s)
         run: pnpm bench
       - name: Upload coverage reports
         if: ${{ !cancelled() }}
