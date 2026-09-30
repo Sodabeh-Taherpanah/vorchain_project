@@ -81,6 +81,10 @@ jobs:
           turbo-cache-key: test
       # Coverage thresholds per package (engine 95, parsers 90, web 80) fail this step.
       - run: pnpm coverage
+      - name: Bundled sample data matches reference/ (P1-11)
+        run: pnpm --filter @vorchain/sample-data check
+      - name: Benchmark parse + analyse 20k/100k, fails above 6 s (P1-11)
+        run: pnpm bench
       - name: Upload coverage reports
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1

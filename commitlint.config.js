@@ -24,7 +24,20 @@ const config = {
     'scope-enum': [
       2,
       'always',
-      ['engine', 'parsers', 'web', 'demo', 'i18n', 'seo', 'ui', 'ci', 'infra', 'docs', 'deps'],
+      [
+        'engine',
+        'parsers',
+        'sample-data',
+        'web',
+        'demo',
+        'i18n',
+        'seo',
+        'ui',
+        'ci',
+        'infra',
+        'docs',
+        'deps',
+      ],
     ],
   },
 };

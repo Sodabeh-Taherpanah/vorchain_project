@@ -464,7 +464,7 @@ order.
 ---
 
 ## P1-11: Sample-data package: bundled datasets and seeded scale generator
-- [ ] Done
+- [x] Done
 - **Owner:** builder
 - **Why:** "Beispieldaten laden" must work offline through the real pipeline, and the 20k/100k
   performance target needs a reproducible large dataset (spec §4.1, §4.2).
@@ -934,5 +934,5 @@ order.
 | Q6 | Plausible (paid, EU) or Umami (free tier) for analytics? (ADR-0012) | Plausible | P1-26 |
 | Q7 | Domain name and final brand assets (logo, colours) | Text logo, tokens per spec §6 | P1-13, P1-28 |
 | Q8 | Licence for the public repo (README says TBD) | Decide before making the repo public | P1-28 |
-| Q9 | Add commitlint scope `sample-data` (not in AGENTS.md §7 list)? | Optional, decided in P1-11 | P1-11 |
+| Q9 | Add commitlint scope `sample-data` (not in AGENTS.md §7 list)? | Yes (P1-11): added to commitlint and AGENTS.md §7 | P1-11 |
 | Q10 | Empty IDs / empty demand dates: error or skip with warning? | Error (owner, 2026-09-30): dropping demand could hide a shortage. Revisit auto-skipping ERP totals rows if users hit it | P1-09, P1-16 |

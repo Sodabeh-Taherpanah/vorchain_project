@@ -1,0 +1,8 @@
+{
+  // The sync script runs on Node (type stripping) and reads reference/ with `node:fs`.
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "types": ["node"]
+  },
+  "include": ["."]
+}

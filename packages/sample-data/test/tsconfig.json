@@ -1,0 +1,10 @@
+{
+  // Tests and the benchmark read reference files and hash output with Node.
+  // `src` stays free of Node types: the package tsconfig checks it without them.
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "types": ["node"]
+  },
+  // The parsers' hand-written papaparse typings, for the parsers source these tests import.
+  "include": [".", "../../parsers/types"]
+}
