@@ -141,3 +141,9 @@ Each agent ends its turn with: what changed, how it was verified, and the sugges
 4. List any decision that departs from the backlog under a heading "Deviations from backlog" in the PR description. Write "None" if there are none.
 5. When CI is green, tell the owner the PR is ready, with a 3–5 line summary: what changed, whether QA ran (and why or why not), and any deviations.
 6. Do NOT merge. The owner merges the PR on GitHub.
+
+### Working with the owner (save tokens)
+1. Make reasonable decisions yourself. Ask the owner only if it costs money, needs an account, or cannot be undone.
+2. If you must ask, ask all questions at once.
+3. Keep ADRs short (5–10 lines). Don't re-read files you have already read.
+4. Do only the one task the owner gives you, then stop.
