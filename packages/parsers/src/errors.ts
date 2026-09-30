@@ -1,3 +1,4 @@
+import type { CanonicalColumn, TableName } from './columns.ts';
 import type { NonTextKind } from './decode.ts';
 
 /**
@@ -11,7 +12,17 @@ export const DATA_ERROR_CODES = [
   'MALFORMED_QUOTE',
   'INVALID_NUMBER',
   'INVALID_DATE',
+  'UNKNOWN_TABLE',
+  'AMBIGUOUS_TABLE',
+  'MISSING_COLUMNS',
+  'MISSING_VALUE',
+  'TOO_MANY_ERRORS',
+  'DUPLICATE_TABLE',
+  'MISSING_TABLE',
 ] as const;
+
+/** Every warning code; like {@link DATA_ERROR_CODES}, the web app keeps one message per code. */
+export const DATA_WARNING_CODES = ['DUPLICATE_MATERIAL'] as const;
 
 /** Machine-readable reason a file could not be read; the UI turns it into a localized fix hint. */
 export type DataErrorCode = (typeof DATA_ERROR_CODES)[number];
@@ -19,7 +30,7 @@ export type DataErrorCode = (typeof DATA_ERROR_CODES)[number];
 /** Parameters for codes whose message needs nothing beyond file, row and column. */
 export type NoParams = Readonly<Record<string, never>>;
 
-interface DataErrorOf<Code extends DataErrorCode, Params> {
+interface DataErrorOf<Code extends DataErrorCode | DataWarningCode, Params> {
   readonly code: Code;
   /** Name of the uploaded file, as the user chose it. */
   readonly fileName?: string;
@@ -50,4 +61,38 @@ export type DataError =
   /** A number cell is not a number in German or English notation (`value` is the raw cell). */
   | DataErrorOf<'INVALID_NUMBER', { readonly value: string }>
   /** A date cell has an unknown format or is not a real calendar day (`value` is the raw cell). */
-  | DataErrorOf<'INVALID_DATE', { readonly value: string }>;
+  | DataErrorOf<'INVALID_DATE', { readonly value: string }>
+  /** Neither the file name nor the headers identify a table (`found`: the file's headers). */
+  | DataErrorOf<'UNKNOWN_TABLE', { readonly found: readonly string[] }>
+  /** The headers fit several tables equally well (`candidates`), and the file name does not decide. */
+  | DataErrorOf<'AMBIGUOUS_TABLE', { readonly candidates: readonly TableName[] }>
+  /** Required columns of `table` have no matching header; `found` lists the file's headers. */
+  | DataErrorOf<
+      'MISSING_COLUMNS',
+      {
+        readonly table: TableName;
+        readonly missing: readonly CanonicalColumn[];
+        readonly found: readonly string[];
+      }
+    >
+  /** A cell that must not be empty (an ID, or the date of a PO or demand line) is empty. */
+  | DataErrorOf<'MISSING_VALUE', NoParams>
+  /** The file has more than `limit` row errors; only the first `limit` are reported. */
+  | DataErrorOf<'TOO_MANY_ERRORS', { readonly limit: number }>
+  /** Two files hold the same table (`fileName` is the second one, `other` the first). */
+  | DataErrorOf<'DUPLICATE_TABLE', { readonly table: TableName; readonly other: string }>
+  /** A required table has no file. */
+  | DataErrorOf<'MISSING_TABLE', { readonly table: TableName }>;
+
+/** Machine-readable reason to double-check the data; analysis still runs. */
+export type DataWarningCode = (typeof DATA_WARNING_CODES)[number];
+
+/**
+ * A data oddity that does not stop the analysis. Same privacy rule as {@link DataError}.
+ * `DUPLICATE_MATERIAL`: the material number (`value`) appears again on `row`, first on
+ * `firstRow`; both rows are analysed, as in the prototype.
+ */
+export type DataWarning = DataErrorOf<
+  'DUPLICATE_MATERIAL',
+  { readonly value: string; readonly firstRow: number }
+>;
