@@ -2,13 +2,16 @@
  * Row validation (backlog P1-09): mapped cells -> engine records through one zod 4 schema per table.
  * Cells are converted like the prototype's `load_table`: numbers via {@link parseNumber} (empty ->
  * 0), dates via {@link parseDate} (empty -> `null`), IDs and text as found (already stripped by
- * `readCsv`). Rows whose mapped cells are all empty are skipped, as in the prototype.
+ * the readers; XLSX number cells as text). Rows whose mapped cells are all empty are skipped, as
+ * in the prototype.
  *
  * Deliberate deviations from the prototype (each pinned by a test in `rows.test.ts`):
  *  - An empty ID (material, PO or supplier number) or an empty PO / demand date is `MISSING_VALUE`.
  *    The prototype keeps `""` or `None`; a `None` PO date crashes it as soon as the supplier has a
  *    delay, and an empty demand date silently drops that demand.
  *  - Errors are collected (up to {@link MAX_ROW_ERRORS} per file) instead of stopping at the first.
+ *  - An XLSX number cell in a date column is read as an Excel day number ({@link dateFromSerial});
+ *    the prototype only accepts real date cells there (backlog P1-10).
  */
 import {
   err,
@@ -28,7 +31,8 @@ import { z } from 'zod';
 
 import type { CanonicalColumn, ColumnMapping, TableName } from './columns.ts';
 import type { DataError } from './errors.ts';
-import { parseDate, parseNumber } from './values.ts';
+import type { DateSystem, RawCell } from './table.ts';
+import { dateFromSerial, parseDate, parseNumber } from './values.ts';
 
 /** Row errors reported per file before the rest is summarised as `TOO_MANY_ERRORS`. */
 export const MAX_ROW_ERRORS = 20;
@@ -57,9 +61,11 @@ export type ValidatedTable = {
   };
 }[TableName];
 
+const rawCell = z.union([z.string(), z.number()]);
+
 /** Turns a cell conversion into a zod schema; a failure carries its `DataError` in `params`. */
-function cell<T>(convert: (raw: string) => Result<T, DataError>) {
-  return z.string().transform((raw, context) => {
+function cell<T>(convert: (raw: RawCell) => Result<T, DataError>) {
+  return rawCell.transform((raw, context) => {
     const result = convert(raw);
     if (result.ok) return result.value;
     context.addIssue({
@@ -73,12 +79,14 @@ function cell<T>(convert: (raw: string) => Result<T, DataError>) {
 
 const MISSING_VALUE: DataError = { code: 'MISSING_VALUE', params: {} };
 
-const text = z.string();
+/** Date cells are text by now: see {@link mappedCells}. */
+const asDate = (raw: RawCell) => parseDate(String(raw));
+const text = rawCell.transform(String);
 const number = cell(parseNumber);
-const optionalDate = cell(parseDate);
-const requiredId = cell((raw) => (raw === '' ? err(MISSING_VALUE) : ok(raw)));
+const optionalDate = cell(asDate);
+const requiredId = cell((raw) => (raw === '' ? err(MISSING_VALUE) : ok(String(raw))));
 const requiredDate = cell((raw): Result<IsoDate, DataError> => {
-  const date = parseDate(raw);
+  const date = asDate(raw);
   if (!date.ok) return date;
   return date.value === null ? err(MISSING_VALUE) : ok(date.value);
 });
@@ -156,19 +164,36 @@ export interface MappedTable {
   readonly fileName: string;
   readonly table: TableName;
   readonly headers: readonly string[];
-  readonly rows: readonly { readonly rowNumber: number; readonly cells: readonly string[] }[];
+  readonly rows: readonly { readonly rowNumber: number; readonly cells: readonly RawCell[] }[];
   readonly mapping: ColumnMapping;
+  /** For number cells in date columns (XLSX); defaults to 1900. */
+  readonly dateSystem?: DateSystem;
+}
+
+const DATE_COLUMNS: ReadonlySet<CanonicalColumn> = new Set([
+  'promised_date',
+  'actual_date',
+  'date',
+]);
+
+/** A number in a date column is an Excel day number; one that is no day stays for the error. */
+function dateCell(cell: RawCell, dateSystem: DateSystem): RawCell {
+  return typeof cell === 'number' ? (dateFromSerial(cell, dateSystem) ?? String(cell)) : cell;
 }
 
 /** The mapped cells of one row, or `null` if they are all empty (the prototype skips those rows). */
 function mappedCells(
-  cells: readonly string[],
+  cells: readonly RawCell[],
   mapping: ColumnMapping,
-): Partial<Record<CanonicalColumn, string>> | null {
-  const entries = Object.entries(mapping).map(([column, index]): [string, string] => [
-    column,
-    cells[index] ?? '',
-  ]);
+  dateSystem: DateSystem,
+): Partial<Record<CanonicalColumn, RawCell>> | null {
+  const entries = Object.entries(mapping).map(([column, index]): [string, RawCell] => {
+    const cell = cells[index] ?? '';
+    return [
+      column,
+      DATE_COLUMNS.has(column as CanonicalColumn) ? dateCell(cell, dateSystem) : cell,
+    ];
+  });
   return entries.some(([, value]) => value !== '') ? Object.fromEntries(entries) : null;
 }
 
@@ -192,12 +217,12 @@ export function validateRows(mapped: MappedTable): {
   readonly table: ValidatedTable;
   readonly errors: readonly DataError[];
 } {
-  const { fileName, headers, mapping } = mapped;
+  const { fileName, headers, mapping, dateSystem = 1900 } = mapped;
   const schema = ROW_SCHEMAS[mapped.table];
   const records: NumberedRecord<unknown>[] = [];
   const errors: DataError[] = [];
   for (const { rowNumber, cells } of mapped.rows) {
-    const values = mappedCells(cells, mapping);
+    const values = mappedCells(cells, mapping, dateSystem);
     if (values === null) continue;
     const parsed = schema.safeParse(values);
     if (parsed.success) {

@@ -16,11 +16,12 @@ describe('@vorchain/parsers', () => {
     expect(PARSERS_PACKAGE_NAME).toBe('@vorchain/parsers');
   });
 
-  it('exports the P1-07, P1-08 and P1-09 entry points', () => {
+  it('exports the P1-07 to P1-10 entry points', () => {
     expect(Object.keys(parsers).sort()).toEqual([
       'COLUMN_ALIASES',
       'DATA_ERROR_CODES',
       'DATA_WARNING_CODES',
+      'MAX_FILE_BYTES',
       'MAX_ROW_ERRORS',
       'OPTIONAL',
       'PARSERS_PACKAGE_NAME',
@@ -29,7 +30,9 @@ describe('@vorchain/parsers', () => {
       'SNIFF_SAMPLE_LENGTH',
       'TABLE_FILE_STEMS',
       'TABLE_NAMES',
+      'XLSX_LIMITS',
       'assembleInput',
+      'dateFromSerial',
       'decodeText',
       'detectNonText',
       'detectTable',
@@ -37,8 +40,10 @@ describe('@vorchain/parsers', () => {
       'mapHeaders',
       'normaliseHeader',
       'parseDate',
+      'parseFile',
       'parseNumber',
       'readCsv',
+      'readXlsx',
       'sniffDelimiter',
       'stripPython',
       'validateRows',

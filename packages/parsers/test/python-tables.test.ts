@@ -6,8 +6,10 @@
  *   header sets (mapping, or the missing required columns);
  * - `load`: `load_table` records for every file of `sample_data` (EN) and `sample_data_de` (DE).
  *
- * The end-to-end block runs `readCsv` -> `loadTables` -> `analyse` on both sample folders and
- * compares the ranked exceptions with `reference/python-prototype/golden/*.json`.
+ * The end-to-end block runs `parseFile` -> `loadTables` -> `analyse` on both sample folders, as CSV
+ * and as the XLSX conversions from `scripts/generate-xlsx-fixtures.py` (typed number and date
+ * cells, checked against the golden output by the prototype's own XLSX loader), and compares the
+ * records and the ranked exceptions with the prototype.
  */
 import { readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -19,7 +21,7 @@ import {
   loadTables,
   mapHeaders,
   normaliseHeader,
-  readCsv,
+  parseFile,
   TABLE_NAMES,
   type RawTable,
   type TableName,
@@ -45,22 +47,35 @@ type Case =
 
 const cases = vectors.cases as readonly Case[];
 const REPO_ROOT = new URL('../../../', import.meta.url);
-const FOLDERS = ['sample_data', 'sample_data_de'] as const;
+const SOURCES = [
+  { folder: 'sample_data', format: 'csv' },
+  { folder: 'sample_data_de', format: 'csv' },
+  { folder: 'sample_data', format: 'xlsx' },
+  { folder: 'sample_data_de', format: 'xlsx' },
+] as const;
+type Source = (typeof SOURCES)[number];
 
 function ofKind<K extends Case['kind']>(kind: K): Extract<Case, { kind: K }>[] {
   return cases.filter((c): c is Extract<Case, { kind: K }> => c.kind === kind);
 }
 
-function readFolder(folder: string): RawTable[] {
-  const dir = new URL(`reference/python-prototype/${folder}/`, REPO_ROOT);
-  return readdirSync(dir)
-    .filter((name) => name.endsWith('.csv'))
-    .sort()
-    .map((name) => {
-      const result = readCsv({ name, bytes: new Uint8Array(readFileSync(new URL(name, dir))) });
+async function readFolder({ folder, format }: Source): Promise<RawTable[]> {
+  const dir =
+    format === 'csv'
+      ? new URL(`reference/python-prototype/${folder}/`, REPO_ROOT)
+      : new URL(`fixtures/xlsx/${folder}/`, import.meta.url);
+  const names = readdirSync(dir)
+    .filter((name) => name.endsWith(`.${format}`))
+    .sort();
+  return Promise.all(
+    names.map(async (name) => {
+      const bytes = new Uint8Array(readFileSync(new URL(name, dir)));
+      const result = await parseFile({ name, bytes });
       if (!result.ok) throw new Error(`${folder}/${name}: ${result.error.code}`);
+      expect(result.value.format).toBe(format);
       return result.value;
-    });
+    }),
+  );
 }
 
 /** The engine record the prototype's row stands for (its defaults: `m.get("description", "")` …). */
@@ -134,42 +149,58 @@ describe('header mapping matches the prototype (_map_headers)', () => {
   });
 });
 
-describe.each(FOLDERS)('%s loads like the prototype and reproduces the golden output', (folder) => {
-  const result = loadTables(readFolder(folder));
-  const loads = ofKind('load').filter((c) => c.file.includes(`/${folder}/`));
+const stem = (path: string | undefined) =>
+  path
+    ?.split('/')
+    .at(-1)
+    ?.replace(/\.\w+$/u, '');
 
-  it('recognises all five files without errors or warnings', () => {
-    expect(result.errors).toEqual([]);
-    expect(result.warnings).toEqual([]);
-    expect(loads.map((c) => c.table).sort()).toEqual([...TABLE_NAMES].sort());
-    const detected = result.tables.map((t) => [t.fileName, t.table]);
-    expect(detected.sort()).toEqual(loads.map((c) => [c.file.split('/').at(-1), c.table]).sort());
-  });
+const tablesBySource = new Map(
+  await Promise.all(SOURCES.map(async (source) => [source, await readFolder(source)] as const)),
+);
 
-  it.each(loads)('$table: same records as load_table', ({ table, rows }) => {
-    expect(result.input?.[INPUT_KEYS[table]]).toEqual(rows.map((row) => engineRecord(table, row)));
-  });
+describe.each(SOURCES)(
+  '$folder ($format) loads like the prototype, gives golden output',
+  (source) => {
+    const { folder } = source;
+    const result = loadTables(tablesBySource.get(source) ?? []);
+    const loads = ofKind('load').filter((c) => c.file.includes(`/${folder}/`));
 
-  it('parsers -> engine gives the golden exceptions, in order', () => {
-    const goldenUrl = new URL(`reference/python-prototype/golden/${folder}.json`, REPO_ROOT);
-    const golden = JSON.parse(readFileSync(fileURLToPath(goldenUrl), 'utf8')) as {
-      asOf: IsoDate;
-      horizon: number;
-      exceptions: unknown[];
-    };
-    if (result.input === null) throw new Error('sample input did not load');
-    const report = analyse(result.input, { asOf: golden.asOf, horizonDays: golden.horizon });
-    const exceptions = report.exceptions.map((e) => ({
-      material_id: e.materialId,
-      severity: e.severity,
-      critical_date: e.criticalDate,
-      days_until: e.daysUntil,
-      min_projected_stock: e.minProjectedStock,
-      hidden_risk: e.hidden ? 'yes' : 'no',
-      erp_view_date: e.erpViewDate ?? 'none',
-      score: e.score,
-    }));
-    expect(golden.exceptions.length).toBeGreaterThan(10);
-    expect(exceptions).toEqual(golden.exceptions);
-  });
-});
+    it('recognises all five files without errors or warnings', () => {
+      expect(result.errors).toEqual([]);
+      expect(result.warnings).toEqual([]);
+      expect(loads.map((c) => c.table).sort()).toEqual([...TABLE_NAMES].sort());
+      const detected = result.tables.map((t) => [stem(t.fileName), t.table]);
+      expect(detected.sort()).toEqual(loads.map((c) => [stem(c.file), c.table]).sort());
+    });
+
+    it.each(loads)('$table: same records as load_table', ({ table, rows }) => {
+      expect(result.input?.[INPUT_KEYS[table]]).toEqual(
+        rows.map((row) => engineRecord(table, row)),
+      );
+    });
+
+    it('parsers -> engine gives the golden exceptions, in order', () => {
+      const goldenUrl = new URL(`reference/python-prototype/golden/${folder}.json`, REPO_ROOT);
+      const golden = JSON.parse(readFileSync(fileURLToPath(goldenUrl), 'utf8')) as {
+        asOf: IsoDate;
+        horizon: number;
+        exceptions: unknown[];
+      };
+      if (result.input === null) throw new Error('sample input did not load');
+      const report = analyse(result.input, { asOf: golden.asOf, horizonDays: golden.horizon });
+      const exceptions = report.exceptions.map((e) => ({
+        material_id: e.materialId,
+        severity: e.severity,
+        critical_date: e.criticalDate,
+        days_until: e.daysUntil,
+        min_projected_stock: e.minProjectedStock,
+        hidden_risk: e.hidden ? 'yes' : 'no',
+        erp_view_date: e.erpViewDate ?? 'none',
+        score: e.score,
+      }));
+      expect(golden.exceptions.length).toBeGreaterThan(10);
+      expect(exceptions).toEqual(golden.exceptions);
+    });
+  },
+);

@@ -19,6 +19,10 @@ export const DATA_ERROR_CODES = [
   'TOO_MANY_ERRORS',
   'DUPLICATE_TABLE',
   'MISSING_TABLE',
+  'UNSUPPORTED_FILE_TYPE',
+  'PASSWORD_PROTECTED',
+  'CORRUPT_FILE',
+  'FILE_TOO_LARGE',
 ] as const;
 
 /** Every warning code; like {@link DATA_ERROR_CODES}, the web app keeps one message per code. */
@@ -82,7 +86,25 @@ export type DataError =
   /** Two files hold the same table (`fileName` is the second one, `other` the first). */
   | DataErrorOf<'DUPLICATE_TABLE', { readonly table: TableName; readonly other: string }>
   /** A required table has no file. */
-  | DataErrorOf<'MISSING_TABLE', { readonly table: TableName }>;
+  | DataErrorOf<'MISSING_TABLE', { readonly table: TableName }>
+  /**
+   * Not a CSV or XLSX file, e.g. `.xls`, `.xlsb`, `.ods`, `.numbers` or `.pdf` (`extension`: the
+   * file name's extension, lower case, without the dot; `''` if there is none). Fix: save as
+   * CSV or XLSX.
+   */
+  | DataErrorOf<'UNSUPPORTED_FILE_TYPE', { readonly extension: string }>
+  /** An encrypted (password-protected) Excel workbook. Fix: save a copy without a password. */
+  | DataErrorOf<'PASSWORD_PROTECTED', NoParams>
+  /** An XLSX file that cannot be opened (truncated or damaged). */
+  | DataErrorOf<'CORRUPT_FILE', NoParams>
+  /**
+   * The file exceeds a safety limit (`limit` in `unit`): its size, its unpacked size (XLSX, a
+   * guard against ZIP bombs) or its number of sheet rows.
+   */
+  | DataErrorOf<
+      'FILE_TOO_LARGE',
+      { readonly limit: number; readonly unit: 'bytes' | 'unpackedBytes' | 'rows' }
+    >;
 
 /** Machine-readable reason to double-check the data; analysis still runs. */
 export type DataWarningCode = (typeof DATA_WARNING_CODES)[number];

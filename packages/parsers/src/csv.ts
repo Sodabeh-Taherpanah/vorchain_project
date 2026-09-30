@@ -1,37 +1,15 @@
 import { err, ok, type Result } from '@vorchain/engine';
 import Papa, { type ParseError } from 'papaparse';
 
-import { decodeText, detectNonText, type Bytes, type TextEncoding } from './decode.ts';
+import { decodeText, detectNonText } from './decode.ts';
 import type { DataError } from './errors.ts';
-import { sniffDelimiter, type Delimiter } from './sniff.ts';
+import { sniffDelimiter } from './sniff.ts';
 import { stripPython } from './strip.ts';
+import type { CsvTable, RawRow, SourceFile } from './table.ts';
 
-/** A file as the Web Worker (or a Node service) hands it to the parsers: never a DOM `File`. */
-export interface CsvFile {
-  /** File name as chosen by the user; used in errors and later for table detection (P1-09). */
-  readonly name: string;
-  readonly bytes: Bytes;
-}
-
-/** One non-blank data record. */
-export interface RawRow {
-  /** Physical line the record starts on (header = line 1); blank lines still count. */
-  readonly rowNumber: number;
-  /** Cells as text, stripped like Python `str.strip()`. Rows may be shorter or longer than the header. */
+/** A CSV record: Papa only yields text cells. */
+interface TextRow extends RawRow {
   readonly cells: readonly string[];
-}
-
-/** A CSV file split into header and data records, before any column mapping or typing. */
-export interface RawTable {
-  readonly fileName: string;
-  /** Cells of the first non-blank record, stripped. */
-  readonly headers: readonly string[];
-  /** Non-blank records after the header, in file order. */
-  readonly rows: readonly RawRow[];
-  /** How the bytes were decoded (shown in the demo's map check). */
-  readonly encoding: TextEncoding;
-  /** The sniffed field delimiter. */
-  readonly delimiter: Delimiter;
 }
 
 const LINE_BREAK = /\r\n?/g;
@@ -72,8 +50,8 @@ function quoteError(
 }
 
 /** Numbers records by physical line, strips cells and drops blank records. */
-function toNumberedRows(records: readonly (readonly string[])[]): RawRow[] {
-  const rows: RawRow[] = [];
+function toNumberedRows(records: readonly (readonly string[])[]): TextRow[] {
+  const rows: TextRow[] = [];
   let line = 1;
   for (const record of records) {
     const cells = record.map(stripPython);
@@ -95,7 +73,7 @@ function toNumberedRows(records: readonly (readonly string[])[]): RawRow[] {
  *   `UNCLOSED_QUOTE` / `MALFORMED_QUOTE` for broken quoting. A header-only file is a table with
  *   zero rows, not an error.
  */
-export function readCsv(file: CsvFile): Result<RawTable, DataError> {
+export function readCsv(file: SourceFile): Result<CsvTable, DataError> {
   const fileName = file.name;
   const nonText = detectNonText(file.bytes);
   if (nonText !== null) return err({ code: 'NOT_TEXT', fileName, params: { detected: nonText } });
@@ -117,5 +95,5 @@ export function readCsv(file: CsvFile): Result<RawTable, DataError> {
 
   const [header, ...rows] = toNumberedRows(parsed.data);
   if (header === undefined) return err({ code: 'EMPTY_FILE', fileName, params: {} });
-  return ok({ fileName, headers: header.cells, rows, encoding, delimiter });
+  return ok({ format: 'csv', fileName, headers: header.cells, rows, encoding, delimiter });
 }

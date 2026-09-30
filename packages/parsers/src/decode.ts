@@ -23,7 +23,7 @@ export type NonTextKind = 'zip' | 'utf-16' | 'binary';
 export type Bytes = Uint8Array | ArrayBuffer;
 
 const UTF8_BOM = [0xef, 0xbb, 0xbf] as const;
-const ZIP_SIGNATURE = [0x50, 0x4b, 0x03, 0x04] as const;
+export const ZIP_SIGNATURE = [0x50, 0x4b, 0x03, 0x04] as const;
 const UTF16_LE_BOM = [0xff, 0xfe] as const;
 const UTF16_BE_BOM = [0xfe, 0xff] as const;
 
@@ -32,7 +32,7 @@ export function toUint8Array(bytes: Bytes): Uint8Array {
   return bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
 }
 
-function startsWith(bytes: Uint8Array, prefix: readonly number[]): boolean {
+export function startsWith(bytes: Uint8Array, prefix: readonly number[]): boolean {
   return prefix.every((value, index) => bytes[index] === value);
 }
 

@@ -1,14 +1,15 @@
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
 
-import { readCsv, type RawTable } from './csv.ts';
+import { readCsv } from './csv.ts';
 import type { DataError } from './errors.ts';
 import type { Delimiter } from './sniff.ts';
 import { stripPython } from './strip.ts';
+import type { CsvTable } from './table.ts';
 
 const utf8 = (text: string): Uint8Array => new TextEncoder().encode(text);
 
-function table(name: string, text: string | Uint8Array): RawTable {
+function table(name: string, text: string | Uint8Array): CsvTable {
   const result = readCsv({ name, bytes: typeof text === 'string' ? utf8(text) : text });
   if (!result.ok) throw new Error(`expected a table, got ${result.error.code}`);
   return result.value;
@@ -24,6 +25,7 @@ describe('readCsv', () => {
   it('reads a German semicolon export with decimal commas', () => {
     expect(table('artikel.csv', 'Artikelnummer;Lagerbestand\nM0001;1.234,5\nM0002;15,0\n')).toEqual(
       {
+        format: 'csv',
         fileName: 'artikel.csv',
         headers: ['Artikelnummer', 'Lagerbestand'],
         rows: [
