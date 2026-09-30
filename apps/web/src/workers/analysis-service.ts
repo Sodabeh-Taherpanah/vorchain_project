@@ -57,9 +57,10 @@ export interface AnalysisService {
 export const MAX_TOTAL_BYTES = MAX_FILE_BYTES;
 
 function namesOf(input: AnalysisInput | null): Readonly<Record<string, string>> {
-  const names: Record<string, string> = {};
-  for (const { supplierId, name } of input?.suppliers ?? []) names[supplierId] = name;
-  return names;
+  // `fromEntries` defines own properties, so an ID such as `__proto__` is kept as a name.
+  return Object.fromEntries(
+    (input?.suppliers ?? []).map(({ supplierId, name }) => [supplierId, name]),
+  );
 }
 
 function tooLarge(): LoadResult {

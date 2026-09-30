@@ -9,7 +9,9 @@ import { formatIsoDate } from './analysis-settings-model.ts';
 export type SupplierName = (id: SupplierId) => string;
 
 export function supplierNameLookup(names: Readonly<Record<string, string>>): SupplierName {
-  return (id) => names[id] ?? id;
+  // Own keys only: the IDs come from the user's file, and `constructor` or `toString` must not
+  // resolve to `Object.prototype` members.
+  return (id) => (Object.hasOwn(names, id) ? (names[id] ?? id) : id);
 }
 
 function useDate() {
