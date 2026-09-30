@@ -21,5 +21,48 @@
   },
   "stub": {
     "comingSoon": "Diese Seite ist in Arbeit und folgt in Kürze."
+  },
+  "site": {
+    "name": "Vorchain",
+    "home": "Vorchain, zur Startseite"
+  },
+  "layout": {
+    "skipLink": "Zum Inhalt springen"
+  },
+  "nav": {
+    "label": "Hauptnavigation",
+    "demo": "Demo",
+    "contact": "Kontakt"
+  },
+  "localeSwitcher": {
+    "label": "Sprache wählen",
+    "de": "Deutsch",
+    "en": "English"
+  },
+  "theme": {
+    "toggle": "Dunkles Farbschema"
+  },
+  "footer": {
+    "label": "Rechtliches und Links",
+    "promise": "Ihre Daten verlassen nie Ihren Browser.",
+    "legalNotice": "Impressum",
+    "privacy": "Datenschutz",
+    "github": "Quellcode auf GitHub",
+    "external": "(externe Seite)"
+  },
+  "notFound": {
+    "code": "Fehler 404",
+    "title": "Seite nicht gefunden",
+    "description": "Diese Seite gibt es nicht oder nicht mehr. Prüfen Sie die Adresse oder starten Sie auf der Startseite.",
+    "home": "Zur Startseite",
+    "demo": "Demo öffnen"
+  },
+  "error": {
+    "code": "Unerwarteter Fehler",
+    "title": "Etwas ist schiefgelaufen",
+    "description": "Diese Seite konnte nicht angezeigt werden. Versuchen Sie es erneut. Hilft das nicht, starten Sie auf der Startseite.",
+    "retry": "Erneut versuchen",
+    "home": "Zur Startseite",
+    "reference": "Fehler-ID: {digest}"
   }
 }

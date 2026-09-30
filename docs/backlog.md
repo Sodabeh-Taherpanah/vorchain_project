@@ -516,7 +516,7 @@ order.
 ---
 
 ## P1-13: Web: design tokens, fonts, layout, dark mode, 404 and error pages
-- [ ] Done
+- [x] Done
 - **Owner:** builder
 - **Why:** a consistent, industrial, trustworthy look (spec §6) and accessible shell for all pages.
 - **Acceptance criteria:**
