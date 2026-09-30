@@ -18,7 +18,16 @@ export default mergeConfig(
       server: { deps: { inline: ['next-intl'] } },
       // Framework glue that only runs inside Next.js (proxy, request config, type augmentation)
       // is covered by the e2e suite instead.
-      coverage: { exclude: ['src/proxy.ts', 'src/i18n/request.ts', 'src/**/*.d.ts'] },
+      coverage: {
+        exclude: [
+          'src/proxy.ts',
+          'src/i18n/request.ts',
+          'src/**/*.d.ts',
+          // jsdom has no Worker: the worker entry and its launcher are covered by the e2e suite.
+          'src/workers/analysis.worker.ts',
+          'src/workers/connect-analysis-worker.ts',
+        ],
+      },
     },
   },
 );
