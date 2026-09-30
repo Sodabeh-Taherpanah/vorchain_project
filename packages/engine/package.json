@@ -16,7 +16,7 @@
     "bench": "vitest run --project bench --reporter=verbose"
   },
   "devDependencies": {
-    "@types/node": "^24.13.6",
+    "@types/node": "^24.19.0",
     "@vitest/coverage-v8": "^5.0.2",
     "@vorchain/config": "workspace:*",
     "fast-check": "^4.10.2",
