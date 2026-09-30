@@ -400,7 +400,7 @@ order.
 ---
 
 ## P1-09: Parsers: header aliases, table detection, row validation, input assembly
-- [ ] Done
+- [x] Done
 - **Owner:** builder
 - **Why:** users upload files named `Export_Bestellungen_KW40.csv` with ERP-specific headers; the
   demo must recognise tables and explain precisely what is missing (spec §4.1 step 2).
