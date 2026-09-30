@@ -9,20 +9,26 @@
   },
   "demo": {
     "title": "Interaktive Demo",
-    "preview": {
+    "lead": "Prüfen Sie Ihre Materialversorgung mit echten Lieferverzügen. Ihre Dateien werden nur in Ihrem Browser gelesen und verlassen nie Ihren Rechner.",
+    "dataSource": {
+      "heading": "1. Daten wählen",
+      "intro": "Starten Sie mit unseren Beispieldaten oder wählen Sie eigene ERP-Exporte als CSV- oder Excel-Dateien (.csv, .xlsx). Benötigt werden Materialstamm, offene Bestellungen, Bedarf und Lieferhistorie; Lieferanten sind optional.",
       "loadSample": "Beispieldaten laden",
+      "chooseFiles": "Dateien auswählen",
+      "dropHint": "oder hierher ziehen – mehrere Dateien möglich (.csv, .xlsx)",
+      "sampleSelected": "Gewählt: Beispieldaten (deutscher ERP-Export).",
+      "selectedFiles": "Gewählte Dateien",
+      "remove": "{file} entfernen",
+      "templates": "Beispieldateien als Vorlage herunterladen"
+    },
+    "status": {
       "loading": "Daten werden im Browser gelesen …",
-      "analysing": "Analyse läuft …",
-      "done": "Analyse abgeschlossen: {critical} kritisch, {warning} Warnungen, {hidden} versteckte Risiken.",
-      "loadFailed": "Die Daten konnten nicht vollständig gelesen werden.",
-      "summary": "Ergebnis der Beispieldaten",
-      "critical": "Kritisch",
-      "warning": "Warnung",
-      "hidden": "Versteckte Risiken",
-      "errors": {
-        "ANALYSIS_TIMEOUT": "Die Analyse hat länger als 30 Sekunden gedauert und wurde abgebrochen. Bitte versuchen Sie es mit kleineren Dateien erneut.",
-        "WORKER_FAILED": "Die Analyse ist unerwartet fehlgeschlagen. Bitte laden Sie die Seite neu und versuchen Sie es erneut."
-      }
+      "complete": "Alle Pflichttabellen erkannt. Die Daten sind bereit für die Analyse.",
+      "incomplete": "{count, plural, one {# Problem gefunden} other {# Probleme gefunden}}. Details stehen bei den Tabellen unten."
+    },
+    "errors": {
+      "ANALYSIS_TIMEOUT": "Die Analyse hat länger als 30 Sekunden gedauert und wurde abgebrochen. Bitte versuchen Sie es mit kleineren Dateien erneut.",
+      "WORKER_FAILED": "Die Analyse ist unerwartet fehlgeschlagen. Bitte laden Sie die Seite neu und versuchen Sie es erneut."
     }
   },
   "contact": {

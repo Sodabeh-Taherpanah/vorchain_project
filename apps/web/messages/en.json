@@ -9,20 +9,26 @@
   },
   "demo": {
     "title": "Interactive demo",
-    "preview": {
+    "lead": "Check your material supply against real supplier delays. Your files are read only in your browser and never leave your computer.",
+    "dataSource": {
+      "heading": "1. Choose data",
+      "intro": "Start with our sample data or choose your own ERP exports as CSV or Excel files (.csv, .xlsx). Materials, open purchase orders, demand and delivery history are required; suppliers are optional.",
       "loadSample": "Load sample data",
-      "loading": "Reading data in your browser …",
-      "analysing": "Analysing …",
-      "done": "Analysis complete: {critical} critical, {warning} warnings, {hidden} hidden risks.",
-      "loadFailed": "The data could not be read completely.",
-      "summary": "Result for the sample data",
-      "critical": "Critical",
-      "warning": "Warning",
-      "hidden": "Hidden risks",
-      "errors": {
-        "ANALYSIS_TIMEOUT": "The analysis took longer than 30 seconds and was stopped. Please try again with smaller files.",
-        "WORKER_FAILED": "The analysis failed unexpectedly. Please reload the page and try again."
-      }
+      "chooseFiles": "Choose files",
+      "dropHint": "or drop them here – several files at once (.csv, .xlsx)",
+      "sampleSelected": "Selected: sample data (English ERP export).",
+      "selectedFiles": "Selected files",
+      "remove": "Remove {file}",
+      "templates": "Download the sample files as templates"
+    },
+    "status": {
+      "loading": "Reading your data in the browser …",
+      "complete": "All required tables recognised. The data is ready for analysis.",
+      "incomplete": "{count, plural, one {# problem found} other {# problems found}}. See the details next to the tables below."
+    },
+    "errors": {
+      "ANALYSIS_TIMEOUT": "The analysis took longer than 30 seconds and was stopped. Please try again with smaller files.",
+      "WORKER_FAILED": "The analysis failed unexpectedly. Please reload the page and try again."
     }
   },
   "contact": {

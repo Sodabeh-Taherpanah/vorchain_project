@@ -26,6 +26,7 @@ export type AnalysisState =
   | { readonly status: 'error'; readonly error: AnalysisErrorCode };
 
 type AnalysisEvent =
+  | { readonly type: 'reset' }
   | { readonly type: 'load' }
   | { readonly type: 'loaded'; readonly load: LoadSummary }
   | { readonly type: 'analyse' }
@@ -41,6 +42,8 @@ function canAnalyse(state: AnalysisState): state is Extract<AnalysisState, { loa
 /** The state machine; events that do not fit the current state are ignored. */
 function transition(state: AnalysisState, event: AnalysisEvent): AnalysisState {
   switch (event.type) {
+    case 'reset':
+      return IDLE;
     case 'load':
       return { status: 'loading' };
     case 'loaded':
@@ -86,6 +89,8 @@ export interface UseAnalysis {
   /** Runs only after a complete load (`mapped` or `ready`); resolves `null` otherwise. */
   readonly analyse: (options: AnalysisOptions) => Promise<Report | null>;
   readonly getProjection: (materialId: MaterialId) => Promise<ProjectionSeries | null>;
+  /** Forgets the last load (e.g. the user removed every file); a pending load is ignored. */
+  readonly reset: () => void;
 }
 
 /**
@@ -174,5 +179,11 @@ export function useAnalysis({
     [call],
   );
 
-  return { state, loadFiles, loadSample, analyse, getProjection };
+  const reset = useCallback(() => {
+    loadGeneration.current += 1;
+    loaded.current = null;
+    dispatch({ type: 'reset' });
+  }, []);
+
+  return { state, loadFiles, loadSample, analyse, getProjection, reset };
 }
