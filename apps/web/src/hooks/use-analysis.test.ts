@@ -242,6 +242,32 @@ describe('useAnalysis', () => {
     await expect(first).resolves.toBeNull();
   });
 
+  it('drops an analysis of the previous data when new data loads meanwhile', async () => {
+    const stale = deferred<Report>();
+    const newLoad = { ...loaded, asOf: '2026-11-02' as IsoDate };
+    const loads = [loaded, newLoad];
+    const { hook } = setup(
+      fakeService({
+        loadSample: () => Promise.resolve(loads.shift() ?? loaded),
+        analyse: () => stale.promise,
+      }),
+    );
+    await act(() => hook.result.current.loadSample('de'));
+    let running: Promise<Report | null> = Promise.resolve(null);
+    act(() => {
+      running = hook.result.current.analyse(options);
+    });
+
+    await act(() => hook.result.current.loadSample('en'));
+    await act(async () => {
+      stale.resolve(report);
+      await running;
+    });
+
+    // The old report must not be shown as the result of the new data.
+    expect(hook.result.current.state).toEqual({ status: 'mapped', load: newLoad });
+  });
+
   it('keeps its functions stable even when `connect` changes on every render', () => {
     const service = fakeService();
     const hook = renderHook(() =>
