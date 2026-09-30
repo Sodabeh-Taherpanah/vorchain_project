@@ -2,7 +2,7 @@ import { addDays, type IsoDate } from '@vorchain/engine';
 import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
 
-import { parseDate, parseNumber } from './values.ts';
+import { dateFromSerial, parseDate, parseNumber } from './values.ts';
 
 function numberOf(input: string | number): unknown {
   const result = parseNumber(input);
@@ -172,6 +172,42 @@ describe('parseDate', () => {
       fc.property(pastMonthEnd, ({ year, month, day }) => {
         const text = `${String(day)}.${String(month).padStart(2, '0')}.${String(year).padStart(4, '0')}`;
         expect(dateOf(text)).toEqual({ code: 'INVALID_DATE', params: { value: text } });
+      }),
+    );
+  });
+});
+
+describe('dateFromSerial', () => {
+  it.each([
+    { serial: 1, system: 1900, date: '1900-01-01' },
+    { serial: 59, system: 1900, date: '1900-02-28' },
+    { serial: 61, system: 1900, date: '1900-03-01' },
+    { serial: 46300, system: 1900, date: '2026-10-05' },
+    { serial: 46300.999, system: 1900, date: '2026-10-05' },
+    { serial: 2_958_465, system: 1900, date: '9999-12-31' },
+    { serial: 0, system: 1904, date: '1904-01-01' },
+    { serial: 44838, system: 1904, date: '2026-10-05' },
+    { serial: 2_957_003, system: 1904, date: '9999-12-31' },
+  ] as const)('$serial in the $system system is $date', ({ serial, system, date }) => {
+    expect(dateFromSerial(serial, system)).toBe(date);
+  });
+
+  it.each([
+    { serial: 0, system: 1900 },
+    { serial: 60, system: 1900 },
+    { serial: -1, system: 1904 },
+    { serial: 2_958_466, system: 1900 },
+    { serial: 2_957_004, system: 1904 },
+    { serial: Number.NaN, system: 1900 },
+    { serial: Infinity, system: 1904 },
+  ] as const)('$serial is no day in the $system system', ({ serial, system }) => {
+    expect(dateFromSerial(serial, system)).toBeNull();
+  });
+
+  it('keeps the two date systems 1462 days apart', () => {
+    fc.assert(
+      fc.property(fc.integer({ min: 61 + 1462, max: 2_958_465 }), (serial) => {
+        expect(dateFromSerial(serial - 1462, 1904)).toBe(dateFromSerial(serial, 1900));
       }),
     );
   });

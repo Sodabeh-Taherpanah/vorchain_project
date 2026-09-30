@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
 import { loadTables } from './assemble.ts';
-import type { RawTable } from './csv.ts';
+import type { RawTable } from './table.ts';
 
 function file(fileName: string, headers: string[], ...lines: string[][]): RawTable {
   const rows = lines.map((cells, i) => ({ rowNumber: i + 2, cells }));
-  return { fileName, headers, rows, encoding: 'utf-8', delimiter: ';' };
+  return { format: 'csv', fileName, headers, rows, encoding: 'utf-8', delimiter: ';' };
 }
 
 const materials = file(

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { mapHeaders, type TableName } from './columns.ts';
 import { MAX_ROW_ERRORS, validateRows } from './rows.ts';
+import type { DateSystem, RawCell } from './table.ts';
 
 function validate(table: TableName, headers: readonly string[], ...lines: string[][]) {
   const mapping = mapHeaders(table, headers);
@@ -159,5 +160,48 @@ describe('validateRows', () => {
     const { errors } = validate('demand', ['Artikel', 'Datum', 'Menge'], ...lines);
     expect(errors).toHaveLength(MAX_ROW_ERRORS);
     expect(errors.some((e) => e.code === 'TOO_MANY_ERRORS')).toBe(false);
+  });
+});
+
+describe('validateRows on XLSX cells', () => {
+  const orders = (cells: RawCell[], dateSystem?: DateSystem) => {
+    const headers = ['Bestellnr', 'Artikel', 'Lieferant', 'Menge', 'Liefertermin'];
+    const mapping = mapHeaders('open_purchase_orders', headers);
+    if (!mapping.ok) throw new Error('test headers must map');
+    return validateRows({
+      fileName: 'f.xlsx',
+      table: 'open_purchase_orders',
+      headers,
+      rows: [{ rowNumber: 2, cells }],
+      mapping: mapping.value,
+      ...(dateSystem === undefined ? {} : { dateSystem }),
+    });
+  };
+
+  it('reads number IDs as text and a number in a date column as an Excel day number', () => {
+    const { table, errors } = orders([4711, 42, 'S1', 12.5, 46300]);
+    expect(errors).toEqual([]);
+    expect(table.records[0]?.record).toEqual({
+      poId: '4711',
+      materialId: '42',
+      supplierId: 'S1',
+      qty: 12.5,
+      promisedDate: '2026-10-05',
+    });
+    expect(orders(['P1', 'M1', 'S1', 1, 44838], 1904).table.records[0]?.record).toMatchObject({
+      promisedDate: '2026-10-05',
+    });
+  });
+
+  it('reports a number that is no Excel day as INVALID_DATE with that number', () => {
+    expect(orders(['P1', 'M1', 'S1', 1, -3]).errors).toEqual([
+      {
+        code: 'INVALID_DATE',
+        fileName: 'f.xlsx',
+        row: 2,
+        column: 'Liefertermin',
+        params: { value: '-3' },
+      },
+    ]);
   });
 });

@@ -5,7 +5,7 @@
 import { err, ok, type AnalysisInput, type Result } from '@vorchain/engine';
 
 import { mapHeaders, type CanonicalColumn, type TableName } from './columns.ts';
-import type { RawTable } from './csv.ts';
+import type { RawTable } from './table.ts';
 import { detectTable } from './detect.ts';
 import type { DataError, DataWarning } from './errors.ts';
 import { validateRows, type TableRecords, type ValidatedTable } from './rows.ts';

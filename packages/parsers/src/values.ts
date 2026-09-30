@@ -9,9 +9,10 @@
  *  - Only ASCII digits are accepted. Python also accepts other Unicode digits (`١٢`, `１２`),
  *    which no ERP export we target produces.
  */
-import { err, isoDateFromParts, ok, type IsoDate, type Result } from '@vorchain/engine';
+import { addDays, err, isoDateFromParts, ok, type IsoDate, type Result } from '@vorchain/engine';
 
 import type { DataError } from './errors.ts';
+import type { DateSystem } from './table.ts';
 import { PYTHON_WHITESPACE, stripPython } from './strip.ts';
 
 /**
@@ -122,4 +123,33 @@ function yearOf(fields: Readonly<Record<string, string | undefined>>): number {
   if (fields.Y !== undefined) return Number(fields.Y);
   const short = Number(fields.y);
   return short <= 68 ? 2000 + short : 1900 + short;
+}
+
+/** Last day number Excel can show (9999-12-31) in each date system. */
+const MAX_SERIAL: Readonly<Record<DateSystem, number>> = { 1900: 2_958_465, 1904: 2_957_003 };
+/** Excel's phantom 29 February 1900 (kept from Lotus 1-2-3); no real day has this number. */
+const PHANTOM_LEAP_DAY = 60;
+
+/**
+ * Converts an Excel day number (a date cell that lost its date format, e.g. `46300`) to an
+ * {@link IsoDate}; the fraction (time of day) is dropped. Pure day arithmetic, so the machine's
+ * time zone cannot shift the result.
+ *
+ * @returns `null` for numbers that are no day in `system` (negative, too large, not finite, or
+ *   the phantom 1900-02-29).
+ * @example `dateFromSerial(46300, 1900)` -> `'2026-10-05'`
+ */
+export function dateFromSerial(serial: number, system: DateSystem): IsoDate | null {
+  if (!Number.isFinite(serial)) return null;
+  const day = Math.floor(serial);
+  if (day < 0 || day > MAX_SERIAL[system]) return null;
+  if (system === 1904) return daysAfter(1904, 1, 1, day);
+  if (day === 0 || day === PHANTOM_LEAP_DAY) return null;
+  // Day 1 is 1900-01-01; from day 61 on, the phantom leap day shifts the count by one.
+  return day < PHANTOM_LEAP_DAY ? daysAfter(1899, 12, 31, day) : daysAfter(1899, 12, 30, day);
+}
+
+function daysAfter(year: number, month: number, day: number, days: number): IsoDate | null {
+  const epoch = isoDateFromParts(year, month, day);
+  return epoch.ok ? addDays(epoch.value, days) : null;
 }

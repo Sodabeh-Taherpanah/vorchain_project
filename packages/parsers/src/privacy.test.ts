@@ -8,7 +8,7 @@ import { describe, expect, it } from 'vitest';
 
 import { loadTables } from './assemble.ts';
 import { COLUMN_ALIASES, OPTIONAL, REQUIRED, TABLE_FILE_STEMS, TABLE_NAMES } from './columns.ts';
-import type { RawTable } from './csv.ts';
+import type { RawTable } from './table.ts';
 
 const ALLOWED_KEYS = new Set(['code', 'fileName', 'row', 'column', 'params']);
 const TOKEN = /§f(\d+)r(\d+)c(\d+)§/gu;
@@ -42,6 +42,7 @@ function buildFile(
   }));
   const stem = TABLE_FILE_STEMS[spec.table][0] ?? spec.table;
   return {
+    format: 'csv',
     fileName: `${stem}_${String(index)}.csv`,
     headers,
     rows,
