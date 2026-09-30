@@ -620,7 +620,7 @@ order.
   5. Every `DataError` code has `de` and `en` messages (test enforces completeness against the
      parsers' exported code list).
   6. The `MISSING_VALUE` message names the file, line and column, and hints that ERP totals rows
-     (e.g. `Summe;;1.234`, empty ID) should be deleted before upload (owner decision on P1-09;
+     (e.g. `Summe;;1.234`, empty ID) should be deleted from the file before loading (owner decision on P1-09;
      see Q10).
 - **Test plan:** component tests for each panel state; Playwright: sample -> all tables
   recognised; upload of `bestellungen.csv` alone -> other tables shown as missing; upload of a

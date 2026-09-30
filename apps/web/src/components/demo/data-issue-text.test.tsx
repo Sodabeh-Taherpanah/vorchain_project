@@ -123,11 +123,11 @@ describe('data error messages', () => {
   it('names file, line and column of a missing value and hints at ERP totals rows (AC6)', () => {
     expect(renderIssue('de', ERRORS.MISSING_VALUE).textContent).toBe(
       'artikel.csv, Zeile 42, Spalte „Artikelnummer“: Pflichtwert fehlt. Summenzeilen aus dem ERP ' +
-        '(z. B. „Summe;;1.234“ ohne ID) bitte vor dem Hochladen löschen.',
+        '(z. B. „Summe;;1.234“ ohne ID) bitte vor dem Einlesen aus der Datei löschen.',
     );
     expect(renderIssue('en', ERRORS.MISSING_VALUE).textContent).toBe(
       'artikel.csv, line 42, column “Artikelnummer”: A required value is missing. Please delete ' +
-        'ERP totals rows (e.g. “Summe;;1.234” without an ID) before uploading.',
+        'ERP totals rows (e.g. “Summe;;1.234” without an ID) from the file before loading it.',
     );
   });
 

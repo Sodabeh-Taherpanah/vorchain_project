@@ -88,7 +88,7 @@
       "UNKNOWN_TABLE": "Die Tabelle wurde nicht erkannt – gefundene Spalten: {found}. Benennen Sie die Datei z. B. in artikel.csv, bestellungen.csv, bedarf.csv, lieferhistorie.csv oder lieferanten.csv um.",
       "AMBIGUOUS_TABLE": "Die Spalten passen zu mehreren Tabellen ({candidates}). Bitte benennen Sie die Datei eindeutig, z. B. bestellungen.csv.",
       "MISSING_COLUMNS": "{count, plural, one {Spalte <b>{missing}</b> nicht gefunden} other {Spalten <b>{missing}</b> nicht gefunden}} – gefundene Spalten: {found}. Bitte benennen Sie die Spalte in der Kopfzeile entsprechend um.",
-      "MISSING_VALUE": "Pflichtwert fehlt. Summenzeilen aus dem ERP (z. B. „Summe;;1.234“ ohne ID) bitte vor dem Hochladen löschen.",
+      "MISSING_VALUE": "Pflichtwert fehlt. Summenzeilen aus dem ERP (z. B. „Summe;;1.234“ ohne ID) bitte vor dem Einlesen aus der Datei löschen.",
       "TOO_MANY_ERRORS": "Mehr als {limit} fehlerhafte Zeilen; nur die ersten {limit} werden angezeigt. Bitte prüfen Sie Trennzeichen, Zahlen- und Datumsformat des Exports.",
       "DUPLICATE_TABLE": "Die Tabelle {table} ist bereits in {other} enthalten. Bitte entfernen Sie eine der beiden Dateien.",
       "MISSING_TABLE": "Die Tabelle {table} fehlt. Bitte fügen Sie eine Datei hinzu, z. B. {example}.",
