@@ -3,4 +3,7 @@
 *.jpg binary
 *.ico binary
 *.xlsx binary
+# Parser fixtures test exact bytes (CRLF, BOM, Windows-1252): never normalise them.
+packages/parsers/test/fixtures/csv/** -text
+packages/parsers/test/fixtures/python-*.json linguist-generated=true
 pnpm-lock.yaml linguist-generated=true -diff

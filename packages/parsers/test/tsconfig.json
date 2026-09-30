@@ -1,0 +1,9 @@
+{
+  // Test-only code under `test/` reads fixture files with Node (`node:fs`). The parsers' `src`
+  // stays free of Node APIs: `tsconfig.pure.json` checks it without Node types.
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "types": ["node"]
+  },
+  "include": [".", "../types"]
+}
