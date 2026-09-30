@@ -130,4 +130,12 @@ describe('ReasonText and ActionText', () => {
       ]
     `);
   });
+
+  it('resolves only own supplier IDs, so IDs like `constructor` fall back to the ID', () => {
+    const lookup = supplierNameLookup(Object.fromEntries([['__proto__', 'Proto GmbH']]));
+
+    expect(lookup(supplierId('__proto__'))).toBe('Proto GmbH');
+    expect(lookup(supplierId('constructor'))).toBe('constructor');
+    expect(lookup(supplierId('toString'))).toBe('toString');
+  });
 });

@@ -52,6 +52,24 @@ describe('createAnalysisService', () => {
     expect(Object.keys(load.supplierNames).length).toBeGreaterThan(1);
   });
 
+  it('keeps a supplier ID that is also an Object.prototype key as a plain name', async () => {
+    const service = createAnalysisService();
+    const files = sampleFiles().map((file) =>
+      file.name === 'lieferanten.csv'
+        ? new File(['Lieferantennr;Name\n__proto__;Proto GmbH\nconstructor;Bau AG\n'], file.name, {
+            type: 'text/csv',
+          })
+        : file,
+    );
+
+    const load = await service.loadFiles(files);
+
+    expect(Object.entries(load.supplierNames)).toEqual([
+      ['__proto__', 'Proto GmbH'],
+      ['constructor', 'Bau AG'],
+    ]);
+  });
+
   it('analyses the German sample with the golden summary counts', async () => {
     const service = createAnalysisService();
     await service.loadSample('de');
