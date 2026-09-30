@@ -203,6 +203,30 @@ describe('useAnalysis', () => {
     await expect(first).resolves.toBeNull();
   });
 
+  it('resets to idle and ignores a load that finishes after the reset', async () => {
+    const pending = deferred<LoadSummary>();
+    const { hook, service } = setup(fakeService({ loadFiles: () => pending.promise }));
+
+    let load: Promise<LoadSummary | null> = Promise.resolve(null);
+    act(() => {
+      load = hook.result.current.loadFiles([]);
+    });
+    act(() => {
+      hook.result.current.reset();
+    });
+    await act(async () => {
+      pending.resolve(loaded);
+      await load;
+    });
+
+    expect(hook.result.current.state).toEqual({ status: 'idle' });
+    await expect(load).resolves.toBeNull();
+    await act(async () => {
+      await expect(hook.result.current.analyse(options)).resolves.toBeNull();
+    });
+    expect(service.analyse).not.toHaveBeenCalled();
+  });
+
   it('ignores the timeout of a call that was pending when the page unmounted', async () => {
     const { hook, terminate } = setup(fakeService({ loadSample: never }));
     let pending: Promise<LoadSummary | null> = Promise.resolve(null);

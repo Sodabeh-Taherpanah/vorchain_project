@@ -9,20 +9,98 @@
   },
   "demo": {
     "title": "Interactive demo",
-    "preview": {
+    "lead": "Check your material supply against real supplier delays. Your files are read only in your browser and never leave your computer.",
+    "dataSource": {
+      "heading": "1. Choose data",
+      "intro": "Start with our sample data or choose your own ERP exports as CSV or Excel files (.csv, .xlsx). Materials, open purchase orders, demand and delivery history are required; suppliers are optional.",
       "loadSample": "Load sample data",
-      "loading": "Reading data in your browser …",
-      "analysing": "Analysing …",
-      "done": "Analysis complete: {critical} critical, {warning} warnings, {hidden} hidden risks.",
-      "loadFailed": "The data could not be read completely.",
-      "summary": "Result for the sample data",
-      "critical": "Critical",
-      "warning": "Warning",
-      "hidden": "Hidden risks",
-      "errors": {
-        "ANALYSIS_TIMEOUT": "The analysis took longer than 30 seconds and was stopped. Please try again with smaller files.",
-        "WORKER_FAILED": "The analysis failed unexpectedly. Please reload the page and try again."
-      }
+      "chooseFiles": "Choose files",
+      "dropHint": "or drop them here – several files at once (.csv, .xlsx)",
+      "sampleSelected": "Selected: sample data (English ERP export).",
+      "selectedFiles": "Selected files",
+      "remove": "Remove {file}",
+      "templates": "Download the sample files as templates"
+    },
+    "status": {
+      "loading": "Reading your data in the browser …",
+      "complete": "All required tables recognised. The data is ready for analysis.",
+      "incomplete": "{count, plural, one {# problem found} other {# problems found}}. See the details next to the tables below."
+    },
+    "mapCheck": {
+      "heading": "2. Recognised tables",
+      "intro": "This is how your files were assigned. Fix hints appear next to the table they concern.",
+      "required": "Required",
+      "optional": "Optional",
+      "status": {
+        "recognised": "Recognised",
+        "invalid": "Has errors",
+        "missing": "Missing",
+        "absent": "Not provided"
+      },
+      "file": "File",
+      "rows": "{count, plural, one {# row} other {# rows}}",
+      "columns": "Mapped columns",
+      "fileErrors": "Unassigned files",
+      "errorLabel": "Error:",
+      "warningLabel": "Note:"
+    },
+    "tables": {
+      "materials": "Materials",
+      "open_purchase_orders": "Open purchase orders",
+      "demand": "Demand",
+      "supplier_history": "Delivery history",
+      "suppliers": "Suppliers"
+    },
+    "tableExamples": {
+      "materials": "materials.csv",
+      "open_purchase_orders": "open_purchase_orders.csv",
+      "demand": "demand.csv",
+      "supplier_history": "supplier_history.csv",
+      "suppliers": "suppliers.csv"
+    },
+    "columns": {
+      "material_id": "material number",
+      "description": "description",
+      "main_supplier_id": "main supplier",
+      "on_hand": "on hand",
+      "safety_stock": "safety stock",
+      "unit": "unit",
+      "po_id": "PO number",
+      "supplier_id": "supplier",
+      "qty": "quantity",
+      "promised_date": "promised date",
+      "actual_date": "receipt date",
+      "date": "demand date",
+      "name": "name"
+    },
+    "location": {
+      "file": "{file}",
+      "row": "line {row}",
+      "column": "column “{column}”"
+    },
+    "errors": {
+      "EMPTY_FILE": "The file is empty. Please export the table from your ERP again.",
+      "NOT_TEXT": "This is not a CSV text file ({detected, select, zip {probably an Excel file named .csv; rename it to .xlsx} utf16 {UTF-16 encoded; save it as CSV UTF-8} other {binary data; save the table as CSV or .xlsx}}).",
+      "UNCLOSED_QUOTE": "A quotation mark is never closed, so the rest of the file would be one cell. Please check this line.",
+      "MALFORMED_QUOTE": "Text follows a closing quotation mark (e.g. \"12\" inch\"). Please double quotation marks inside a field or remove them.",
+      "INVALID_NUMBER": "“{value}” is not a valid number. Use e.g. 1234.5, 1,234.5 or 1.234,5.",
+      "INVALID_DATE": "“{value}” is not a valid date. Use e.g. 2026-10-05, 05.10.2026 or 05/10/2026.",
+      "UNKNOWN_TABLE": "The table was not recognised – columns found: {found}. Rename the file to e.g. materials.csv, open_purchase_orders.csv, demand.csv, supplier_history.csv or suppliers.csv.",
+      "AMBIGUOUS_TABLE": "The columns fit several tables ({candidates}). Please give the file a clear name, e.g. open_purchase_orders.csv.",
+      "MISSING_COLUMNS": "{count, plural, one {Column <b>{missing}</b> not found} other {Columns <b>{missing}</b> not found}} – columns found: {found}. Please rename the column in the header row.",
+      "MISSING_VALUE": "A required value is missing. Please delete ERP totals rows (e.g. “Summe;;1.234” without an ID) before uploading.",
+      "TOO_MANY_ERRORS": "More than {limit} rows have errors; only the first {limit} are shown. Please check the export’s delimiter, number and date format.",
+      "DUPLICATE_TABLE": "The table {table} is already in {other}. Please remove one of the two files.",
+      "MISSING_TABLE": "The table {table} is missing. Please add a file, e.g. {example}.",
+      "UNSUPPORTED_FILE_TYPE": "Files {extension, select, none {without an extension} other {with the extension .{extension}}} are not supported. Please save the table as CSV or Excel workbook (.xlsx).",
+      "PASSWORD_PROTECTED": "The Excel file is password-protected. Please save a copy without a password.",
+      "CORRUPT_FILE": "The Excel file is damaged or incomplete. Please export it again.",
+      "FILE_TOO_LARGE": "{unit, select, bytes {The data is larger than {limit, number} MB.} unpackedBytes {The Excel file is larger than {limit, number} MB when unpacked.} other {The table has more than {limit, number} rows.}} Please export only the columns and rows you need.",
+      "ANALYSIS_TIMEOUT": "The analysis took longer than 30 seconds and was stopped. Please try again with smaller files.",
+      "WORKER_FAILED": "The analysis failed unexpectedly. Please reload the page and try again."
+    },
+    "warnings": {
+      "DUPLICATE_MATERIAL": "Material number “{value}” appears more than once (first in line {firstRow}). Both rows are analysed; please check the export."
     }
   },
   "contact": {

@@ -10,3 +10,5 @@ reference/python-prototype/sample_data*/** -text
 packages/parsers/test/fixtures/python-*.json linguist-generated=true
 pnpm-lock.yaml linguist-generated=true -diff
 packages/sample-data/src/generated/** linguist-generated=true
+# E2E upload fixtures are real ERP exports (CRLF, BOM): upload them byte for byte.
+apps/web/e2e/fixtures/** -text
