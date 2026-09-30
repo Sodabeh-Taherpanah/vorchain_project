@@ -41,13 +41,21 @@ async function openDemo(page: Page) {
   return { scripts, sent, scriptsOnLoad: scripts.length };
 }
 
-/** Privacy (ADR-0003): after page load only same-origin code is fetched; nothing is sent. */
-function expectNothingSent(page: Page, sent: readonly SentRequest[]) {
+/**
+ * Privacy (ADR-0003): after page load only same-origin code is fetched; nothing is sent, not even
+ * inside a URL (`values` are cells of the uploaded file).
+ */
+function expectNothingSent(
+  page: Page,
+  sent: readonly SentRequest[],
+  values: readonly string[] = [],
+) {
   const origin = new URL(page.url()).origin;
   for (const request of sent) {
     expect(request.method, request.url).toBe('GET');
     expect(request.body, request.url).toBeNull();
     expect(new URL(request.url).origin, request.url).toBe(origin);
+    for (const value of values) expect(decodeURIComponent(request.url)).not.toContain(value);
   }
 }
 
@@ -88,7 +96,7 @@ test('an uploaded file stays in the browser; missing tables are reported', async
     await expect(page.getByTestId(`table-${table}`)).toHaveAttribute('data-status', 'missing');
   }
   await expect(page.getByTestId('table-suppliers')).toHaveAttribute('data-status', 'absent');
-  expectNothingSent(page, sent);
+  expectNothingSent(page, sent, ['PO00001', 'Liefertermin', '15.10.2026']);
 });
 
 test('a renamed required column gets a specific hint; removing the file clears it', async ({
@@ -113,6 +121,24 @@ test('a renamed required column gets a specific hint; removing the file clears i
   await page.getByRole('button', { name: 'bestellungen.csv entfernen' }).click();
   await expect(orders).toHaveCount(0);
   await expect(page.getByRole('status')).toHaveText('');
+});
+
+test('the map check with an error fits a 360 px screen without horizontal scrolling', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 360, height: 800 });
+  await openDemo(page);
+  const renamed = bestellungen.toString('utf8').replace('Liefertermin', 'Termin_neu');
+
+  await page.getByTestId('file-input').setInputFiles({
+    name: 'bestellungen_export_aus_dem_erp_system_2026.csv',
+    mimeType: 'text/csv',
+    buffer: Buffer.from(renamed, 'utf8'),
+  });
+
+  await expect(page.getByRole('status')).toContainText('Probleme gefunden');
+  const width = await page.evaluate(() => document.documentElement.scrollWidth);
+  expect(width).toBeLessThanOrEqual(360);
 });
 
 for (const [locale, messages] of [
