@@ -17,6 +17,7 @@ const load = (overrides: Partial<LoadSummary>): LoadSummary => ({
   warnings: [],
   ready: false,
   asOf: null,
+  supplierNames: {},
   ...overrides,
 });
 

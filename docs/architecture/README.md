@@ -219,10 +219,12 @@ sequenceDiagram
   end
   W->>PR: assembleInput(tables)
   PR-->>W: AnalysisInput or missing-table errors
-  W-->>H: LoadResult {tables, errors, suggestedAsOf}
+  W-->>H: LoadSummary {tables, errors, warnings, ready, asOf, supplierNames}
   H-->>P: show map check (recognised tables, missing columns, fix hints)
-  U->>P: confirm settings (asOf, horizon, language)
-  P->>H: analyse(options)
+  P->>H: analyse(options) with defaults (sample asOf or today, 28 days)
+  U->>P: change settings (asOf, horizon, report language)
+  P->>H: analyse(options) again; the worker keeps the loaded input
+  Note over P: report language only changes rendering (nested next-intl provider)
   H->>W: analyse({asOf, horizonDays})
   W->>E: analyse(input, options)
   E-->>W: Report

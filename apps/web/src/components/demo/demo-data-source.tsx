@@ -7,17 +7,33 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button.tsx';
 
 import { useAnalysis, type AnalysisState } from '../../hooks/use-analysis.ts';
+import {
+  DEFAULT_HORIZON_DAYS,
+  defaultAsOf,
+  type AnalysisSettings,
+} from './analysis-settings-model.ts';
+import { DemoAnalysis, type ReportMessages } from './demo-analysis.tsx';
 import { FileDropzone } from './file-dropzone.tsx';
 import { MapCheckPanel } from './map-check-panel.tsx';
 import { addFiles, NO_SOURCE, removeFileAt, type DataSource } from './file-selection.ts';
 import { SampleTemplates } from './sample-templates.tsx';
 
-/** Step 1 and 2 of the demo (spec §4.1): choose the data, then see what was recognised. */
-export function DemoDataSource() {
+/**
+ * The demo (spec §4.1): choose the data, see what was recognised, then adjust the settings and read
+ * the results. The settings live here so they survive loading other files.
+ */
+export function DemoDataSource({ reportMessages }: { readonly reportMessages: ReportMessages }) {
   const t = useTranslations('demo');
   const locale = useLocale();
-  const { state, loadFiles, loadSample, reset } = useAnalysis();
+  const { state, loadFiles, loadSample, analyse, reset } = useAnalysis();
   const [source, setSource] = useState<DataSource>(NO_SOURCE);
+  const [settings, setSettings] = useState<AnalysisSettings>({
+    asOf: null,
+    horizonDays: DEFAULT_HORIZON_DAYS,
+    reportLocale: locale,
+  });
+  // Today only matters for uploads without a chosen date; read once so it stays stable.
+  const [now] = useState(() => new Date());
 
   function chooseSample() {
     setSource({ kind: 'sample' });
@@ -97,6 +113,18 @@ export function DemoDataSource() {
         </p>
       )}
       {'load' in state && <MapCheckPanel load={state.load} />}
+      {'load' in state && state.load.ready && (
+        <DemoAnalysis
+          load={state.load}
+          state={state}
+          analyse={analyse}
+          settings={{ ...settings, asOf: settings.asOf ?? defaultAsOf(state.load.asOf, now) }}
+          onSettingsChange={(change) => {
+            setSettings((current) => ({ ...current, ...change }));
+          }}
+          reportMessages={reportMessages}
+        />
+      )}
     </div>
   );
 }

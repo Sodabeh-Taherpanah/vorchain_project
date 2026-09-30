@@ -36,7 +36,7 @@ type AnalysisEvent =
 const IDLE: AnalysisState = { status: 'idle' };
 
 function canAnalyse(state: AnalysisState): state is Extract<AnalysisState, { load: LoadSummary }> {
-  return (state.status === 'mapped' || state.status === 'ready') && state.load.ready;
+  return 'load' in state && state.load.ready;
 }
 
 /** The state machine; events that do not fit the current state are ignored. */
@@ -86,7 +86,10 @@ export interface UseAnalysis {
    */
   readonly loadFiles: (files: readonly File[]) => Promise<LoadSummary | null>;
   readonly loadSample: (locale: SampleLocale) => Promise<LoadSummary | null>;
-  /** Runs only after a complete load (`mapped` or `ready`); resolves `null` otherwise. */
+  /**
+   * Runs only after a complete load; resolves `null` otherwise. May run again with new settings
+   * (also while one runs): only the newest run reaches the state, older ones resolve `null`.
+   */
   readonly analyse: (options: AnalysisOptions) => Promise<Report | null>;
   readonly getProjection: (materialId: MaterialId) => Promise<ProjectionSeries | null>;
   /** Forgets the last load (e.g. the user removed every file); a pending load is ignored. */
@@ -103,11 +106,19 @@ export function useAnalysis({
 }: UseAnalysisOptions = {}): UseAnalysis {
   const [state, dispatch] = useReducer(transition, IDLE);
   const connection = useRef<AnalysisConnection | null>(null);
+  // The latest `connect`, so the returned functions keep their identity: the production bundle
+  // hands in a new `connect` on every render, and callers use `analyse` as an effect dependency.
+  const connectRef = useRef(connect);
+  useEffect(() => {
+    connectRef.current = connect;
+  }, [connect]);
   // The last load, readable right after `await loadSample()` in the same event handler, where
   // `state` from the closure is still the old one.
   const loaded = useRef<LoadSummary | null>(null);
   // Counts loads so that only the newest one reaches the state; an older load may finish later.
   const loadGeneration = useRef(0);
+  // The same for analyses: the settings may change while an analysis is still running.
+  const analyseGeneration = useRef(0);
 
   useEffect(
     () => () => {
@@ -119,7 +130,7 @@ export function useAnalysis({
 
   const call = useCallback(
     async <T>(task: (service: AnalysisService) => Promise<T>): Promise<T | null> => {
-      connection.current ??= connect();
+      connection.current ??= connectRef.current();
       const current = connection.current;
       try {
         return await withTimeout(task(current.service), ANALYSIS_TIMEOUT_MS);
@@ -135,7 +146,7 @@ export function useAnalysis({
         return null;
       }
     },
-    [connect],
+    [],
   );
 
   const load = useCallback(
@@ -166,8 +177,10 @@ export function useAnalysis({
   const analyse = useCallback(
     async (options: AnalysisOptions) => {
       if (loaded.current?.ready !== true) return null;
+      const generation = ++analyseGeneration.current;
       dispatch({ type: 'analyse' });
       const report = await call((service) => service.analyse(options));
+      if (generation !== analyseGeneration.current) return null;
       if (report !== null) dispatch({ type: 'analysed', report });
       return report;
     },

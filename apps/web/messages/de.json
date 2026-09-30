@@ -101,6 +101,76 @@
     },
     "warnings": {
       "DUPLICATE_MATERIAL": "Artikelnummer „{value}“ kommt mehrfach vor (zuerst in Zeile {firstRow}). Beide Zeilen werden analysiert; bitte prüfen Sie den Export."
+    },
+    "settings": {
+      "heading": "3. Einstellungen",
+      "asOf": "Stichtag",
+      "asOfHint": "Erster Tag der Vorschau, meist das Datum des ERP-Exports.",
+      "asOfInvalid": "Bitte wählen Sie ein gültiges Datum.",
+      "horizon": "Horizont in Tagen",
+      "horizonHint": "{min} bis {max} Kalendertage ab dem Stichtag.",
+      "horizonInvalid": "Bitte geben Sie eine ganze Zahl von {min} bis {max} ein.",
+      "reportLanguage": "Sprache des Berichts",
+      "languages": {
+        "de": "Deutsch",
+        "en": "English"
+      }
+    },
+    "report": {
+      "heading": "4. Ergebnis",
+      "scope": "Stichtag {asOf}, Horizont {days} Tage.",
+      "analysing": "Analyse läuft …",
+      "tiles": {
+        "critical": "Kritisch",
+        "criticalHint": "Fehlteil: Bestand fällt unter 0",
+        "warning": "Warnungen",
+        "warningHint": "Bestand fällt unter den Sicherheitsbestand",
+        "hidden": "Verdeckte Risiken",
+        "hiddenHint": "In der ERP-Sicht nicht oder erst später sichtbar"
+      },
+      "overdue": {
+        "note": "{count, plural, one {# offene Bestellung ist überfällig} other {# offene Bestellungen sind überfällig}} (Liefertermin vor dem Stichtag). Die ERP-Sicht zählt sie nicht mehr, die realistische Sicht bucht sie mit dem typischen Verzug des Lieferanten.",
+        "item": "{poId} für {materialId} bei {supplier}: bestätigt für {promised}, realistisch am {realistic}.",
+        "notListed": "Das Material steht nicht in der Liste; in der ERP-Sicht kann es trotzdem knapp werden. Bitte klären Sie den Termin mit dem Lieferanten."
+      },
+      "table": {
+        "caption": "Materialien mit Fehlteil-Risiko, nach Dringlichkeit sortiert ({shown} von {total})",
+        "empty": "Keine Fehlteile und keine Unterschreitung des Sicherheitsbestands in den nächsten {days} Tagen.",
+        "region": "Tabelle der Fehlteil-Risiken",
+        "severity": "Schwere",
+        "material": "Material",
+        "criticalDate": "Kritisch ab",
+        "daysUntil": "In",
+        "minStock": "Niedrigster Bestand",
+        "hidden": "Verdeckt",
+        "why": "Warum",
+        "action": "Nächster Schritt",
+        "days": "{days, plural, one {# Tag} other {# Tage}}",
+        "hiddenBadge": "Verdecktes Risiko",
+        "notHidden": "Nein",
+        "details": "Details zu {materialId}",
+        "showAll": "Alle anzeigen ({count})",
+        "showTop": "Nur die ersten {count} anzeigen"
+      },
+      "severity": {
+        "CRITICAL": "Kritisch",
+        "WARNING": "Warnung"
+      },
+      "reasons": {
+        "NO_OPEN_PO": "Keine offene Bestellung deckt den Bedarf.",
+        "PO_AFTER_CRITICAL": "{poId} ist für {promised} bestätigt – bereits nach dem kritischen Datum.",
+        "PO_LATE": "{poId} ist für {promised} bestätigt, aber {supplier} liefert typischerweise {days, plural, one {# Arbeitstag} other {# Arbeitstage}} zu spät (Termintreue {rate, number, percent}).",
+        "PO_LATE_LOW_CONFIDENCE": "Nur {deliveries, plural, one {# frühere Lieferung} other {# frühere Lieferungen}}, geringe Aussagekraft.",
+        "HIDDEN_ERP_LATER": "Die ERP-Sicht (bestätigte Termine) zeigt das Problem erst ab {erpDate}: verdecktes Risiko.",
+        "HIDDEN_ERP_NONE": "Die ERP-Sicht (bestätigte Termine) zeigt gar kein Problem: verdecktes Risiko.",
+        "PO_OVERDUE": "{poId} war für {promised} bestätigt und ist überfällig; die ERP-Sicht zählt sie nicht, realistisch kommt sie am {realistic}."
+      },
+      "actions": {
+        "PLACE_ORDER": "{known, select, yes {Jetzt bei {supplier} bestellen.} other {Jetzt beim Hauptlieferanten bestellen (nicht hinterlegt).}}",
+        "PULL_FORWARD": "{supplier} bitten, {poId} vor {before} vorzuziehen, oder alternativ beschaffen.",
+        "EXPEDITE": "{poId} nachfassen oder Teillieferung vor {before} anfragen.",
+        "REVIEW_QTY_OR_DEMAND": "Bestellmenge erhöhen oder Bedarfsplanung prüfen."
+      }
     }
   },
   "contact": {

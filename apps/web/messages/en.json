@@ -101,6 +101,76 @@
     },
     "warnings": {
       "DUPLICATE_MATERIAL": "Material number “{value}” appears more than once (first in line {firstRow}). Both rows are analysed; please check the export."
+    },
+    "settings": {
+      "heading": "3. Settings",
+      "asOf": "As-of date",
+      "asOfHint": "First day of the projection, usually the date of the ERP export.",
+      "asOfInvalid": "Please choose a valid date.",
+      "horizon": "Horizon in days",
+      "horizonHint": "{min} to {max} calendar days from the as-of date.",
+      "horizonInvalid": "Please enter a whole number from {min} to {max}.",
+      "reportLanguage": "Report language",
+      "languages": {
+        "de": "Deutsch",
+        "en": "English"
+      }
+    },
+    "report": {
+      "heading": "4. Results",
+      "scope": "As of {asOf}, horizon {days} days.",
+      "analysing": "Analysing …",
+      "tiles": {
+        "critical": "Critical",
+        "criticalHint": "Stock-out: stock drops below 0",
+        "warning": "Warnings",
+        "warningHint": "Stock drops below safety stock",
+        "hidden": "Hidden risks",
+        "hiddenHint": "Not visible in the ERP view, or only later"
+      },
+      "overdue": {
+        "note": "{count, plural, one {# open purchase order is overdue} other {# open purchase orders are overdue}} (promised before the as-of date). The ERP view no longer counts them; the realistic view books them with the supplier's typical delay.",
+        "item": "{poId} for {materialId} from {supplier}: promised {promised}, realistically {realistic}.",
+        "notListed": "The material is not in the list; the ERP view may still show it running short. Please confirm the date with the supplier."
+      },
+      "table": {
+        "caption": "Materials at risk of a shortage, most urgent first ({shown} of {total})",
+        "empty": "No stock-outs and no drop below safety stock in the next {days} days.",
+        "region": "Shortage risk table",
+        "severity": "Severity",
+        "material": "Material",
+        "criticalDate": "Critical from",
+        "daysUntil": "In",
+        "minStock": "Lowest stock",
+        "hidden": "Hidden",
+        "why": "Why",
+        "action": "Next action",
+        "days": "{days, plural, one {# day} other {# days}}",
+        "hiddenBadge": "Hidden risk",
+        "notHidden": "No",
+        "details": "Details for {materialId}",
+        "showAll": "Show all ({count})",
+        "showTop": "Show only the first {count}"
+      },
+      "severity": {
+        "CRITICAL": "Critical",
+        "WARNING": "Warning"
+      },
+      "reasons": {
+        "NO_OPEN_PO": "No open purchase order covers the demand.",
+        "PO_AFTER_CRITICAL": "{poId} is promised for {promised} – already after the critical date.",
+        "PO_LATE": "{poId} is promised for {promised}, but {supplier} is typically {days, plural, one {# working day} other {# working days}} late (on-time rate {rate, number, percent}).",
+        "PO_LATE_LOW_CONFIDENCE": "Only {deliveries, plural, one {# past delivery} other {# past deliveries}}, low confidence.",
+        "HIDDEN_ERP_LATER": "The ERP view (promised dates) shows the problem only from {erpDate}: hidden risk.",
+        "HIDDEN_ERP_NONE": "The ERP view (promised dates) shows no problem at all: hidden risk.",
+        "PO_OVERDUE": "{poId} was promised for {promised} and is overdue; the ERP view does not count it, realistically it arrives on {realistic}."
+      },
+      "actions": {
+        "PLACE_ORDER": "{known, select, yes {Order now from {supplier}.} other {Order now from the main supplier (not on file).}}",
+        "PULL_FORWARD": "Ask {supplier} to pull {poId} forward before {before}, or source elsewhere.",
+        "EXPEDITE": "Expedite {poId} or ask for a partial delivery before {before}.",
+        "REVIEW_QTY_OR_DEMAND": "Increase the order quantity or check the demand plan."
+      }
     }
   },
   "contact": {

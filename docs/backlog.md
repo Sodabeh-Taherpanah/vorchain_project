@@ -634,7 +634,7 @@ order.
 ---
 
 ## P1-17: Demo: settings, summary tiles, ranked exception table
-- [ ] Done
+- [x] Done
 - **Owner:** builder
 - **Why:** the core answer "which parts will run out and why" (spec §4.1 steps 3 and 4).
 - **Acceptance criteria:**
