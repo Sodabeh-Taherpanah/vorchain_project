@@ -436,7 +436,7 @@ order.
 ---
 
 ## P1-10: Parsers: XLSX support and end-to-end parity (parsers -> engine)
-- [ ] Done
+- [x] Done
 - **Owner:** builder
 - **Why:** many Mittelstand users export straight to Excel; and the full pipeline must reproduce
   the golden output from the German-format files (ADR-0005 two-level parity).
