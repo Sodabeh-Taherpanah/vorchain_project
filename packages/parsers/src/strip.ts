@@ -3,7 +3,7 @@
  * points). `String.prototype.trim` differs: it also strips U+FEFF but not U+001C..U+001F or U+0085,
  * so it would not match the prototype's `value.strip()`.
  */
-const PYTHON_WHITESPACE =
+export const PYTHON_WHITESPACE =
   '\\t\\n\\v\\f\\r\\x1c-\\x20\\x85\\xa0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000';
 const LEADING_OR_TRAILING = new RegExp(`^[${PYTHON_WHITESPACE}]+|[${PYTHON_WHITESPACE}]+$`, 'gu');
 

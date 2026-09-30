@@ -9,6 +9,8 @@ export const DATA_ERROR_CODES = [
   'NOT_TEXT',
   'UNCLOSED_QUOTE',
   'MALFORMED_QUOTE',
+  'INVALID_NUMBER',
+  'INVALID_DATE',
 ] as const;
 
 /** Machine-readable reason a file could not be read; the UI turns it into a localized fix hint. */
@@ -25,13 +27,16 @@ interface DataErrorOf<Code extends DataErrorCode, Params> {
   readonly row?: number;
   /** Column header as found in the file. */
   readonly column?: string;
-  /** Values for the message placeholders. Never contains cell contents beyond a fix hint. */
+  /**
+   * Values for the message placeholders. Holds at most the one offending cell (`value`), so the
+   * message can show what to fix; never whole rows.
+   */
   readonly params: Params;
 }
 
 /**
  * Expected data problem, as codes and parameters only (no display text, AGENTS.md §5). Only file
- * names, line numbers and column headers appear here, never whole rows (privacy, AGENTS.md §2).
+ * names, line numbers, column headers and the one offending cell appear here, never whole rows (privacy, AGENTS.md §2).
  */
 export type DataError =
   /** The file has no bytes, or only a BOM, whitespace and blank lines. */
@@ -41,4 +46,8 @@ export type DataError =
   /** A quoted field starting on `row` is never closed, so the rest of the file would be one cell. */
   | DataErrorOf<'UNCLOSED_QUOTE', NoParams>
   /** A quoted field starting on `row` has text after its closing quote (e.g. `"12" Zoll"`). */
-  | DataErrorOf<'MALFORMED_QUOTE', NoParams>;
+  | DataErrorOf<'MALFORMED_QUOTE', NoParams>
+  /** A number cell is not a number in German or English notation (`value` is the raw cell). */
+  | DataErrorOf<'INVALID_NUMBER', { readonly value: string }>
+  /** A date cell has an unknown format or is not a real calendar day (`value` is the raw cell). */
+  | DataErrorOf<'INVALID_DATE', { readonly value: string }>;
