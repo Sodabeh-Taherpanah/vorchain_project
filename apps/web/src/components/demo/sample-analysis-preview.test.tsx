@@ -38,5 +38,8 @@ describe('SampleAnalysisPreview', () => {
     expect(screen.getByTestId('count-critical').textContent).toBe('7');
     expect(screen.getByTestId('count-warning').textContent).toBe('3');
     expect(screen.getByTestId('count-hidden').textContent).toBe('2');
+    expect(screen.getByRole('status').textContent).toBe(
+      'Analyse abgeschlossen: 7 kritisch, 3 Warnungen, 2 versteckte Risiken.',
+    );
   });
 });

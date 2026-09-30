@@ -13,6 +13,7 @@
       "loadSample": "Beispieldaten laden",
       "loading": "Daten werden im Browser gelesen …",
       "analysing": "Analyse läuft …",
+      "done": "Analyse abgeschlossen: {critical} kritisch, {warning} Warnungen, {hidden} versteckte Risiken.",
       "loadFailed": "Die Daten konnten nicht vollständig gelesen werden.",
       "summary": "Ergebnis der Beispieldaten",
       "critical": "Kritisch",

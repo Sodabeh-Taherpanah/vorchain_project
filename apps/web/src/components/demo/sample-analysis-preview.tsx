@@ -37,6 +37,8 @@ export function SampleAnalysisPreview() {
         {state.status === 'loading' && t('loading')}
         {state.status === 'analysing' && t('analysing')}
         {state.status === 'mapped' && !state.load.ready && t('loadFailed')}
+        {/* The counts below are not in the live region, so announce the outcome here. */}
+        {state.status === 'ready' && t('done', state.report.summary)}
       </p>
       {state.status === 'error' && <p role="alert">{t(`errors.${state.error}`)}</p>}
       {state.status === 'ready' && (
