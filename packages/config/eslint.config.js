@@ -77,6 +77,50 @@ const ENGINE_PURITY_POLICY = {
 };
 
 /**
+ * Parsers production code runs in the Web Worker next to customer files (AGENTS.md §2, ADR-0003):
+ * no Node core modules (it must stay browser-safe; tests may read fixtures with `node:fs`).
+ */
+const PARSERS_PURITY_POLICY = {
+  from: { element: { type: 'parsers' } },
+  disallow: { to: { module: { origin: 'core' } } },
+};
+
+/**
+ * Privacy guard for the parsers' shipped code (AGENTS.md §2): file contents must never leave the
+ * Worker or be logged, so network, messaging, storage and console APIs are off limits. Only the
+ * web app's worker module talks to the page (Comlink), and it only sends derived data.
+ */
+const PARSERS_FORBIDDEN_GLOBALS = [
+  'fetch',
+  'XMLHttpRequest',
+  'WebSocket',
+  'EventSource',
+  'navigator',
+  'importScripts',
+  'postMessage',
+  'BroadcastChannel',
+  'Worker',
+  'SharedWorker',
+  'localStorage',
+  'sessionStorage',
+  'indexedDB',
+  'caches',
+  'self',
+  'window',
+  'globalThis',
+];
+const PARSERS_PRIVACY_RULES = {
+  'no-console': 'error',
+  'no-restricted-globals': [
+    'error',
+    ...PARSERS_FORBIDDEN_GLOBALS.map((name) => ({
+      name,
+      message: 'Parsers are pure: no network, messaging, storage or globals (AGENTS.md §2).',
+    })),
+  ],
+};
+
+/**
  * The engine is deterministic (AGENTS.md §2, ADR-0005): `asOf` is an input, so nothing in
  * `packages/engine/src` (tests included, which must be reproducible too) may read the clock or
  * draw random numbers. `new Date(x)` with an argument stays allowed for the UTC helpers in
@@ -223,6 +267,22 @@ export function createEslintConfig({ rootDir }) {
             policies: [...BOUNDARY_POLICIES, ENGINE_PURITY_POLICY],
           },
         ],
+      },
+    },
+    {
+      name: 'vorchain/boundaries/parsers-purity',
+      files: ['packages/parsers/src/**/*.ts'],
+      ignores: TEST_FILES,
+      rules: {
+        'boundaries/dependencies': [
+          'error',
+          {
+            default: 'allow',
+            checkAllOrigins: true,
+            policies: [...BOUNDARY_POLICIES, PARSERS_PURITY_POLICY],
+          },
+        ],
+        ...PARSERS_PRIVACY_RULES,
       },
     },
     {
