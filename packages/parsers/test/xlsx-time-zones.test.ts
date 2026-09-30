@@ -38,8 +38,8 @@ const openpyxlFile = new Uint8Array(
   readFileSync(new URL('fixtures/xlsx/sample_data_de/lieferhistorie.xlsx', import.meta.url)),
 );
 
-function dateColumn(name: string, bytes: Uint8Array, column: number): unknown[] {
-  const result = parseFile({ name, bytes });
+async function dateColumn(name: string, bytes: Uint8Array, column: number): Promise<unknown[]> {
+  const result = await parseFile({ name, bytes });
   if (!result.ok) throw new Error(result.error.code);
   const table: RawTable = result.value;
   return table.rows.slice(0, 5).map((row) => row.cells[column]);
@@ -51,20 +51,20 @@ afterAll(() => {
 });
 
 describe.each(TIME_ZONES)('XLSX dates in time zone %s (UTC%i)', (timeZone, offset) => {
-  it('are the calendar days Excel shows', () => {
+  it('are the calendar days Excel shows', async () => {
     process.env.TZ = timeZone;
     // `|| 0` turns UTC's -0 into 0.
     expect(-new Date(Date.UTC(2026, 9, 5)).getTimezoneOffset() / 60 || 0).toBe(offset);
 
-    expect(dateColumn('bedarf.xlsx', written, 1)).toEqual([
+    expect(await dateColumn('bedarf.xlsx', written, 1)).toEqual([
       '2026-10-05',
       '2026-10-05',
       '2026-03-29', // 18:00 on the day Europe switches to summer time
       46300, // plain number: read as a day number by the row validation
       '05.10.2026',
     ]);
-    expect(dateColumn('bedarf.xlsx', written1904, 0)).toEqual(['2026-10-05']);
-    expect(dateColumn('lieferhistorie.xlsx', openpyxlFile, 3)).toEqual([
+    expect(await dateColumn('bedarf.xlsx', written1904, 0)).toEqual(['2026-10-05']);
+    expect(await dateColumn('lieferhistorie.xlsx', openpyxlFile, 3)).toEqual([
       '2025-11-03',
       '2026-05-24',
       '2026-06-03',

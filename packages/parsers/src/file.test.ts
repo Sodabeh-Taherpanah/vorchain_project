@@ -18,15 +18,15 @@ describe('parseFile', () => {
     { name: 'artikel.csv', bytes: xlsx, format: 'xlsx' },
     { name: 'artikel.xlsx', bytes: csv, format: 'csv' },
     { name: 'ARTIKEL.TXT', bytes: csv, format: 'csv' },
-  ])('reads $name holding $format content by its content', ({ name, bytes, format }) => {
-    const result = parseFile({ name, bytes: bytes.buffer as ArrayBuffer });
+  ])('reads $name holding $format content by its content', async ({ name, bytes, format }) => {
+    const result = await parseFile({ name, bytes: bytes.buffer as ArrayBuffer });
     expect(result.ok && result.value).toMatchObject({ format, headers: ['Artikel', 'Menge'] });
   });
 
   it.each(['xls', 'XLSB', 'ods', 'numbers', 'pdf'])(
     'rejects .%s as UNSUPPORTED_FILE_TYPE with the extension',
-    (extension) => {
-      expect(parseFile({ name: `bestand.${extension}`, bytes: xlsx })).toEqual({
+    async (extension) => {
+      expect(await parseFile({ name: `bestand.${extension}`, bytes: xlsx })).toEqual({
         ok: false,
         error: {
           code: 'UNSUPPORTED_FILE_TYPE',
@@ -37,16 +37,16 @@ describe('parseFile', () => {
     },
   );
 
-  it('rejects a legacy XLS workbook even when named .xlsx', () => {
+  it('rejects a legacy XLS workbook even when named .xlsx', async () => {
     const xls = workbookBytes({ S: [['a']] }, { bookType: 'xls' });
-    expect(parseFile({ name: 'bestand.xlsx', bytes: xls })).toMatchObject({
+    expect(await parseFile({ name: 'bestand.xlsx', bytes: xls })).toMatchObject({
       error: { code: 'UNSUPPORTED_FILE_TYPE', params: { extension: 'xlsx' } },
     });
   });
 
-  it('rejects files above MAX_FILE_BYTES before reading them', () => {
+  it('rejects files above MAX_FILE_BYTES before reading them', async () => {
     const bytes = new Uint8Array(MAX_FILE_BYTES + 1);
-    expect(parseFile({ name: 'riesig.csv', bytes })).toEqual({
+    expect(await parseFile({ name: 'riesig.csv', bytes })).toEqual({
       ok: false,
       error: {
         code: 'FILE_TOO_LARGE',

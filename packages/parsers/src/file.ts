@@ -27,10 +27,12 @@ const UNSUPPORTED_EXTENSIONS: ReadonlySet<string> = new Set([
  * containers go to {@link readXlsx}, anything else to {@link readCsv}, so an `.xlsx` renamed to
  * `.csv` (or a CSV named `.xlsx`) still works. Known non-CSV/XLSX extensions are rejected first.
  *
+ * Asynchronous because XLSX data is unpacked with the platform's `DecompressionStream`.
+ *
  * @returns `FILE_TOO_LARGE` above {@link MAX_FILE_BYTES}, `UNSUPPORTED_FILE_TYPE` for `.xls`,
  *   `.xlsb`, `.ods`, `.numbers`, `.pdf`, otherwise whatever the reader returns.
  */
-export function parseFile(file: SourceFile): Result<RawTable, DataError> {
+export async function parseFile(file: SourceFile): Promise<Result<RawTable, DataError>> {
   const { name } = file;
   const bytes = toUint8Array(file.bytes);
   if (bytes.byteLength > MAX_FILE_BYTES) {

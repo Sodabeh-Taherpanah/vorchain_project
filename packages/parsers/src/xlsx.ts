@@ -4,9 +4,9 @@
  * rows skipped. SheetJS only ever sees the bytes it is given (`type: 'array'`): no file system,
  * no network.
  *
- * Known limit: SheetJS's pure-JS inflater does not bounds-check, so some damaged *compressed*
- * entries make `read` loop forever instead of throwing. The caller must run this in a Worker it
- * can terminate after a time limit (P1-15).
+ * SheetJS's pure-JS inflater does not bounds-check, so some damaged *compressed* entries make
+ * `read` loop forever instead of throwing. `checkZipData` unpacks every entry with the platform's
+ * zlib first and rejects damaged ones, so `read` only sees valid deflate streams.
  */
 import { err, isoDateFromParts, ok, type Result } from '@vorchain/engine';
 import {
@@ -22,7 +22,7 @@ import { startsWith, toUint8Array, ZIP_SIGNATURE } from './decode.ts';
 import type { DataError } from './errors.ts';
 import { stripPython } from './strip.ts';
 import type { DateSystem, RawCell, RawRow, SourceFile, XlsxTable } from './table.ts';
-import { readZipContents } from './zip.ts';
+import { checkZipData, readZipContents, type ZipContents } from './zip.ts';
 
 /** Safety limits against ZIP bombs and sheets too large for the browser tab. */
 export interface XlsxLimits {
@@ -60,8 +60,17 @@ function containsSequence(bytes: Uint8Array, sequence: readonly number[]): boole
   return false;
 }
 
+const TOO_LARGE = (limits: XlsxLimits): DataError => ({
+  code: 'FILE_TOO_LARGE',
+  params: { limit: limits.unpackedBytes, unit: 'unpackedBytes' },
+});
+
 /** Container checks before SheetJS runs: right format, not encrypted, not a ZIP bomb. */
-function containerError(bytes: Uint8Array, name: string, limits: XlsxLimits): DataError | null {
+function containerError(
+  bytes: Uint8Array,
+  name: string,
+  limits: XlsxLimits,
+): DataError | ZipContents {
   const unsupported: DataError = {
     code: 'UNSUPPORTED_FILE_TYPE',
     params: { extension: extensionOf(name) },
@@ -76,13 +85,21 @@ function containerError(bytes: Uint8Array, name: string, limits: XlsxLimits): Da
   if (contents === null) return { code: 'CORRUPT_FILE', params: {} };
   // `.ods`, `.numbers`, `.docx` and `.xlsb` are ZIPs too, but without this part.
   if (!contents.names.includes(WORKBOOK_PART)) return unsupported;
-  if (contents.unpackedBytes > limits.unpackedBytes) {
-    return {
-      code: 'FILE_TOO_LARGE',
-      params: { limit: limits.unpackedBytes, unit: 'unpackedBytes' },
-    };
-  }
-  return null;
+  if (contents.unpackedBytes > limits.unpackedBytes) return TOO_LARGE(limits);
+  return contents;
+}
+
+/** Everything that stops SheetJS from reading the bytes safely, or `null` if nothing does. */
+async function packageError(
+  bytes: Uint8Array,
+  name: string,
+  limits: XlsxLimits,
+): Promise<DataError | null> {
+  const contents = containerError(bytes, name, limits);
+  if ('code' in contents) return contents;
+  const check = await checkZipData(bytes, contents, limits.unpackedBytes);
+  if (check === 'too-large') return TOO_LARGE(limits);
+  return check === 'corrupt' ? { code: 'CORRUPT_FILE', params: {} } : null;
 }
 
 function parsingOptions(limits: XlsxLimits): ParsingOptions {
@@ -143,16 +160,16 @@ function numberedRows(sheet: WorkSheet): RawRow[] {
  * machine's time zone; formulas give their cached values. Row numbers are the sheet's own.
  *
  * @returns `UNSUPPORTED_FILE_TYPE` for anything but an XLSX package (`.xls`, `.ods`, text …),
- *   `PASSWORD_PROTECTED`, `CORRUPT_FILE`, `FILE_TOO_LARGE` beyond `limits`, `EMPTY_FILE` for a
- *   sheet without a non-blank row.
+ *   `PASSWORD_PROTECTED`, `CORRUPT_FILE` (also for damaged compressed data), `FILE_TOO_LARGE`
+ *   beyond `limits`, `EMPTY_FILE` for a sheet without a non-blank row.
  */
-export function readXlsx(
+export async function readXlsx(
   file: SourceFile,
   limits: XlsxLimits = XLSX_LIMITS,
-): Result<XlsxTable, DataError> {
+): Promise<Result<XlsxTable, DataError>> {
   const fileName = file.name;
   const bytes = toUint8Array(file.bytes);
-  const rejected = containerError(bytes, fileName, limits);
+  const rejected = await packageError(bytes, fileName, limits);
   if (rejected !== null) return err({ ...rejected, fileName });
   let workbook: WorkBook;
   try {

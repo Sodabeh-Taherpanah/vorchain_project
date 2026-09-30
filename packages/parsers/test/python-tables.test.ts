@@ -59,20 +59,23 @@ function ofKind<K extends Case['kind']>(kind: K): Extract<Case, { kind: K }>[] {
   return cases.filter((c): c is Extract<Case, { kind: K }> => c.kind === kind);
 }
 
-function readFolder({ folder, format }: Source): RawTable[] {
+async function readFolder({ folder, format }: Source): Promise<RawTable[]> {
   const dir =
     format === 'csv'
       ? new URL(`reference/python-prototype/${folder}/`, REPO_ROOT)
       : new URL(`fixtures/xlsx/${folder}/`, import.meta.url);
-  return readdirSync(dir)
+  const names = readdirSync(dir)
     .filter((name) => name.endsWith(`.${format}`))
-    .sort()
-    .map((name) => {
-      const result = parseFile({ name, bytes: new Uint8Array(readFileSync(new URL(name, dir))) });
+    .sort();
+  return Promise.all(
+    names.map(async (name) => {
+      const bytes = new Uint8Array(readFileSync(new URL(name, dir)));
+      const result = await parseFile({ name, bytes });
       if (!result.ok) throw new Error(`${folder}/${name}: ${result.error.code}`);
       expect(result.value.format).toBe(format);
       return result.value;
-    });
+    }),
+  );
 }
 
 /** The engine record the prototype's row stands for (its defaults: `m.get("description", "")` …). */
@@ -152,11 +155,15 @@ const stem = (path: string | undefined) =>
     .at(-1)
     ?.replace(/\.\w+$/u, '');
 
+const tablesBySource = new Map(
+  await Promise.all(SOURCES.map(async (source) => [source, await readFolder(source)] as const)),
+);
+
 describe.each(SOURCES)(
   '$folder ($format) loads like the prototype, gives golden output',
   (source) => {
     const { folder } = source;
-    const result = loadTables(readFolder(source));
+    const result = loadTables(tablesBySource.get(source) ?? []);
     const loads = ofKind('load').filter((c) => c.file.includes(`/${folder}/`));
 
     it('recognises all five files without errors or warnings', () => {
