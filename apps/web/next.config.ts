@@ -11,6 +11,14 @@ const nextConfig: NextConfig = {
   transpilePackages: ['@vorchain/engine', '@vorchain/parsers', '@vorchain/sample-data'],
   poweredByHeader: false,
   reactStrictMode: true,
+  // Project rules live in the root AGENTS.md; stop `next dev` from writing its own AGENTS.md and
+  // CLAUDE.md into apps/web.
+  agentRules: false,
+  experimental: {
+    // `src/app/global-not-found.tsx` answers URLs outside any locale (e.g. `/missing.png`) with a
+    // branded 404, because the root layout lives in `[locale]` (ADR-0004).
+    globalNotFound: true,
+  },
 };
 
 export default withNextIntl(nextConfig);

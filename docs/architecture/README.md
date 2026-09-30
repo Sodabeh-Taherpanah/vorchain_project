@@ -157,7 +157,9 @@ flowchart LR
 ```mermaid
 flowchart TB
   subgraph web["apps/web/src"]
-    routes["app/[locale]/<br/>page, demo, kontakt, impressum, datenschutz,<br/>not-found, error"]
+    routes["app/[locale]/<br/>page, demo, kontakt, impressum, datenschutz,<br/>not-found, error, [...rest] + app/global-not-found"]
+    layout["components/layout/<br/>SkipLink, SiteHeader, SiteFooter, LocaleSwitcher,<br/>ThemeToggle, StatusPage, Container"]
+    ui["components/ui/ (shadcn copy-ins)<br/>+ lib/ (fonts, theme, utils)"]
     sections["components/sections/<br/>Hero, Problem, HiddenRiskChart (SVG), HowItWorks,<br/>Privacy, Faq, Cta"]
     demo["components/demo/<br/>DataSource, MapCheck, Settings, SummaryTiles,<br/>ExceptionTable, DetailDrawer, SupplierTable, ExportBar"]
     hooks["lib/demo/use-analysis.ts<br/>(state machine, Comlink proxy)"]
@@ -165,6 +167,7 @@ flowchart TB
     i18n["i18n/ + messages/de.json, en.json<br/>renders Reason/Action codes"]
     contact["app/[locale]/kontakt/actions.ts<br/>+ lib/mail/ (MailTransport)"]
   end
+  routes --> layout --> ui
   routes --> sections & demo
   demo --> hooks --> workerf
   demo --> i18n

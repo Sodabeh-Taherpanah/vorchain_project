@@ -36,6 +36,7 @@ describe.each(cases)('$name page ($locale)', ({ locale, Page, title }) => {
 
     expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1);
     expect(screen.getByRole('heading', { level: 1, name: title })).toBeDefined();
-    expect(screen.getByRole('main')).toBeDefined();
+    // The root layout owns the single <main> landmark (layout.test.tsx), so pages add none.
+    expect(screen.queryByRole('main')).toBeNull();
   });
 });
