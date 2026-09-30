@@ -99,6 +99,32 @@ test('an uploaded file stays in the browser; missing tables are reported', async
   expectNothingSent(page, sent, ['PO00001', 'Liefertermin', '15.10.2026']);
 });
 
+test('a complete upload is analysed, re-analysed and translated without sending anything', async ({
+  page,
+}) => {
+  const { sent } = await openDemo(page);
+  const dir = new URL('../../../reference/python-prototype/sample_data_de/', import.meta.url);
+  const files = ['artikel', 'bedarf', 'bestellungen', 'lieferanten', 'lieferhistorie'].map(
+    (name) => ({
+      name: `${name}.csv`,
+      mimeType: 'text/csv',
+      buffer: readFileSync(new URL(`${name}.csv`, dir)),
+    }),
+  );
+
+  await page.getByTestId('file-input').setInputFiles(files);
+  await page.getByLabel(de.demo.settings.asOf).fill('2026-10-05');
+  const table = page.getByRole('table');
+  // Supplier names from the uploaded suppliers file reach the explanations.
+  await expect(table).toContainText('Metallbau Krüger GmbH');
+  await page.getByLabel(de.demo.settings.horizon).fill('7');
+  await expect(page.getByText('Stichtag 05.10.2026, Horizont 7 Tage.')).toBeVisible();
+  await page.getByLabel(de.demo.settings.reportLanguage).selectOption('en');
+  await expect(page.getByRole('heading', { name: en.demo.report.heading })).toBeVisible();
+
+  expectNothingSent(page, sent, ['Metallbau Krüger GmbH', 'PO00001', 'M0011', '15.10.2026']);
+});
+
 test('a renamed required column gets a specific hint; removing the file clears it', async ({
   page,
 }) => {
