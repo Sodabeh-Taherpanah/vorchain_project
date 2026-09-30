@@ -11,6 +11,9 @@ Writes:
     reason is in `deviation`.
   * `test/fixtures/python-sniff.json`: random quote-free samples and the delimiter the prototype
     picks (`csv.Sniffer`, then its `;`/`,` fallback), for `sniffDelimiter`.
+  * `test/fixtures/python-tables.json` (P1-09): what the prototype's `_norm` makes of headers, what
+    `_map_headers` maps (or reports missing) for every table on the sample headers and on seeded
+    random header sets, and the records `load_table` returns for every sample file (DE and EN).
   * `test/fixtures/python-values.json`: hand-picked and random cell values and what the
     prototype's `parse_number` / `parse_date` return (value, or `error`), for `parseNumber` and
     `parseDate`. `parity: false` marks a documented, intended difference (`deviation`).
@@ -20,6 +23,7 @@ Seeded, so reruns are byte-identical.
 Run:  python3 packages/parsers/scripts/generate-python-fixtures.py
 (The JSON is written one row per line and is excluded from Prettier, so reruns stay byte-identical.)
 """
+import ast
 import csv
 import json
 import math
@@ -294,6 +298,127 @@ def value_cases(count=800):
     return cases
 
 
+# --------------------------------------------------------------------- tables (P1-09)
+
+NORM_INPUTS = [
+    "Artikelnummer", "  Offene Menge ", "offene_menge", "OFFENE-MENGE", "Bestell.-Nr.", "Item No",
+    "Bestätigter Termin", "BESTÄTIGTER TERMIN", "Menge\tLager", "we-datum", "", " ", "_-.",
+    "Straße", "STRASSE", " Name　", "Name1", "SKU", "Po Number", "ab_termin",
+]
+
+HEADER_SETS = [
+    ["Artikel", "Material", "Datum", "Menge", "Menge"],
+    ["Artikelnummer", "Farbe"],
+    ["Artikelnummer", "Bezeichnung", "Lagerbestand", "Sicherheitsbestand"],
+    ["Lieferant", "Name", "Artikel", "Bestand"],
+    ["Artikel", "Datum", "Menge", "Bestand", "Bezeichnung"],
+    ["Bestellnr", "Lieferant", "Liefertermin", "Wareneingang"],
+    ["Einkaufsbeleg", "Teilenummer", "Kreditor", "Offene Menge", "AB-Termin"],
+    ["Item No", "Stock", "UOM", "Min Stock", "Supplier"],
+    ["Lieferant", "Lieferant", "Name", "Firma"],
+    ["", "Artikel", "", "Bestand"],
+    [],
+]
+
+# Optional columns per table, as in the `wanted` set of `_map_headers`.
+OPTIONAL = {"materials": {"description", "main_supplier_id", "safety_stock", "unit"},
+            "supplier_history": {"po_id"}}
+
+
+def all_aliases():
+    return sorted({alias for aliases in loaders.COLUMN_ALIASES.values() for alias in aliases})
+
+
+def random_header(rng, aliases):
+    if rng.random() < 0.15:
+        return rng.choice(["Farbe", "Gewicht", "Notiz", "", "Lager", "Werk"])
+    return variant(rng, rng.choice(aliases))
+
+
+def variant(rng, alias):
+    alias = rng.choice([alias, alias.upper(), alias.title(), alias.replace("_", " "),
+                        alias.replace("_", "-"), alias.replace("_", ".")])
+    return rng.choice(["", "", " "]) + alias + rng.choice(["", "", " ", "\t"])
+
+
+def random_table_headers(rng, aliases):
+    """Headers for one table: an alias per required and some optional columns, plus noise."""
+    table = rng.choice(list(loaders.TABLE_FILES))
+    columns = list(loaders.REQUIRED[table]) + [c for c in sorted(OPTIONAL.get(table, set()))
+                                               if rng.random() < 0.5]
+    if rng.random() < 0.3:
+        columns.remove(rng.choice(columns))
+    headers = [variant(rng, rng.choice(loaders.COLUMN_ALIASES[column])) for column in columns]
+    headers += [random_header(rng, aliases) for _ in range(rng.randint(0, 2))]
+    rng.shuffle(headers)
+    return headers
+
+
+def python_mapping(table, headers):
+    try:
+        # Sorted: the prototype builds the dict in Python set order, which changes between runs.
+        return {"mapping": dict(sorted(loaders._map_headers(table, headers, Path("f.csv")).items()))}
+    except loaders.DataError as error:
+        text = str(error)
+        return {"missing": ast.literal_eval(text[text.index("["): text.index("]") + 1])}
+
+
+def header_case(headers):
+    return {
+        "kind": "headers",
+        "headers": headers,
+        "python": {table: python_mapping(table, headers) for table in loaders.TABLE_FILES},
+    }
+
+
+def sample_headers():
+    for folder in ("sample_data", "sample_data_de"):
+        for path in sorted((PROTOTYPE / folder).glob("*.csv")):
+            yield [header.strip() for header in loaders._read_csv_rows(path)[0]]
+
+
+def json_cell(value):
+    return value.isoformat() if hasattr(value, "isoformat") else value
+
+
+def load_case(folder, table):
+    """`load_table` records, restricted to the table's columns (it adds `material_id: None` to all)."""
+    path = loaders._find_file(PROTOTYPE / folder, table)
+    columns = set(loaders.REQUIRED[table]) | OPTIONAL.get(table, set())
+    rows = [
+        {key: json_cell(value) for key, value in sorted(row.items()) if key in columns}
+        for row in loaders.load_table(PROTOTYPE / folder, table)
+    ]
+    return {"kind": "load", "file": f"reference/python-prototype/{folder}/{path.name}",
+            "table": table, "rows": rows}
+
+
+def table_cases(count=120):
+    rng = random.Random(20261007)
+    aliases = all_aliases()
+    cases = [{"kind": "norm", "input": raw, "python": loaders._norm(raw)}
+             for raw in [*NORM_INPUTS, *aliases]]
+    cases += [header_case(headers) for headers in [*sample_headers(), *HEADER_SETS]]
+    cases += [header_case([random_header(rng, aliases) for _ in range(rng.randint(1, 7))])
+              for _ in range(count // 2)]
+    cases += [header_case(random_table_headers(rng, aliases)) for _ in range(count // 2)]
+    cases += [load_case(folder, table) for folder in ("sample_data", "sample_data_de")
+              for table in loaders.TABLE_FILES]
+    return cases
+
+
+def table_case_lines(case):
+    """Load cases one record per line, like `csv_case_lines`; the rest one case per line."""
+    if case["kind"] != "load":
+        return [f"    {compact(case)}"]
+    head = {key: value for key, value in case.items() if key != "rows"}
+    lines = [f"    {compact(head)[:-1]}, \"rows\": ["]
+    lines += [f"      {compact(row)}," for row in case["rows"]]
+    lines[-1] = lines[-1][:-1]
+    lines.append("    ]}")
+    return lines
+
+
 def compact(value):
     return json.dumps(value, ensure_ascii=False)
 
@@ -331,6 +456,7 @@ def main():
     write_json(FIXTURES / "python-csv.json", csv_cases(), csv_case_lines)
     write_json(FIXTURES / "python-sniff.json", sniff_cases(), lambda case: [f"    {compact(case)}"])
     write_json(FIXTURES / "python-values.json", value_cases(), lambda case: [f"    {compact(case)}"])
+    write_json(FIXTURES / "python-tables.json", table_cases(), table_case_lines)
 
 
 if __name__ == "__main__":
