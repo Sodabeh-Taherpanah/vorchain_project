@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/Sodabeh-Taherpanah/vorchain_project/compare/v0.1.1...v0.2.0) (2026-09-30)
+
+
+### Features
+
+* **demo:** add analysis web worker bridge and useAnalysis hook ([#26](https://github.com/Sodabeh-Taherpanah/vorchain_project/issues/26)) ([d8a5928](https://github.com/Sodabeh-Taherpanah/vorchain_project/commit/d8a592889bdf9896fb4ecdb88135c695b3e3fad0))
+
 ## [0.1.1](https://github.com/Sodabeh-Taherpanah/vorchain_project/compare/v0.1.0...v0.1.1) (2026-09-30)
 
 
