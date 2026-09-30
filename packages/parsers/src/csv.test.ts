@@ -185,6 +185,22 @@ describe('readCsv', () => {
     expect(JSON.stringify(error)).not.toContain(secret);
   });
 
+  it('reads a large export (50 000 rows, about 2 MB) quickly', () => {
+    const lines = ['Artikelnummer;Lieferant;Menge;Liefertermin'];
+    for (let i = 0; i < 50_000; i += 1)
+      lines.push(`M-${String(i)};Krüger GmbH;${String(i)},5;05.10.2026`);
+    const bytes = utf8(lines.join('\r\n'));
+    const started = performance.now();
+    const result = table('big.csv', bytes);
+    // Generous smoke bound (local ~100 ms): catches accidental quadratic work, not micro-regressions.
+    expect(performance.now() - started).toBeLessThan(5000);
+    expect(result.rows).toHaveLength(50_000);
+    expect(result.rows.at(-1)).toEqual({
+      rowNumber: 50_001,
+      cells: ['M-49999', 'Krüger GmbH', '49999,5', '05.10.2026'],
+    });
+  });
+
   it('accepts an ArrayBuffer', () => {
     const bytes = utf8('a;b\n1;2');
     const buffer = new ArrayBuffer(bytes.byteLength);
@@ -241,6 +257,22 @@ describe('readCsv properties', () => {
           lines.slice(0, i).reduce((line, text) => line + text.split('\n').length, 1),
         );
         expect(result.rows.map((row) => row.rowNumber)).toEqual(starts.slice(1));
+      }),
+    );
+  });
+
+  it('never puts anything but code, file name, line and fixed params into an error', () => {
+    const allowedKeys = ['code', 'fileName', 'params', 'row'];
+    fc.assert(
+      fc.property(fc.uint8Array({ maxLength: 512 }), (bytes) => {
+        const result = readCsv({ name: 'x.csv', bytes });
+        if (result.ok) return;
+        const { error } = result;
+        expect(Object.keys(error).sort()).toEqual(allowedKeys.filter((key) => key in error));
+        // `detected` is the only parameter so far, and it is an enum, never file content.
+        expect(
+          Object.values(error.params).every((v) => ['zip', 'utf-16', 'binary'].includes(v)),
+        ).toBe(true);
       }),
     );
   });
