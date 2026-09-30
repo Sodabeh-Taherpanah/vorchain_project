@@ -376,7 +376,7 @@ order.
 ---
 
 ## P1-08: Parsers: German/English number and date parsing
-- [ ] Done
+- [x] Done
 - **Owner:** builder
 - **Why:** `1.234,5` and `05.10.2026` are the norm in German exports; wrong parsing produces
   plausible but wrong numbers (spec §5.1).
