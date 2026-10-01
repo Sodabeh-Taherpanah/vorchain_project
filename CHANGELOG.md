@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.0](https://github.com/Sodabeh-Taherpanah/vorchain_project/compare/v0.6.0...v0.7.0) (2026-10-01)
+
+
+### Features
+
+* **web:** add landing page sections ([#44](https://github.com/Sodabeh-Taherpanah/vorchain_project/issues/44)) ([0302ad1](https://github.com/Sodabeh-Taherpanah/vorchain_project/commit/0302ad139676182e4c02c1879a24bf1f108a3e6c))
+
 ## [0.6.0](https://github.com/Sodabeh-Taherpanah/vorchain_project/compare/v0.5.0...v0.6.0) (2026-10-01)
 
 
