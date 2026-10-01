@@ -111,8 +111,14 @@ function expectNoLeak(requests: readonly RecordedRequest[], origin: string, mark
   }
 }
 
+/**
+ * The file input and buttons are in the server HTML, so they exist before React hydrates; an
+ * upload or click before then is lost (seen on WebKit). Like the other demo specs, wait until the
+ * page's chunks are loaded.
+ */
 async function openDemo(page: Page, locale: 'de' | 'en' = 'de') {
   await page.goto(`/${locale}/demo`);
+  await page.waitForLoadState('networkidle');
   await expect(page.getByTestId('file-input')).toBeAttached();
 }
 
@@ -157,7 +163,6 @@ test.describe('privacy', () => {
     const { requests, sockets } = recordRequests(page);
     const worker = page.waitForEvent('worker');
     await openDemo(page);
-    await page.waitForLoadState('networkidle');
 
     const table = await analyseUpload(
       page,
@@ -251,8 +256,25 @@ test.describe('file formats and errors', () => {
   });
 });
 
+/**
+ * Waits for running CSS animations (the drawer fades and slides in). axe measures colour contrast
+ * as rendered, so a half-transparent drawer fails it; on CI's WebKit the fade is still running
+ * when the chart is already drawn.
+ */
+async function animationsFinished(page: Page) {
+  await page.evaluate(() =>
+    Promise.all(
+      document
+        .getAnimations()
+        .filter((animation) => animation.effect?.getTiming().iterations !== Infinity)
+        .map((animation) => animation.finished.catch(() => undefined)),
+    ),
+  );
+}
+
 /** Fails on serious or critical axe violations anywhere on the page. */
 async function expectNoSeriousViolations(page: Page) {
+  await animationsFinished(page);
   const results = await new AxeBuilder({ page }).analyze();
   const serious = results.violations
     .filter((v) => v.impact === 'serious' || v.impact === 'critical')
