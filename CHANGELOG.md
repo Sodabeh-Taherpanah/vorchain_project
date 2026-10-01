@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.8.0](https://github.com/Sodabeh-Taherpanah/vorchain_project/compare/v0.7.0...v0.8.0) (2026-10-01)
+
+
+### Features
+
+* **ui:** add @vorchain/ui design-system package and design guide ([#47](https://github.com/Sodabeh-Taherpanah/vorchain_project/issues/47)) ([a216566](https://github.com/Sodabeh-Taherpanah/vorchain_project/commit/a216566df6c0f7936afc9cedf66fdcca9a80e4ec))
+* **ui:** add content primitives and logo ([#51](https://github.com/Sodabeh-Taherpanah/vorchain_project/issues/51)) ([ccf5ee1](https://github.com/Sodabeh-Taherpanah/vorchain_project/commit/ccf5ee1b86a150ab1745be39ce38556b23771bae))
+* **ui:** site shell (header, mobile menu, footer, 404/error) ([#52](https://github.com/Sodabeh-Taherpanah/vorchain_project/issues/52)) ([596a710](https://github.com/Sodabeh-Taherpanah/vorchain_project/commit/596a71076eaa6a870561c00d83642d1c631d2e81))
+
 ## [0.7.0](https://github.com/Sodabeh-Taherpanah/vorchain_project/compare/v0.6.0...v0.7.0) (2026-10-01)
 
 
