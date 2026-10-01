@@ -15,6 +15,8 @@ const STUB_PAGES = [
   '/en/contact',
   '/en/legal-notice',
   '/en/privacy',
+  '/de/xyz',
+  '/en/xyz',
 ] as const;
 
 test.describe('localized 404', () => {
@@ -71,6 +73,61 @@ test.describe('layout shell', () => {
     }
     await page.goto('/de/kontakt');
     await page.screenshot({ path: test.info().outputPath('kontakt-360.png'), fullPage: true });
+    await page.goto('/de/xyz');
+    await page.screenshot({ path: test.info().outputPath('404-360.png'), fullPage: true });
+  });
+
+  test('the header stays on top while scrolling and marks the current page', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 720 });
+    await page.goto('/de/kontakt');
+
+    const nav = page.getByRole('banner').getByRole('navigation', { name: de.nav.label });
+    await expect(nav.getByRole('link', { name: de.nav.contact })).toHaveAttribute(
+      'aria-current',
+      'page',
+    );
+    await expect(nav.getByRole('link', { name: de.nav.demo })).not.toHaveAttribute('aria-current');
+    await page.evaluate(() => {
+      window.scrollTo(0, document.body.scrollHeight);
+    });
+    const box = await page.getByRole('banner').boundingBox();
+    expect(box?.y).toBe(0);
+    await page.screenshot({ path: test.info().outputPath('shell-1280.png') });
+  });
+
+  test('at 360 px the menu opens, traps Escape and returns focus', async ({ page }) => {
+    await page.setViewportSize({ width: 360, height: 780 });
+    await page.goto('/de');
+    const trigger = page.getByRole('button', { name: de.nav.menu });
+
+    await trigger.focus();
+    await page.keyboard.press('Enter');
+    const dialog = page.getByRole('dialog', { name: de.nav.menuTitle });
+    await expect(dialog).toBeVisible();
+    await expect(dialog.getByRole('link', { name: de.nav.cta })).toBeVisible();
+    await page.screenshot({ path: test.info().outputPath('menu-360.png') });
+
+    await page.keyboard.press('Escape');
+    await expect(dialog).toBeHidden();
+    await expect(trigger).toBeFocused();
+
+    await trigger.click();
+    await dialog.getByRole('link', { name: de.nav.contact }).click();
+    await expect(page).toHaveURL(/\/de\/kontakt$/);
+    await expect(dialog).toBeHidden();
+  });
+
+  test('the open menu has no serious axe violations in dark mode', async ({ page }) => {
+    await page.emulateMedia({ colorScheme: 'dark' });
+    await page.setViewportSize({ width: 360, height: 780 });
+    await page.goto('/de');
+    await page.getByRole('button', { name: de.nav.menu }).click();
+    await expect(page.getByRole('dialog')).toBeVisible();
+
+    const { violations } = await new AxeBuilder({ page }).analyze();
+    const blocking = violations.filter((v) => v.impact === 'serious' || v.impact === 'critical');
+
+    expect(blocking.map((v) => `${v.id}: ${v.help}`)).toEqual([]);
   });
 
   test('the skip link is the first tab stop and moves focus to main', async ({ page }) => {

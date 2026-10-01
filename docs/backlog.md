@@ -839,7 +839,7 @@ tasks, following the guide. Document order below is the work order.
 ---
 
 ## P1-30: Design: site shell (logo, header, mobile menu, footer, 404/error)
-- [ ] Done
+- [x] Done
 - **Owner:** builder
 - **Why:** the shell is on every page; it sets the first visual impression (spec §6: industrial,
   calm neutrals, amber signal accent, not playful).
