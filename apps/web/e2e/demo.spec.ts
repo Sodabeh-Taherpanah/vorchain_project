@@ -195,6 +195,76 @@ test.describe('privacy', () => {
     expectNoLeak(sent, origin, PRIVACY_MARKER);
     expect(sockets).toEqual([]);
   });
+
+  /**
+   * Guards the test above against a vacuous pass: if a browser or Playwright update stopped
+   * reporting Web Worker requests, or a check in `expectNoLeak` broke, the privacy test would stay
+   * green while proving nothing. Here a worker deliberately leaks, and the recorder must see it.
+   */
+  test('the recorder sees a leak from a Web Worker and expectNoLeak rejects it', async ({
+    page,
+  }) => {
+    const { requests } = recordRequests(page);
+    await openDemo(page);
+    const origin = new URL(page.url()).origin;
+    const leakUrl = `${origin}/privacy-canary`;
+    // Nothing listens there, so the connection is refused, but the request is still issued and
+    // reported. Not a browser-blocked "unsafe" port (1, 9, ...), which would never be requested.
+    const foreignUrl = 'http://127.0.0.1:3199/privacy-canary';
+
+    await page.evaluate(
+      async ({ leakUrl, foreignUrl, marker }) => {
+        const source = `
+          const send = (url, init) => fetch(url, init).catch(() => undefined);
+          Promise.all([
+            send(${JSON.stringify(leakUrl)}, { method: 'POST', body: ${JSON.stringify(marker)} }),
+            send(${JSON.stringify(foreignUrl)}),
+          ]).then(() => postMessage('done'));
+        `;
+        const url = URL.createObjectURL(new Blob([source], { type: 'text/javascript' }));
+        const worker = new Worker(url);
+        await new Promise((resolve) => {
+          worker.onmessage = resolve;
+        });
+        worker.terminate();
+        URL.revokeObjectURL(url);
+      },
+      { leakUrl, foreignUrl, marker: PRIVACY_MARKER },
+    );
+
+    // The locale proxy may redirect the POST (`/de/privacy-canary`); only the original counts here.
+    const canaries = async () => {
+      const sent = await requests();
+      return {
+        sent,
+        leak: sent.find((r) => r.url === leakUrl),
+        foreign: sent.filter((r) => r.url === foreignUrl),
+      };
+    };
+    await expect
+      .poll(async () => {
+        const { leak, foreign } = await canaries();
+        return leak !== undefined && foreign.length > 0;
+      })
+      .toBe(true);
+    const { sent, leak, foreign } = await canaries();
+    expect(leak?.method).toBe('POST');
+    expect(leak?.body?.toString('utf8')).toBe(PRIVACY_MARKER);
+
+    expect(() => {
+      expectNoLeak(sent, origin, PRIVACY_MARKER);
+    }).toThrow();
+    // The origin allowlist alone must catch a request that carries no marker.
+    expect(() => {
+      expectNoLeak(foreign, origin, PRIVACY_MARKER);
+    }).toThrow();
+    // The page's own requests pass, so the throws above come from the canaries.
+    expectNoLeak(
+      sent.filter((r) => !r.url.includes('/privacy-canary')),
+      origin,
+      PRIVACY_MARKER,
+    );
+  });
 });
 
 test.describe('file formats and errors', () => {
