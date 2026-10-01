@@ -114,7 +114,7 @@ test('a complete upload is analysed, re-analysed and translated without sending 
 
   await page.getByTestId('file-input').setInputFiles(files);
   await page.getByLabel(de.demo.settings.asOf).fill('2026-10-05');
-  const table = page.getByRole('table');
+  const table = page.getByRole('region', { name: de.demo.report.table.region }).getByRole('table');
   // Supplier names from the uploaded suppliers file reach the explanations.
   await expect(table).toContainText('Metallbau Krüger GmbH');
   await page.getByLabel(de.demo.settings.horizon).fill('7');

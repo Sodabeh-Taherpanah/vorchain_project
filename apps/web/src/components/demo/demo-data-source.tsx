@@ -54,7 +54,7 @@ export function DemoDataSource({ reportMessages }: { readonly reportMessages: Re
 
   return (
     <div className="mt-8 space-y-8">
-      <section aria-labelledby="data-source-heading" className="space-y-4">
+      <section aria-labelledby="data-source-heading" className="space-y-4 print:hidden">
         <h2 id="data-source-heading" className="text-xl font-semibold">
           {t('dataSource.heading')}
         </h2>
@@ -104,15 +104,19 @@ export function DemoDataSource({ reportMessages }: { readonly reportMessages: Re
           </div>
         )}
       </section>
-      <p role="status" className="text-muted-foreground">
+      <p role="status" className="text-muted-foreground print:hidden">
         <StatusText state={state} />
       </p>
       {state.status === 'error' && (
-        <p role="alert" className="font-medium text-critical">
+        <p role="alert" className="font-medium text-critical print:hidden">
           {t(`errors.${state.error}`)}
         </p>
       )}
-      {'load' in state && <MapCheckPanel load={state.load} />}
+      {'load' in state && (
+        <div className="print:hidden">
+          <MapCheckPanel load={state.load} />
+        </div>
+      )}
       {'load' in state && state.load.ready && (
         <DemoAnalysis
           load={state.load}

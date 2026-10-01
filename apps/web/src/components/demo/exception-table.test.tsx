@@ -22,6 +22,10 @@ function renderIn(locale: 'de' | 'en', ui: ReactNode) {
   );
 }
 
+/** Rows on screen; rows marked `data-print-only` are hidden by CSS until printed. */
+const screenRows = () =>
+  screen.getAllByRole('row').filter((row) => !row.hasAttribute('data-print-only'));
+
 /** The row header (material) is a `th`, the rest are `td`s; read them in column order. */
 const cells = (row: HTMLElement) =>
   Array.from(row.querySelectorAll('th, td'), (cell) => cell.textContent);
@@ -86,7 +90,7 @@ describe('ExceptionTable', () => {
     const many = Array.from({ length: 12 }, (_, i) => exception(`M${String(i).padStart(4, '0')}`));
     renderIn('de', <ExceptionTable exceptions={many} supplierName={supplierName} />);
 
-    expect(screen.getAllByRole('row')).toHaveLength(TOP_ROWS + 1);
+    expect(screenRows()).toHaveLength(TOP_ROWS + 1);
     expect(screen.getByRole('table').querySelector('caption')?.textContent).toContain(
       '(10 von 12)',
     );
@@ -95,9 +99,24 @@ describe('ExceptionTable', () => {
     expect(toggle.getAttribute('aria-expanded')).toBe('false');
     await userEvent.click(toggle);
 
+    expect(screenRows()).toHaveLength(13);
     expect(screen.getAllByRole('row')).toHaveLength(13);
     expect(toggle.getAttribute('aria-expanded')).toBe('true');
     expect(toggle.textContent).toBe('Nur die ersten 10 anzeigen');
+  });
+
+  it('keeps the rows after the top 10 in the page for the printed report', () => {
+    const many = Array.from({ length: 12 }, (_, i) => exception(`M${String(i).padStart(4, '0')}`));
+    renderIn('de', <ExceptionTable exceptions={many} supplierName={supplierName} />);
+
+    const printOnly = screen
+      .getAllByRole('row')
+      .filter((row) => row.hasAttribute('data-print-only'));
+    expect(printOnly).toHaveLength(2);
+    for (const row of printOnly) expect(row.className).toContain('print:table-row');
+    expect(screen.getByRole('table').querySelector('caption')?.textContent).toContain(
+      '(12 von 12)',
+    );
   });
 
   it('has no expand button for ten rows or fewer', () => {

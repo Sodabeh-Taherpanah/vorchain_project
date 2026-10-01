@@ -180,3 +180,44 @@
     scroll-behavior: auto !important;
   }
 }
+
+/*
+ * Printed report (backlog P1-19): black on white whatever the theme, so it reads in black and
+ * white. Fills are dropped and labels carry the meaning; badges get an outline in their components.
+ * Navigation, controls and the drawer are hidden with `print:hidden` or below.
+ */
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 12mm;
+  }
+
+  :root {
+    color-scheme: light;
+    --background: oklch(1 0 0);
+    --foreground: oklch(0 0 0);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0 0 0);
+    --muted: oklch(1 0 0);
+    --muted-foreground: oklch(0.3 0 0);
+    --border: oklch(0.45 0 0);
+    --signal: oklch(0.45 0 0);
+    --signal-foreground: oklch(0 0 0);
+    --critical: oklch(0 0 0);
+    --critical-foreground: oklch(0 0 0);
+    --warning: oklch(0.45 0 0);
+    --warning-foreground: oklch(0 0 0);
+  }
+
+  /* Severity badges use the fill colour as background; on paper they are outlined labels. */
+  .bg-critical,
+  .bg-warning,
+  .bg-signal {
+    background: none;
+  }
+
+  [data-slot='sheet-overlay'],
+  [data-slot='sheet-content'] {
+    display: none;
+  }
+}

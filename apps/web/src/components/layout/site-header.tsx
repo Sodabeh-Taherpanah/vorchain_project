@@ -18,7 +18,7 @@ export function SiteHeader() {
   const t = useTranslations();
 
   return (
-    <header className="border-b bg-background">
+    <header className="border-b bg-background print:hidden">
       <Container className="flex flex-wrap items-center gap-x-6 gap-y-1 py-2">
         <Link
           href="/"

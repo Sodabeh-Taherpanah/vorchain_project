@@ -152,6 +152,31 @@
         "showAll": "Show all ({count})",
         "showTop": "Show only the first {count}"
       },
+      "suppliers": {
+        "heading": "Supplier delivery reliability",
+        "caption": "Supplier delivery reliability, least reliable first",
+        "region": "Table of supplier delivery reliability",
+        "intro": "Delay in working days between promised and actual delivery date, from the delivery history.",
+        "empty": "No delivery history, so no supplier statistics.",
+        "supplier": "Supplier",
+        "onTime": "On-time rate",
+        "meanDelay": "Mean delay (working days)",
+        "p80Delay": "P80 delay (working days)",
+        "deliveries": "Deliveries",
+        "confidence": "Confidence",
+        "low": "low",
+        "sufficient": "sufficient"
+      },
+      "export": {
+        "label": "Export report",
+        "csv": "Export CSV",
+        "print": "Print report",
+        "title": "Vorchain – shortage report",
+        "description": "Description",
+        "daysUntil": "Days until critical",
+        "yes": "Yes",
+        "no": "No"
+      },
       "severity": {
         "CRITICAL": "Critical",
         "WARNING": "Warning"

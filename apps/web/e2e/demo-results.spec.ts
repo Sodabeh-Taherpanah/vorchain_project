@@ -12,7 +12,10 @@ async function analyseSample(page: Page, locale: 'de' | 'en' = 'de') {
   const messages = locale === 'de' ? de : en;
   await page.goto(`/${locale}/demo`);
   await page.getByRole('button', { name: messages.demo.dataSource.loadSample }).click();
-  const table = page.getByRole('table');
+  // The exception table; the supplier table follows it.
+  const table = page
+    .getByRole('region', { name: messages.demo.report.table.region })
+    .getByRole('table');
   await expect(table).toBeVisible();
   return table;
 }
@@ -51,6 +54,8 @@ test('a 7-day horizon re-runs the analysis and finds fewer risks', async ({ page
 
 test('"Alle anzeigen" expands the table to every exception', async ({ page }) => {
   const table = await analyseSample(page);
+  // Rows kept in the page for printing stay out of the accessibility tree until expanded.
+  await expect(table.getByRole('row')).toHaveCount(10 + 1);
 
   await page.getByRole('button', { name: /^Alle anzeigen/ }).click();
 
