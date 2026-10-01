@@ -5,7 +5,76 @@
   },
   "home": {
     "title": "See the material shortages your ERP does not show",
-    "tagline": "Vorchain plans with your suppliers' real delays instead of their promised dates."
+    "tagline": "Vorchain plans with your suppliers' real delays instead of their promised dates.",
+    "hero": {
+      "eyebrow": "For production planners in mid-sized manufacturing",
+      "cta": "Start the demo",
+      "secondary": "How it works",
+      "note": "Free, no sign-up, with sample data or your own exports."
+    },
+    "problem": {
+      "title": "The problem",
+      "lead": "Your ERP plans with the delivery date your supplier promised. Many suppliers regularly deliver a few working days later.",
+      "points": {
+        "promised": "In the ERP, stock looks fine until the promised receipt.",
+        "late": "When the goods arrive late as usual, the shelf is empty before then.",
+        "hidden": "These hidden risks only show up when the line stops."
+      }
+    },
+    "howItWorks": {
+      "title": "How it works",
+      "steps": {
+        "export": {
+          "title": "Export your data",
+          "text": "Export materials, open purchase orders, demand and delivery history from your ERP as CSV or Excel."
+        },
+        "analyse": {
+          "title": "Plan realistically",
+          "text": "Vorchain measures each supplier's typical delay (80th percentile in working days) and projects your stock day by day with it."
+        },
+        "act": {
+          "title": "Act where it matters",
+          "text": "You get a ranked list of critical materials, each with the reason and a concrete next step."
+        }
+      }
+    },
+    "privacy": {
+      "title": "Your data never leaves your browser",
+      "text": "The demo reads and analyses your files only locally in your browser. Nothing is uploaded, stored or sent to analytics services.",
+      "proof": "An automated test checks on every change that no network request carries file content.",
+      "proofLink": "How we test this",
+      "external": "(external site)"
+    },
+    "faq": {
+      "title": "Frequently asked questions",
+      "items": {
+        "data": {
+          "question": "What data do I need?",
+          "answer": "Four exports from your ERP: materials with stock on hand, open purchase orders, demand and the delivery history with promised and actual delivery dates. German and English column names are recognised."
+        },
+        "integration": {
+          "question": "Do I have to connect or change my ERP?",
+          "answer": "No. Vorchain works with CSV or Excel exports your ERP can already produce."
+        },
+        "delay": {
+          "question": "How is the real delay calculated?",
+          "answer": "From the delivery history: for each supplier we take the delay in working days that 80% of deliveries did not exceed. With fewer than three deliveries we flag the thin data."
+        },
+        "upload": {
+          "question": "Are my files uploaded?",
+          "answer": "No. The analysis runs entirely in your browser. Your files are never sent to our server or to any third party."
+        },
+        "cost": {
+          "question": "What does Vorchain cost?",
+          "answer": "The demo is free. For a pilot with your own data, just get in touch."
+        }
+      }
+    },
+    "cta": {
+      "title": "See shortages sooner",
+      "text": "Want to try Vorchain with your own data or have questions? Write to us.",
+      "button": "Get in touch"
+    }
   },
   "demo": {
     "title": "Interactive demo",

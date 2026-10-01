@@ -5,7 +5,76 @@
   },
   "home": {
     "title": "Materialengpässe erkennen, die Ihr ERP nicht zeigt",
-    "tagline": "Vorchain rechnet mit der echten Verspätung Ihrer Lieferanten statt mit dem zugesagten Termin."
+    "tagline": "Vorchain rechnet mit der echten Verspätung Ihrer Lieferanten statt mit dem zugesagten Termin.",
+    "hero": {
+      "eyebrow": "Für Produktionsplaner im Mittelstand",
+      "cta": "Demo starten",
+      "secondary": "So funktioniert's",
+      "note": "Kostenlos, ohne Anmeldung, mit Beispieldaten oder Ihren eigenen Exporten."
+    },
+    "problem": {
+      "title": "Das Problem",
+      "lead": "Ihr ERP plant mit dem Liefertermin, den der Lieferant zugesagt hat. Viele Lieferanten liefern aber regelmäßig ein paar Arbeitstage später.",
+      "points": {
+        "promised": "Im ERP sieht der Bestand bis zum zugesagten Wareneingang gut aus.",
+        "late": "Kommt die Ware wie üblich später, ist das Lager vorher leer.",
+        "hidden": "Diese versteckten Risiken fallen erst auf, wenn die Linie steht."
+      }
+    },
+    "howItWorks": {
+      "title": "So funktioniert's",
+      "steps": {
+        "export": {
+          "title": "Daten exportieren",
+          "text": "Exportieren Sie Materialien, offene Bestellungen, Bedarf und Lieferhistorie als CSV oder Excel aus Ihrem ERP."
+        },
+        "analyse": {
+          "title": "Realistisch rechnen",
+          "text": "Vorchain ermittelt für jeden Lieferanten die typische Verspätung (80. Perzentil in Arbeitstagen) und rechnet den Bestand damit Tag für Tag durch."
+        },
+        "act": {
+          "title": "Gezielt handeln",
+          "text": "Sie erhalten eine Rangliste der kritischen Materialien, jeweils mit Begründung und konkretem nächsten Schritt."
+        }
+      }
+    },
+    "privacy": {
+      "title": "Ihre Daten verlassen nie Ihren Browser",
+      "text": "Die Demo liest und analysiert Ihre Dateien ausschließlich lokal in Ihrem Browser. Nichts wird hochgeladen, gespeichert oder an Analysedienste gesendet.",
+      "proof": "Ein automatischer Test prüft bei jeder Änderung, dass keine Netzwerkanfrage Dateiinhalte enthält.",
+      "proofLink": "So testen wir das",
+      "external": "(externe Seite)"
+    },
+    "faq": {
+      "title": "Häufige Fragen",
+      "items": {
+        "data": {
+          "question": "Welche Daten brauche ich?",
+          "answer": "Vier Exporte aus Ihrem ERP: Materialien mit Bestand, offene Bestellungen, Bedarf und die Lieferhistorie mit zugesagtem und tatsächlichem Liefertermin. Deutsche und englische Spaltennamen werden erkannt."
+        },
+        "integration": {
+          "question": "Muss ich mein ERP anbinden oder ändern?",
+          "answer": "Nein. Vorchain arbeitet mit CSV- oder Excel-Exporten, die Ihr ERP bereits erzeugen kann."
+        },
+        "delay": {
+          "question": "Wie wird die echte Verspätung berechnet?",
+          "answer": "Aus der Lieferhistorie: Für jeden Lieferanten nehmen wir die Verspätung in Arbeitstagen, die in 80 % der Lieferungen nicht überschritten wurde. Bei weniger als drei Lieferungen weisen wir auf die geringe Datenbasis hin."
+        },
+        "upload": {
+          "question": "Werden meine Dateien hochgeladen?",
+          "answer": "Nein. Die Analyse läuft vollständig in Ihrem Browser. Ihre Dateien werden weder an unseren Server noch an Dritte übertragen."
+        },
+        "cost": {
+          "question": "Was kostet Vorchain?",
+          "answer": "Die Demo ist kostenlos. Für einen Pilot mit Ihren Daten sprechen Sie uns gern an."
+        }
+      }
+    },
+    "cta": {
+      "title": "Engpässe früher sehen",
+      "text": "Sie möchten Vorchain mit Ihren eigenen Daten testen oder haben Fragen? Schreiben Sie uns.",
+      "button": "Kontakt aufnehmen"
+    }
   },
   "demo": {
     "title": "Interaktive Demo",
