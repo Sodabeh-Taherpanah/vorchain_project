@@ -818,7 +818,7 @@ tasks, following the guide. Document order below is the work order.
 ---
 
 ## P1-29b: Design: `@vorchain/ui` content primitives (card, badge, feature card, stat, callout, CTA band, logo)
-- [ ] Done
+- [x] Done
 - **Owner:** builder
 - **Why:** split from P1-29 by its size note (P1-29 alone was ~600 changed lines without the move
   commit). P1-29 delivered the package, theme, fluid type, `cn()`, the moved primitives,
@@ -833,7 +833,7 @@ tasks, following the guide. Document order below is the work order.
 - **Test plan:** Vitest roles and variants per primitive; `@vorchain/ui` coverage >= 90 %;
   screenshots of a preview at 1280/360 px, light and dark, in the PR.
 - **Packages:** `packages/ui`, `docs/design`
-- **Branch:** `feat/ui-primitives` (a local branch with a first draft exists from P1-29)
+- **Branch:** `feat/ui-primitives-content`
 - **Commits:** `feat(ui): add content primitives and logo`
 
 ---
