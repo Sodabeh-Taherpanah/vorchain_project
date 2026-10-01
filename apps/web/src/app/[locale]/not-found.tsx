@@ -12,7 +12,12 @@ export default function NotFound() {
   const t = useTranslations('notFound');
 
   return (
-    <StatusPage code={t('code')} title={t('title')} description={t('description')}>
+    <StatusPage
+      code={t('code')}
+      title={t('title')}
+      description={t('description')}
+      illustration="not-found"
+    >
       <Link href="/" className={buttonVariants({ size: 'lg' })}>
         {t('home')}
       </Link>

@@ -6,6 +6,8 @@ import './globals.css';
 
 import { Container } from '@vorchain/ui/components/container';
 import { buttonVariants } from '@vorchain/ui/components/button';
+import { Logo } from '@vorchain/ui/components/logo';
+import { StatusIllustration } from '@/components/layout/status-illustration.tsx';
 import { fontVariables } from '@/lib/fonts.ts';
 
 /*
@@ -30,10 +32,14 @@ export default async function GlobalNotFound() {
     <html lang="de" className={fontVariables} suppressHydrationWarning>
       <body className="min-h-dvh">
         <main>
-          <Container className="grid gap-12 py-16 sm:py-24">
+          <Container className="grid gap-12 py-10 sm:py-16">
+            <Link href="/de" className="inline-flex w-fit rounded-lg">
+              <Logo name="Vorchain" />
+            </Link>
+            <StatusIllustration kind="not-found" className="max-w-48" />
             <section>
-              <p className="font-mono text-sm font-medium text-signal-strong">{de('code')}</p>
-              <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">
+              <p className="font-mono text-sm font-medium text-muted-foreground">{de('code')}</p>
+              <h1 className="mt-3 font-heading text-title font-semibold text-balance">
                 {de('title')}
               </h1>
               <p className="mt-4 max-w-prose text-muted-foreground">{de('description')}</p>

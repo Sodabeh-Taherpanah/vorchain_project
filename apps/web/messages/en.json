@@ -327,7 +327,11 @@
   "nav": {
     "label": "Main navigation",
     "demo": "Demo",
-    "contact": "Contact"
+    "contact": "Contact",
+    "cta": "Start the demo",
+    "menu": "Open menu",
+    "menuTitle": "Navigation",
+    "menuClose": "Close menu"
   },
   "localeSwitcher": {
     "label": "Choose language",
@@ -343,7 +347,11 @@
     "legalNotice": "Legal notice",
     "privacy": "Privacy",
     "github": "Source code on GitHub",
-    "external": "(external site)"
+    "external": "(external site)",
+    "tagline": "Warns production planners about material shortages the ERP does not show.",
+    "productHeading": "Product",
+    "legalHeading": "Legal",
+    "projectHeading": "Project"
   },
   "notFound": {
     "code": "Error 404",

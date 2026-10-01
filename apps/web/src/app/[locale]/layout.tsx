@@ -36,6 +36,7 @@ export const viewport: Viewport = {
  * HTML does not carry the whole catalog.
  */
 const CLIENT_NAMESPACES = [
+  'nav',
   'localeSwitcher',
   'theme',
   'error',

@@ -327,7 +327,11 @@
   "nav": {
     "label": "Hauptnavigation",
     "demo": "Demo",
-    "contact": "Kontakt"
+    "contact": "Kontakt",
+    "cta": "Demo starten",
+    "menu": "Menü öffnen",
+    "menuTitle": "Navigation",
+    "menuClose": "Menü schließen"
   },
   "localeSwitcher": {
     "label": "Sprache wählen",
@@ -343,7 +347,11 @@
     "legalNotice": "Impressum",
     "privacy": "Datenschutz",
     "github": "Quellcode auf GitHub",
-    "external": "(externe Seite)"
+    "external": "(externe Seite)",
+    "tagline": "Warnt Fertigungsplaner vor Materialengpässen, die das ERP nicht zeigt.",
+    "productHeading": "Produkt",
+    "legalHeading": "Rechtliches",
+    "projectHeading": "Projekt"
   },
   "notFound": {
     "code": "Fehler 404",

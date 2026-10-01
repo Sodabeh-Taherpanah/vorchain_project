@@ -25,6 +25,7 @@ export default function ErrorPage({ error, retry }: ErrorPageProps) {
       code={t('code')}
       title={t('title')}
       description={t('description')}
+      illustration="error"
       footnote={error.digest === undefined ? undefined : t('reference', { digest: error.digest })}
     >
       <Button type="button" size="lg" onClick={retry}>
