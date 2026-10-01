@@ -35,6 +35,22 @@ test('the supplier table lists the least reliable supplier first', async ({ page
   // S04 has the lowest on-time rate (4 %) in the golden output.
   await expect(table.getByRole('row').nth(1)).toContainText('Asia Components Ltd');
   await expect(table.getByRole('row').nth(1)).toContainText('4 %');
+  // Same order and figures as the prototype's report.md for `sample_data_de` (`--lang de`).
+  await expect(table.getByRole('rowheader')).toHaveText([
+    'Asia Components Ltd',
+    'Elektronik Weber AG',
+    'Kabel & Draht GmbH',
+    'Kunststoff Nord KG',
+    'Metallbau Krüger GmbH',
+    'Schrauben Meyer',
+  ]);
+  await expect(table.getByRole('row').nth(1).getByRole('cell')).toHaveText([
+    '4 %',
+    '9,4',
+    '12',
+    '25',
+    de.demo.report.suppliers.sufficient,
+  ]);
 });
 
 test('the CSV export holds every exception and sends nothing over the network', async ({

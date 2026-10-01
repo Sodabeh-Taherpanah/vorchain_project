@@ -114,6 +114,30 @@ describe('exceptionCsvRows', () => {
   });
 });
 
+describe('CSV injection through user data', () => {
+  it('guards material IDs, descriptions and rendered sentences from user files', () => {
+    const rows = exceptionCsvRows(
+      [exception('=cmd|"/c calc"!A1', { description: '@SUM(1+1)', minProjectedStock: -7.5 })],
+      {
+        headers: ['H'],
+        severity: () => 'Kritisch',
+        date: (date) => date,
+        hidden: () => 'Nein',
+        // A sentence that starts with a user-supplied supplier name.
+        reason: () => '+Evil Supplier liefert spät',
+        action: () => '-Evil Supplier anrufen',
+      },
+    );
+
+    const record = toCsv(rows, 'de').split('\r\n')[1];
+
+    expect(record).toBe(
+      `Kritisch;"'=cmd|""/c calc""!A1";'@SUM(1+1);2026-10-20;15;-7,5;Nein;` +
+        `'+Evil Supplier liefert spät;'-Evil Supplier anrufen`,
+    );
+  });
+});
+
 describe('downloadFile', () => {
   afterEach(() => {
     vi.restoreAllMocks();

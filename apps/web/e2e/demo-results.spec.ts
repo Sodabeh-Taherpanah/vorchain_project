@@ -54,6 +54,8 @@ test('a 7-day horizon re-runs the analysis and finds fewer risks', async ({ page
 
 test('"Alle anzeigen" expands the table to every exception', async ({ page }) => {
   const table = await analyseSample(page);
+  // Rows kept in the page for printing stay out of the accessibility tree until expanded.
+  await expect(table.getByRole('row')).toHaveCount(10 + 1);
 
   await page.getByRole('button', { name: /^Alle anzeigen/ }).click();
 
