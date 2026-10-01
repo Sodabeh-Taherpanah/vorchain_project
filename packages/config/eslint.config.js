@@ -106,14 +106,18 @@ const ENGINE_PURITY_POLICY = {
 };
 
 /**
- * Parsers production code runs in the Web Worker next to customer files (AGENTS.md §2, ADR-0003):
- * no Node core modules (it must stay browser-safe; tests may read fixtures with `node:fs`).
+ * Design-system components render on the server and in the browser (ADR-0013): no Node core
+ * modules. Tests are exempt, as for the parsers.
  */
 const UI_PURITY_POLICY = {
   from: { element: { type: 'ui' } },
   disallow: { to: { module: { origin: 'core' } } },
 };
 
+/**
+ * Parsers production code runs in the Web Worker next to customer files (AGENTS.md §2, ADR-0003):
+ * no Node core modules (it must stay browser-safe; tests may read fixtures with `node:fs`).
+ */
 const PARSERS_PURITY_POLICY = {
   from: { element: { type: 'parsers' } },
   disallow: { to: { module: { origin: 'core' } } },

@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   Sheet,
+  SheetClose,
   SheetContent,
   SheetDescription,
   SheetFooter,
@@ -24,7 +25,9 @@ function Example({ showCloseButton }: { showCloseButton?: boolean }) {
           <SheetTitle>Details</SheetTitle>
           <SheetDescription>More about it</SheetDescription>
         </SheetHeader>
-        <SheetFooter>Footer</SheetFooter>
+        <SheetFooter>
+          <SheetClose>Done</SheetClose>
+        </SheetFooter>
       </SheetContent>
     </Sheet>
   );
@@ -49,5 +52,14 @@ describe('Sheet', () => {
 
     await user.click(screen.getByRole('button', { name: 'Open' }));
     expect(screen.queryByRole('button', { name: 'Close' })).toBeNull();
+  });
+
+  it('closes from a custom close control in the footer', async () => {
+    const user = userEvent.setup();
+    render(<Example showCloseButton={false} />);
+
+    await user.click(screen.getByRole('button', { name: 'Open' }));
+    await user.click(screen.getByRole('button', { name: 'Done' }));
+    expect(screen.queryByRole('dialog')).toBeNull();
   });
 });
