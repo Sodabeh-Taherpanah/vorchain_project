@@ -50,7 +50,7 @@ vorchain/
 ├─ apps/
 │  └─ web/                     # Next.js site + demo UI
 │     ├─ src/app/[locale]/     # routes: /, /demo, /kontakt, /impressum, /datenschutz
-│     ├─ src/components/       # ui/ (shadcn), sections/, demo/
+│     ├─ src/components/       # layout/, sections/, demo/ (features; primitives from @vorchain/ui)
 │     ├─ src/workers/          # analysis.worker.ts (Comlink)
 │     ├─ src/i18n/ messages/   # de.json, en.json
 │     └─ e2e/                  # Playwright specs
@@ -58,6 +58,7 @@ vorchain/
 │  ├─ engine/                  # pure domain logic: types, supplier stats, projection, ranking, explanations
 │  ├─ parsers/                 # CSV/XLSX → validated domain input (zod), German/English header aliases
 │  ├─ sample-data/             # generated demo datasets (DE + EN) + generator
+│  ├─ ui/                      # design system: Tailwind theme, shadcn primitives, section blocks (ADR-0013)
 │  └─ config/                  # shared tsconfig, eslint, prettier, vitest presets
 ├─ docs/
 │  ├─ spec/                    # product specs per phase
@@ -68,7 +69,7 @@ vorchain/
 ├─ .github/                    # workflows, agents, templates, CODEOWNERS
 └─ AGENTS.md
 ```
-Dependency rule: `apps/web → parsers → engine`. `engine` depends on nothing internal. Enforce this with ESLint `no-restricted-imports` or `eslint-plugin-boundaries`.
+Dependency rule: `apps/web → parsers → engine` and `apps/web → ui`. `engine` and `ui` depend on nothing internal (`ui` = `packages/ui`, the shared design system, ADR-0013; no micro-frontends). Enforce this with ESLint `no-restricted-imports` or `eslint-plugin-boundaries`.
 
 ## 5. Coding standards
 - Functions stay small and named by intent. Avoid `any`; use `unknown` + zod at boundaries. Model domain types explicitly (`MaterialId` branded strings, `IsoDate`).

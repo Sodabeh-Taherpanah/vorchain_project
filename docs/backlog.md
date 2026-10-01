@@ -44,12 +44,13 @@ ADRs 0001 to 0012, `docs/architecture/README.md`.
 | P1-19 | Demo: supplier reliability table, CSV export, printable report | builder | P1-17 |
 | P1-20 | Demo: e2e suite (privacy network assertion, XLSX, errors, cross-browser, axe) | builder | P1-18, P1-19 |
 | P1-21 | Landing page: sections and content | builder | P1-13 |
-| P1-29 | Design: visual design guide and site shell (header, footer, 404/error) | builder | P1-21 |
-| P1-30 | Design: landing page visual design | builder | P1-29 |
-| P1-31 | Design: demo visual design pass | builder | P1-29, P1-20 |
-| P1-22 | Landing page: hidden-risk chart (build-time engine data, SVG) | builder | P1-30, P1-11 |
+| P1-29 | Design: `@vorchain/ui` design-system package and design guide (ADR-0013) | builder | P1-21 |
+| P1-30 | Design: site shell (logo, header, mobile menu, footer, 404/error) | builder | P1-29 |
+| P1-31 | Design: landing page visual design | builder | P1-30 |
+| P1-32 | Design: demo visual design pass | builder | P1-30, P1-20 |
+| P1-22 | Landing page: hidden-risk chart (build-time engine data, SVG) | builder | P1-31, P1-11 |
 | P1-23 | SEO: metadata, sitemap, robots, hreflang, JSON-LD, OG images | builder | P1-22 |
-| P1-24 | Legal pages: Impressum and Datenschutz (owner placeholders) | builder | P1-29 |
+| P1-24 | Legal pages: Impressum and Datenschutz (owner placeholders) | builder | P1-30 |
 | P1-25 | Contact form: Server Action, validation, spam protection, mail transport | builder | P1-24 |
 | P1-26 | Cookieless analytics for three funnel events | builder | P1-25 |
 | P1-27 | Hardening: security headers/CSP, Lighthouse CI, a11y on all pages, bundle budget | devops | P1-26 |
@@ -65,11 +66,11 @@ flowchart LR
   S11 --> W15[P1-15]
   W13 --> W15 --> W16[P1-16] --> W17[P1-17] --> W18[P1-18] --> W20[P1-20]
   W17 --> W19[P1-19] --> W20
-  W13 --> L21[P1-21] --> G29[P1-29] --> G30[P1-30] --> L22[P1-22] --> SEO23[P1-23]
+  W13 --> L21[P1-21] --> G29[P1-29] --> G30[P1-30] --> G31[P1-31] --> L22[P1-22] --> SEO23[P1-23]
   S11 --> L22
-  G29 --> G31[P1-31]
-  W20 --> G31
-  G29 --> LG24[P1-24] --> C25[P1-25] --> A26[P1-26] --> H27[P1-27] --> P28[P1-28]
+  G30 --> G32[P1-32]
+  W20 --> G32
+  G30 --> LG24[P1-24] --> C25[P1-25] --> A26[P1-26] --> H27[P1-27] --> P28[P1-28]
 ```
 
 The engine track (P1-01..06) and the parser track (P1-07..08) can run in parallel after Task 0,
@@ -77,9 +78,10 @@ and P1-12/13 can run in parallel with both. The linear order below is the recomm
 order.
 
 **Design track (added 2026-10-01).** The original plan had no visual design task: P1-13 built
-the tokens and shell, P1-21 the content, but nothing made the pages look finished. P1-29..31 close
-that gap and run **before P1-22**: the guide (P1-29) comes first because every page uses it, the
-landing design (P1-30) gives the chart (P1-22) a finished frame, and the demo pass (P1-31) restyles
+the tokens and shell, P1-21 the content, but nothing made the pages look finished. P1-29..32 close
+that gap and run **before P1-22**: the design system (P1-29, ADR-0013: a shared `@vorchain/ui`
+package, no micro-frontends) and the shell (P1-30) come first because every page uses them, the
+landing design (P1-31) gives the chart (P1-22) a finished frame, and the demo pass (P1-32) restyles
 pages that already work. Legal (P1-24) and contact (P1-25) pages are designed inside their own
 tasks, following the guide. Document order below is the work order.
 
@@ -781,35 +783,59 @@ tasks, following the guide. Document order below is the work order.
 
 ---
 
-## P1-29: Design: visual design guide and site shell (header, footer, 404/error)
+## P1-29: Design: `@vorchain/ui` design-system package and design guide (ADR-0013)
 - [ ] Done
 - **Owner:** builder
-- **Why:** P1-13 created tokens but no visual language, so pages look like unstyled drafts. One
-  short guide plus a polished shell gives every later page the same finished, trustworthy look
-  (spec §6: industrial, calm neutrals, amber signal accent, not playful).
+- **Why:** one modular, modern design system (Tailwind 4) that every page uses, instead of styles
+  spread over the app. ADR-0013: shared package, no micro-frontends.
 - **Acceptance criteria:**
-  1. `docs/design/README.md` (max ~2 pages): type scale, spacing and section rhythm, colour usage
-     (neutral surfaces, amber only for hidden risk, severity colours only for severity), radius and
-     elevation, icon style, component patterns (section header, feature card, stat, CTA band,
-     callout), imagery rules (inline SVG/HTML mock-ups, no stock photos, no raster hero images).
-  2. Tokens refined where the guide needs them (e.g. surface levels, subtle borders, an accent
-     tint for backgrounds), defined for light and dark; no raw colours in components.
-  3. Simple SVG wordmark + mark (logo) in header, footer and favicon; replaceable later (Q7).
-  4. Header: sticky with subtle blur/border, clear active nav state, primary "Demo starten"
-     button; mobile menu works at 360 px with keyboard and focus trap.
-  5. Footer: multi-column (product, legal, GitHub), short privacy line, locale and theme kept.
-  6. 404 and error pages restyled to the guide (illustrative SVG, clear way back).
-  7. Reusable section primitives (`SectionHeader`, `FeatureCard`, `CtaBand`, `Callout`) in
-     `src/components/ui/` or `sections/`, used by P1-30/31.
-- **Test plan:** component tests for mobile menu (roles, Escape, focus return); Playwright: no
-  horizontal scroll at 360 px, active nav state; axe clean in both themes; screenshots in PR.
-- **Packages:** `apps/web`, `docs/design`
-- **Branch:** `feat/ui-design-guide-shell`
-- **Commits:** `docs(ui): add visual design guide`, `feat(ui): restyle header, footer and error pages`
+  1. `packages/ui` (`@vorchain/ui`, TS source per ADR-0002) holds the Tailwind 4 theme
+     (`theme.css`: `@theme` tokens, light/dark variables, `@custom-variant dark`, fluid type scale
+     with `clamp()`), `cn()` (clsx + tailwind-merge) and the shadcn primitives moved from
+     `apps/web/src/components/ui` (button, sheet, ...) plus card, badge, table as needed.
+  2. New presentational primitives with `cva` variants: `Container`, `Section`, `SectionHeader`,
+     `FeatureCard`, `Stat`, `Callout`, `CtaBand`, `Logo` (SVG wordmark + mark, replaceable, Q7).
+     No `next-intl`, routing, data or worker code in the package; text via props.
+  3. `apps/web` imports `@vorchain/ui`; `globals.css` imports the theme and uses `@source` for the
+     package. Existing pages look the same or better; all existing tests stay green.
+  4. Boundaries: `ui` element added to `packages/config/eslint.config.js`; `ui` imports nothing
+     internal; only `apps/web` may import it. AGENTS.md §4 layout + dependency rule updated.
+  5. `docs/design/README.md` (max ~2 pages): type scale, spacing and section rhythm, colour usage
+     (neutral surfaces, amber only for hidden risk, severity colours only for severity), radius
+     and elevation, icons, the primitives above with when-to-use, imagery rules (inline SVG/HTML
+     mock-ups, no stock photos), Tailwind rules from ADR-0013.
+  6. Token contrast test (WCAG) moves with the theme and still passes in both themes.
+- **Test plan:** Vitest in `packages/ui` for variants and roles of each primitive (coverage
+  >= 90%); lint proves the boundary rule; web e2e + axe unchanged and green; screenshots in PR.
+- **Packages:** `packages/ui`, `apps/web`, `packages/config`, `docs/design`
+- **Branch:** `feat/ui-design-system`
+- **Commits:** `refactor(ui): move theme and primitives into @vorchain/ui`,
+  `feat(ui): add section primitives and logo`, `docs(ui): add design guide`
+- **Size note:** the move commit is mechanical; if the PR grows past ~400 lines without it, split
+  the primitives into the next PR.
 
 ---
 
-## P1-30: Design: landing page visual design
+## P1-30: Design: site shell (logo, header, mobile menu, footer, 404/error)
+- [ ] Done
+- **Owner:** builder
+- **Why:** the shell is on every page; it sets the first visual impression (spec §6: industrial,
+  calm neutrals, amber signal accent, not playful).
+- **Acceptance criteria:**
+  1. Header: `Logo`, sticky with subtle blur/border, clear active nav state, primary
+     "Demo starten" button; mobile menu at 360 px with keyboard, Escape and focus return.
+  2. Footer: multi-column (product, legal, GitHub), short privacy line; locale and theme kept.
+  3. 404 and error pages restyled to the guide (illustrative inline SVG, clear way back).
+  4. Built only from `@vorchain/ui` primitives and tokens; no raw colours.
+- **Test plan:** component tests for the mobile menu (roles, Escape, focus return); Playwright:
+  no horizontal scroll at 360 px, active nav state; axe clean in both themes; screenshots in PR.
+- **Packages:** `apps/web`
+- **Branch:** `feat/ui-site-shell`
+- **Commits:** `feat(ui): restyle header, footer and error pages`
+
+---
+
+## P1-31: Design: landing page visual design
 - [ ] Done
 - **Owner:** builder
 - **Why:** the landing page is the first impression for customers and portfolio reviewers; P1-21
@@ -835,7 +861,7 @@ tasks, following the guide. Document order below is the work order.
 
 ---
 
-## P1-31: Design: demo visual design pass
+## P1-32: Design: demo visual design pass
 - [ ] Done
 - **Owner:** builder
 - **Why:** the demo is the product; it works and is tested, but should look like a finished tool.
@@ -868,7 +894,7 @@ tasks, following the guide. Document order below is the work order.
      CSS draw-in animation disabled under `prefers-reduced-motion`; dark mode via tokens.
   3. Text alternative (`<figcaption>` + visually hidden table or description) in both locales.
   4. No layout shift (explicit `viewBox`, aspect-ratio box).
-  5. Styled per `docs/design/README.md` and fills the slot kept by P1-21/P1-30.
+  5. Styled per `docs/design/README.md` and fills the slot kept by P1-21/P1-31.
 - **Test plan:** unit test of the pure `seriesToPath()` geometry helper; Playwright visual
   snapshot in both themes (threshold tolerant); axe clean.
 - **Packages:** `apps/web` (reads `engine`, `parsers`, `sample-data` at build time)
