@@ -8,7 +8,12 @@ const nextConfig: NextConfig = {
   // Same build runs on the host and in the GHCR container image (ADR-0004, ADR-0006).
   output: 'standalone',
   // Internal packages are consumed as TypeScript source (ADR-0002).
-  transpilePackages: ['@vorchain/engine', '@vorchain/parsers', '@vorchain/sample-data'],
+  transpilePackages: [
+    '@vorchain/engine',
+    '@vorchain/parsers',
+    '@vorchain/sample-data',
+    '@vorchain/ui',
+  ],
   poweredByHeader: false,
   reactStrictMode: true,
   // Project rules live in the root AGENTS.md; stop `next dev` from writing its own AGENTS.md and

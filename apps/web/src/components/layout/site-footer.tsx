@@ -4,7 +4,7 @@ import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation.ts';
 import { GITHUB_URL } from '@/lib/site.ts';
 
-import { Container } from './container.tsx';
+import { Container } from '@vorchain/ui/components/container';
 
 const FOOTER_LINK =
   'inline-flex min-h-9 items-center gap-1 rounded-md text-sm text-muted-foreground ' +

@@ -3,7 +3,7 @@
 import type { Report } from '@vorchain/engine';
 import { useLocale, useTranslations } from 'next-intl';
 
-import { cn } from '@/lib/utils.ts';
+import { cn } from '@vorchain/ui/lib/utils';
 
 import { formatIsoDate } from './analysis-settings-model.ts';
 import type { SupplierName } from './explanation-text.tsx';

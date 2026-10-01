@@ -1,7 +1,7 @@
 import { useTranslations } from 'next-intl';
 import type { ReactNode } from 'react';
 
-import { Container } from './layout/container.tsx';
+import { Container } from '@vorchain/ui/components/container';
 
 interface PageStubProps {
   /** Already translated page title, rendered as the page's only `h1`. */

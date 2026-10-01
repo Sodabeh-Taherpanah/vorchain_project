@@ -4,7 +4,7 @@ import { Database, FileSpreadsheet, X } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useState } from 'react';
 
-import { Button } from '@/components/ui/button.tsx';
+import { Button } from '@vorchain/ui/components/button';
 
 import { useAnalysis, type AnalysisState } from '../../hooks/use-analysis.ts';
 import {

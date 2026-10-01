@@ -4,7 +4,7 @@ import type { Report } from '@vorchain/engine';
 import { Download, Printer } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 
-import { Button } from '@/components/ui/button.tsx';
+import { Button } from '@vorchain/ui/components/button';
 
 import { formatIsoDate } from './analysis-settings-model.ts';
 import { csvFileName, downloadFile, exceptionCsvRows, toCsv } from './csv-export.ts';

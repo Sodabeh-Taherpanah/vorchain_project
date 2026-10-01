@@ -4,7 +4,7 @@ import { Moon, Sun } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useSyncExternalStore } from 'react';
 
-import { Button } from '@/components/ui/button.tsx';
+import { Button } from '@vorchain/ui/components/button';
 import { currentTheme, subscribeToTheme, toggleTheme } from '@/lib/theme.ts';
 
 /** The server cannot know the visitor's scheme; `null` renders a neutral button until hydration. */

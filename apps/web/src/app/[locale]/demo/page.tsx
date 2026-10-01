@@ -4,7 +4,7 @@ import de from '../../../../messages/de.json';
 import en from '../../../../messages/en.json';
 import type { ReportMessages } from '../../../components/demo/demo-analysis.tsx';
 import { DemoDataSource } from '../../../components/demo/demo-data-source.tsx';
-import { Container } from '../../../components/layout/container.tsx';
+import { Container } from '@vorchain/ui/components/container';
 
 // The results can be read in either language, independent of the page's (P1-17).
 const reportMessages: ReportMessages = { de: de.demo.report, en: en.demo.report };

@@ -4,7 +4,7 @@ import { Download } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useEffect, useId, useState } from 'react';
 
-import { Button } from '@/components/ui/button.tsx';
+import { Button } from '@vorchain/ui/components/button';
 
 interface Template {
   readonly name: string;

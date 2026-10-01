@@ -1,6 +1,6 @@
 import { useTranslations } from 'next-intl';
 
-import { buttonVariants } from '@/components/ui/button.tsx';
+import { buttonVariants } from '@vorchain/ui/components/button';
 import { Link } from '@/i18n/navigation.ts';
 
 import { Section } from './section.tsx';

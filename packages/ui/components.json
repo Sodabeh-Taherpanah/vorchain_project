@@ -5,7 +5,7 @@
   "tsx": true,
   "tailwind": {
     "config": "",
-    "css": "../../packages/ui/src/styles/theme.css",
+    "css": "src/styles/theme.css",
     "baseColor": "neutral",
     "cssVariables": true,
     "prefix": ""
@@ -13,11 +13,11 @@
   "iconLibrary": "lucide",
   "rtl": false,
   "aliases": {
-    "components": "@/components",
+    "components": "@vorchain/ui/components",
     "utils": "@vorchain/ui/lib/utils",
     "ui": "@vorchain/ui/components",
-    "lib": "@/lib",
-    "hooks": "@/hooks"
+    "lib": "@vorchain/ui/lib",
+    "hooks": "@vorchain/ui/hooks"
   },
   "menuColor": "default",
   "menuAccent": "subtle",

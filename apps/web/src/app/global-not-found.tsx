@@ -4,8 +4,8 @@ import Link from 'next/link';
 
 import './globals.css';
 
-import { Container } from '@/components/layout/container.tsx';
-import { buttonVariants } from '@/components/ui/button.tsx';
+import { Container } from '@vorchain/ui/components/container';
+import { buttonVariants } from '@vorchain/ui/components/button';
 import { fontVariables } from '@/lib/fonts.ts';
 
 /*

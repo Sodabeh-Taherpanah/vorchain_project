@@ -4,12 +4,13 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 /*
- * Guards for the design tokens in globals.css (P1-13): every text/background pair meets WCAG AA
- * in both themes, and components use tokens instead of raw colour values (AGENTS.md §5).
+ * Guards for the design tokens in theme.css (P1-13, moved with the theme in P1-29): every
+ * text/background pair meets WCAG AA in both themes, and the package's components use tokens
+ * instead of raw colour values (AGENTS.md §5). apps/web scans its own components the same way.
  */
 
 const SRC_DIR = join(import.meta.dirname, '..', '/');
-const css = readFileSync(join(SRC_DIR, 'app', 'globals.css'), 'utf8');
+const css = readFileSync(join(import.meta.dirname, 'theme.css'), 'utf8');
 
 type Tokens = ReadonlyMap<string, string>;
 
@@ -129,7 +130,7 @@ describe('components', () => {
   const files = componentFiles(SRC_DIR);
 
   it('are found by the scan', () => {
-    expect(files.length).toBeGreaterThan(5);
+    expect(files.length).toBeGreaterThanOrEqual(3);
   });
 
   it.each(['#fff', 'bg-red-500', 'text-white', 'rgb(0 0 0)', 'oklch(0.5 0 0)'])(

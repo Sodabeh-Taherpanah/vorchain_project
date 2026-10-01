@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react';
 
-import { cn } from '@/lib/utils.ts';
+import { cn } from '@vorchain/ui/lib/utils';
 
-import { Container } from '../layout/container.tsx';
+import { Container } from '@vorchain/ui/components/container';
 
 interface SectionProps {
   /** Anchor target and the base of the heading id that labels the region landmark. */
