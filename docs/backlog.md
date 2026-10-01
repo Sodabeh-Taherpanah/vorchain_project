@@ -12,6 +12,9 @@ ADRs 0001 to 0012, `docs/architecture/README.md`.
   criteria: `pnpm lint && pnpm typecheck && pnpm test && pnpm build` green (+ `pnpm test:e2e` if UI
   changed), i18n keys in `de` and `en`, docs/diagrams updated **in the same PR** when structure
   changes, CI green.
+- **Visual check for UI tasks:** the PR includes screenshots at 1280 px and 360 px, light and dark,
+  and the page follows `docs/design/README.md` (from P1-29). Passing tests is not enough: the page
+  must look finished to a visitor.
 - Tick the box when the task is merged. `qa` verifies each task after `builder`/`devops` finish.
 - Owner agent: `devops` for tooling/CI/deploy tasks, `builder` for everything else.
 
@@ -41,9 +44,13 @@ ADRs 0001 to 0012, `docs/architecture/README.md`.
 | P1-19 | Demo: supplier reliability table, CSV export, printable report | builder | P1-17 |
 | P1-20 | Demo: e2e suite (privacy network assertion, XLSX, errors, cross-browser, axe) | builder | P1-18, P1-19 |
 | P1-21 | Landing page: sections and content | builder | P1-13 |
-| P1-22 | Landing page: hidden-risk chart (build-time engine data, SVG) | builder | P1-21, P1-11 |
+| P1-29 | Design: `@vorchain/ui` design-system package and design guide (ADR-0013) | builder | P1-21 |
+| P1-30 | Design: site shell (logo, header, mobile menu, footer, 404/error) | builder | P1-29 |
+| P1-31 | Design: landing page visual design | builder | P1-30 |
+| P1-32 | Design: demo visual design pass | builder | P1-30, P1-20 |
+| P1-22 | Landing page: hidden-risk chart (build-time engine data, SVG) | builder | P1-31, P1-11 |
 | P1-23 | SEO: metadata, sitemap, robots, hreflang, JSON-LD, OG images | builder | P1-22 |
-| P1-24 | Legal pages: Impressum and Datenschutz (owner placeholders) | builder | P1-13 |
+| P1-24 | Legal pages: Impressum and Datenschutz (owner placeholders) | builder | P1-30 |
 | P1-25 | Contact form: Server Action, validation, spam protection, mail transport | builder | P1-24 |
 | P1-26 | Cookieless analytics for three funnel events | builder | P1-25 |
 | P1-27 | Hardening: security headers/CSP, Lighthouse CI, a11y on all pages, bundle budget | devops | P1-26 |
@@ -59,14 +66,24 @@ flowchart LR
   S11 --> W15[P1-15]
   W13 --> W15 --> W16[P1-16] --> W17[P1-17] --> W18[P1-18] --> W20[P1-20]
   W17 --> W19[P1-19] --> W20
-  W13 --> L21[P1-21] --> L22[P1-22] --> SEO23[P1-23]
+  W13 --> L21[P1-21] --> G29[P1-29] --> G30[P1-30] --> G31[P1-31] --> L22[P1-22] --> SEO23[P1-23]
   S11 --> L22
-  W13 --> LG24[P1-24] --> C25[P1-25] --> A26[P1-26] --> H27[P1-27] --> P28[P1-28]
+  G30 --> G32[P1-32]
+  W20 --> G32
+  G30 --> LG24[P1-24] --> C25[P1-25] --> A26[P1-26] --> H27[P1-27] --> P28[P1-28]
 ```
 
 The engine track (P1-01..06) and the parser track (P1-07..08) can run in parallel after Task 0,
 and P1-12/13 can run in parallel with both. The linear order below is the recommended single-agent
 order.
+
+**Design track (added 2026-10-01).** The original plan had no visual design task: P1-13 built
+the tokens and shell, P1-21 the content, but nothing made the pages look finished. P1-29..32 close
+that gap and run **before P1-22**: the design system (P1-29, ADR-0013: a shared `@vorchain/ui`
+package, no micro-frontends) and the shell (P1-30) come first because every page uses them, the
+landing design (P1-31) gives the chart (P1-22) a finished frame, and the demo pass (P1-32) restyles
+pages that already work. Legal (P1-24) and contact (P1-25) pages are designed inside their own
+tasks, following the guide. Document order below is the work order.
 
 ---
 
@@ -766,6 +783,105 @@ order.
 
 ---
 
+## P1-29: Design: `@vorchain/ui` design-system package and design guide (ADR-0013)
+- [ ] Done
+- **Owner:** builder
+- **Why:** one modular, modern design system (Tailwind 4) that every page uses, instead of styles
+  spread over the app. ADR-0013: shared package, no micro-frontends.
+- **Acceptance criteria:**
+  1. `packages/ui` (`@vorchain/ui`, TS source per ADR-0002) holds the Tailwind 4 theme
+     (`theme.css`: `@theme` tokens, light/dark variables, `@custom-variant dark`, fluid type scale
+     with `clamp()`), `cn()` (clsx + tailwind-merge) and the shadcn primitives moved from
+     `apps/web/src/components/ui` (button, sheet, ...) plus card, badge, table as needed.
+  2. New presentational primitives with `cva` variants: `Container`, `Section`, `SectionHeader`,
+     `FeatureCard`, `Stat`, `Callout`, `CtaBand`, `Logo` (SVG wordmark + mark, replaceable, Q7).
+     No `next-intl`, routing, data or worker code in the package; text via props.
+  3. `apps/web` imports `@vorchain/ui`; `globals.css` imports the theme and uses `@source` for the
+     package. Existing pages look the same or better; all existing tests stay green.
+  4. Boundaries: `ui` element added to `packages/config/eslint.config.js`; `ui` imports nothing
+     internal; only `apps/web` may import it. AGENTS.md §4 layout + dependency rule updated.
+  5. `docs/design/README.md` (max ~2 pages): type scale, spacing and section rhythm, colour usage
+     (neutral surfaces, amber only for hidden risk, severity colours only for severity), radius
+     and elevation, icons, the primitives above with when-to-use, imagery rules (inline SVG/HTML
+     mock-ups, no stock photos), Tailwind rules from ADR-0013.
+  6. Token contrast test (WCAG) moves with the theme and still passes in both themes.
+- **Test plan:** Vitest in `packages/ui` for variants and roles of each primitive (coverage
+  >= 90%); lint proves the boundary rule; web e2e + axe unchanged and green; screenshots in PR.
+- **Packages:** `packages/ui`, `apps/web`, `packages/config`, `docs/design`
+- **Branch:** `feat/ui-design-system`
+- **Commits:** `refactor(ui): move theme and primitives into @vorchain/ui`,
+  `feat(ui): add section primitives and logo`, `docs(ui): add design guide`
+- **Size note:** the move commit is mechanical; if the PR grows past ~400 lines without it, split
+  the primitives into the next PR.
+
+---
+
+## P1-30: Design: site shell (logo, header, mobile menu, footer, 404/error)
+- [ ] Done
+- **Owner:** builder
+- **Why:** the shell is on every page; it sets the first visual impression (spec §6: industrial,
+  calm neutrals, amber signal accent, not playful).
+- **Acceptance criteria:**
+  1. Header: `Logo`, sticky with subtle blur/border, clear active nav state, primary
+     "Demo starten" button; mobile menu at 360 px with keyboard, Escape and focus return.
+  2. Footer: multi-column (product, legal, GitHub), short privacy line; locale and theme kept.
+  3. 404 and error pages restyled to the guide (illustrative inline SVG, clear way back).
+  4. Built only from `@vorchain/ui` primitives and tokens; no raw colours.
+- **Test plan:** component tests for the mobile menu (roles, Escape, focus return); Playwright:
+  no horizontal scroll at 360 px, active nav state; axe clean in both themes; screenshots in PR.
+- **Packages:** `apps/web`
+- **Branch:** `feat/ui-site-shell`
+- **Commits:** `feat(ui): restyle header, footer and error pages`
+
+---
+
+## P1-31: Design: landing page visual design
+- [ ] Done
+- **Owner:** builder
+- **Why:** the landing page is the first impression for customers and portfolio reviewers; P1-21
+  delivered correct content but a plain text page.
+- **Acceptance criteria:**
+  1. Hero: strong headline layout, accent background shape or grid pattern (CSS/SVG), and a
+     product visual next to the text: a static, accessible HTML/SVG mock-up of the demo result
+     (summary tiles + ranked table with a "hidden risk" badge), built from the real UI components,
+     not a screenshot file.
+  2. "Das Problem": a visual ERP-vs-reality comparison (two cards: "ERP: ok" vs "real: shortage
+     on day X") next to the reserved chart slot (slot dimensions unchanged for P1-22).
+  3. "So funktioniert's": icon per step, connector line between steps on desktop.
+  4. Privacy section as a highlighted callout; FAQ in a two-column layout on desktop; final CTA as
+     a full-width `CtaBand`.
+  5. Subtle entrance/hover motion only via CSS, disabled under `prefers-reduced-motion`.
+  6. Budgets hold: no new client JS, no raster images above the fold, CLS < 0.05; Lighthouse
+     local run (mobile) noted in the PR.
+- **Test plan:** existing landing tests stay green; Playwright: mock-up is `aria-hidden` or has a
+  text alternative, no horizontal scroll at 360 px; axe clean in both themes; screenshots in PR.
+- **Packages:** `apps/web`
+- **Branch:** `feat/ui-landing-design`
+- **Commits:** `feat(ui): add landing page visual design`
+
+---
+
+## P1-32: Design: demo visual design pass
+- [ ] Done
+- **Owner:** builder
+- **Why:** the demo is the product; it works and is tested, but should look like a finished tool.
+- **Acceptance criteria:**
+  1. Data-source step: clear two-choice layout (sample data vs upload) with a styled drop zone,
+     file-type hints and the privacy promise visible next to the upload.
+  2. Summary tiles, exception table, severity and hidden-risk badges, projection drawer and
+     supplier table restyled to the guide (spacing, hierarchy, tabular numbers, sticky table
+     header, zebra or hover rows); empty, loading and error states designed, not plain text.
+  3. Mobile (360 px): table becomes readable (card rows or horizontal scroll inside its own
+     region, never page-level scroll).
+  4. Styling only: no change to worker, parsing, engine or network code; print report still works.
+- **Test plan:** the P1-20 e2e suite (incl. privacy network assertion) stays green unchanged;
+  axe clean in both themes; print screenshot check; screenshots in PR.
+- **Packages:** `apps/web`
+- **Branch:** `feat/ui-demo-design`
+- **Commits:** `feat(ui): restyle demo to the design guide`
+
+---
+
 ## P1-22: Landing page: hidden-risk chart (build-time engine data, SVG)
 - [ ] Done
 - **Owner:** builder
@@ -778,6 +894,7 @@ order.
      CSS draw-in animation disabled under `prefers-reduced-motion`; dark mode via tokens.
   3. Text alternative (`<figcaption>` + visually hidden table or description) in both locales.
   4. No layout shift (explicit `viewBox`, aspect-ratio box).
+  5. Styled per `docs/design/README.md` and fills the slot kept by P1-21/P1-31.
 - **Test plan:** unit test of the pure `seriesToPath()` geometry helper; Playwright visual
   snapshot in both themes (threshold tolerant); axe clean.
 - **Packages:** `apps/web` (reads `engine`, `parsers`, `sample-data` at build time)
@@ -823,7 +940,9 @@ order.
      in-browser demo (no transmission of files), rights of data subjects, supervisory authority.
      Text marked as draft, to be checked by the owner/lawyer.
   3. Both linked in the footer and from the contact form consent label; `noindex` is **not** set.
-  4. A CI check (`pnpm check:todo-owner`) lists remaining `TODO(owner)` markers; it is a warning
+  4. Long-form legal layout styled per `docs/design/README.md` (readable measure, table of
+     contents, section anchors).
+  5. A CI check (`pnpm check:todo-owner`) lists remaining `TODO(owner)` markers; it is a warning
      now and becomes blocking in P1-28.
 - **Test plan:** Playwright: pages render in both locales with one `h1`; axe clean; unit test for
   the TODO checker script.
@@ -848,6 +967,7 @@ order.
   4. No personal data logged; server logs only `contact_submit_ok` / `contact_submit_failed` with
      an error code.
   5. `.env.example` documents `MAIL_TRANSPORT`, `BREVO_API_KEY`, `CONTACT_TO`, `CONTACT_FROM`.
+  6. Page and form styled per `docs/design/README.md` (form layout, states, success screen).
 - **Test plan:** unit tests for schema, honeypot, timing, rate limiter, Brevo request shape
   (mocked `fetch`); Playwright with `MAIL_TRANSPORT=memory`: happy path shows success, invalid
   email shows localized error, JS-disabled submission works; axe clean.

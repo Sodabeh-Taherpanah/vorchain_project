@@ -17,3 +17,4 @@ Status `proposed` means the owner still has to confirm (usually cost or an exter
 | [0010](0010-typescript-and-lint-toolchain-versions.md) | TypeScript 6.0 and ESLint 9 (not TS 7 / ESLint 10 yet) | accepted |
 | [0011](0011-charts-recharts-on-demo-svg-on-landing.md) | Charts: Recharts on /demo, server-rendered SVG on / | accepted |
 | [0012](0012-cookieless-analytics.md) | Cookieless EU analytics (Plausible) for three funnel events | proposed |
+| [0013](0013-modular-ui-package-no-micro-frontends.md) | Modular UI: shared `@vorchain/ui` package, no micro-frontends | accepted |
