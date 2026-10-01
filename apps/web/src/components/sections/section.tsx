@@ -1,8 +1,6 @@
+import { Section as SectionBand } from '@vorchain/ui/components/section';
+import { SectionHeader } from '@vorchain/ui/components/section-header';
 import type { ReactNode } from 'react';
-
-import { cn } from '@/lib/utils.ts';
-
-import { Container } from '../layout/container.tsx';
 
 interface SectionProps {
   /** Anchor target and the base of the heading id that labels the region landmark. */
@@ -10,7 +8,7 @@ interface SectionProps {
   /** Already translated section heading, rendered as an `h2`. */
   readonly title: string;
   readonly children: ReactNode;
-  /** Extra classes for the full-width band, e.g. a muted background. */
+  /** Extra classes for the full-width band. */
   readonly className?: string;
 }
 
@@ -18,20 +16,9 @@ interface SectionProps {
 export function Section({ id, title, children, className }: SectionProps) {
   const headingId = `${id}-heading`;
   return (
-    <section
-      id={id}
-      aria-labelledby={headingId}
-      className={cn('scroll-mt-20 py-16 sm:py-20', className)}
-    >
-      <Container>
-        <h2
-          id={headingId}
-          className="text-2xl font-semibold tracking-tight text-balance sm:text-3xl"
-        >
-          {title}
-        </h2>
-        {children}
-      </Container>
-    </section>
+    <SectionBand id={id} aria-labelledby={headingId} className={className}>
+      <SectionHeader titleId={headingId} title={title} />
+      {children}
+    </SectionBand>
   );
 }

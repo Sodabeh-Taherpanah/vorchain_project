@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl';
 
 import { StatusPage } from '@/components/layout/status-page.tsx';
-import { Button, buttonVariants } from '@/components/ui/button.tsx';
+import { Button, buttonVariants } from '@vorchain/ui/components/button';
 import { Link } from '@/i18n/navigation.ts';
 
 interface ErrorPageProps {

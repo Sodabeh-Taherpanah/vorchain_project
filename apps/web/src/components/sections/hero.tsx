@@ -1,10 +1,10 @@
 import { ArrowRight } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-import { buttonVariants } from '@/components/ui/button.tsx';
+import { buttonVariants } from '@vorchain/ui/components/button';
 import { Link } from '@/i18n/navigation.ts';
 
-import { Container } from '../layout/container.tsx';
+import { Container } from '@vorchain/ui/components/container';
 import { HOW_IT_WORKS_ID } from './how-it-works-section.tsx';
 
 const HEADING_ID = 'hero-heading';

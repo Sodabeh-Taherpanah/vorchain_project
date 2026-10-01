@@ -9,8 +9,16 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 const WEB_FILES = ['apps/web/**/*.{js,jsx,mjs,ts,tsx}'];
+const UI_FILES = ['packages/ui/**/*.{ts,tsx}'];
+/** React code: the web app and the design-system package (ADR-0013). */
+const REACT_FILES = [...WEB_FILES, ...UI_FILES];
 const TEST_FILES = ['**/*.test.{ts,tsx}', '**/e2e/**'];
-const WEB_UI_FILES = ['apps/web/src/app/**/*.tsx', 'apps/web/src/components/**/*.tsx'];
+const WEB_UI_FILES = [
+  'apps/web/src/app/**/*.tsx',
+  'apps/web/src/components/**/*.tsx',
+  // `@vorchain/ui` takes all text through props, so it may not contain literals either.
+  'packages/ui/src/**/*.tsx',
+];
 /** Separators that carry no language and may appear as JSX text without a message key. */
 const JSX_ALLOWED_PUNCTUATION = ['·', '–', '—', '/', '|', ':', ',', '.', '(', ')', '*', '&nbsp;'];
 /**
@@ -32,6 +40,7 @@ const ELEMENTS = [
   { type: 'parsers', pattern: 'packages/parsers/src' },
   { type: 'sample-data', pattern: 'packages/sample-data/src' },
   { type: 'config', pattern: 'packages/config/src' },
+  { type: 'ui', pattern: 'packages/ui/src' },
   { type: 'web', pattern: 'apps/web/src' },
 ];
 
@@ -40,7 +49,7 @@ const toElements = (/** @type {string[]} */ types) => ({
 });
 
 /**
- * Dependency rule `web -> parsers -> engine` (ADR-0002, ADR-0010).
+ * Dependency rule `web -> ui` and `web -> parsers -> engine` (ADR-0002, ADR-0010, ADR-0013).
  * Default is "allow" so imports inside one element and of declared npm packages keep working;
  * the policies forbid every edge the architecture does not allow. Module selectors take plain
  * micromatch strings or arrays (`{ anyOf }` is only valid for element types and file categories).
@@ -65,6 +74,26 @@ const BOUNDARY_POLICIES = [
     from: { element: { types: { anyOf: ['parsers', 'sample-data'] } } },
     disallow: { to: { module: { source: ['react', 'react-dom', 'next', 'next/**'] } } },
   },
+  // Only the web app may use the design system; `ui` depends on no workspace package.
+  {
+    from: { element: { types: { anyOf: ['engine', 'parsers', 'sample-data', 'config'] } } },
+    disallow: toElements(['ui']),
+  },
+  {
+    from: { element: { type: 'ui' } },
+    disallow: toElements(['engine', 'parsers', 'sample-data', 'config']),
+  },
+  // `ui` is presentational only (ADR-0013): no workspace packages, Next.js, i18n or worker bridge.
+  {
+    from: { element: { type: 'ui' } },
+    disallow: {
+      to: {
+        module: {
+          source: ['@vorchain/*', 'next', 'next/**', 'next-intl', 'next-intl/**', 'comlink'],
+        },
+      },
+    },
+  },
 ];
 
 /**
@@ -80,6 +109,11 @@ const ENGINE_PURITY_POLICY = {
  * Parsers production code runs in the Web Worker next to customer files (AGENTS.md §2, ADR-0003):
  * no Node core modules (it must stay browser-safe; tests may read fixtures with `node:fs`).
  */
+const UI_PURITY_POLICY = {
+  from: { element: { type: 'ui' } },
+  disallow: { to: { module: { origin: 'core' } } },
+};
+
 const PARSERS_PURITY_POLICY = {
   from: { element: { type: 'parsers' } },
   disallow: { to: { module: { origin: 'core' } } },
@@ -195,14 +229,25 @@ export function createEslintConfig({ rootDir }) {
       files: ['**/*.{js,mjs,cjs}'],
       extends: [tseslint.configs.disableTypeChecked],
     },
-    // Next.js (React, hooks, import, Core Web Vitals) and full jsx-a11y, only for the web app.
-    ...nextVitals.map((config) => ({ ...config, files: WEB_FILES })),
+    // Next.js (React, hooks, import, Core Web Vitals) and full jsx-a11y, for the React code.
+    ...nextVitals.map((config) => ({ ...config, files: REACT_FILES })),
     {
       name: 'vorchain/web',
-      files: WEB_FILES,
+      files: REACT_FILES,
       settings: { next: { rootDir: `${rootDir}/apps/web` } },
       languageOptions: { globals: { ...globals.browser } },
       rules: { ...jsxA11y.flatConfigs.recommended.rules },
+    },
+    {
+      // `@vorchain/ui` is framework-neutral React (ADR-0013): Next.js-specific rules do not apply.
+      name: 'vorchain/ui/no-next-rules',
+      files: UI_FILES,
+      rules: Object.fromEntries(
+        nextVitals
+          .flatMap((config) => Object.keys(config.rules ?? {}))
+          .filter((rule) => rule.startsWith('@next/next/'))
+          .map((rule) => [rule, 'off']),
+      ),
     },
     {
       // Every user-facing string goes through next-intl (AGENTS.md §2.4, P1-12). Props such as
@@ -284,6 +329,22 @@ export function createEslintConfig({ rootDir }) {
           },
         ],
         ...PARSERS_PRIVACY_RULES,
+      },
+    },
+    {
+      // Design-system components run in the browser and on the server: no Node core modules.
+      name: 'vorchain/boundaries/ui-purity',
+      files: ['packages/ui/src/**/*.{ts,tsx}'],
+      ignores: TEST_FILES,
+      rules: {
+        'boundaries/dependencies': [
+          'error',
+          {
+            default: 'allow',
+            checkAllOrigins: true,
+            policies: [...BOUNDARY_POLICIES, UI_PURITY_POLICY],
+          },
+        ],
       },
     },
     {

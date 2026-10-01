@@ -3,7 +3,7 @@
 import type { ProjectionSeries } from '@vorchain/engine';
 import { useFormatter, useLocale, useTranslations } from 'next-intl';
 
-import { cn } from '@/lib/utils.ts';
+import { cn } from '@vorchain/ui/lib/utils';
 
 import { formatIsoDate } from './analysis-settings-model.ts';
 

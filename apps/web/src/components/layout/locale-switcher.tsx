@@ -4,7 +4,7 @@ import { useLocale, useTranslations } from 'next-intl';
 
 import { Link, usePathname } from '@/i18n/navigation.ts';
 import { routing } from '@/i18n/routing.ts';
-import { cn } from '@/lib/utils.ts';
+import { cn } from '@vorchain/ui/lib/utils';
 
 /**
  * Links to the current page in every locale (`/de/kontakt` <-> `/en/contact`). Plain links rather

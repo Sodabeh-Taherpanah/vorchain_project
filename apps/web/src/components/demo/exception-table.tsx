@@ -4,8 +4,8 @@ import type { MaterialId, Reason, ShortageException } from '@vorchain/engine';
 import { useFormatter, useLocale, useTranslations } from 'next-intl';
 import { useId, useState } from 'react';
 
-import { Button } from '@/components/ui/button.tsx';
-import { cn } from '@/lib/utils.ts';
+import { Button } from '@vorchain/ui/components/button';
+import { cn } from '@vorchain/ui/lib/utils';
 
 import { formatIsoDate } from './analysis-settings-model.ts';
 import { ActionText, ReasonText, type SupplierName } from './explanation-text.tsx';

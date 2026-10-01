@@ -45,7 +45,8 @@ ADRs 0001 to 0012, `docs/architecture/README.md`.
 | P1-20 | Demo: e2e suite (privacy network assertion, XLSX, errors, cross-browser, axe) | builder | P1-18, P1-19 |
 | P1-21 | Landing page: sections and content | builder | P1-13 |
 | P1-29 | Design: `@vorchain/ui` design-system package and design guide (ADR-0013) | builder | P1-21 |
-| P1-30 | Design: site shell (logo, header, mobile menu, footer, 404/error) | builder | P1-29 |
+| P1-29b | Design: `@vorchain/ui` content primitives (card, badge, feature card, stat, callout, CTA band, logo) | builder | P1-29 |
+| P1-30 | Design: site shell (logo, header, mobile menu, footer, 404/error) | builder | P1-29b |
 | P1-31 | Design: landing page visual design | builder | P1-30 |
 | P1-32 | Design: demo visual design pass | builder | P1-30, P1-20 |
 | P1-22 | Landing page: hidden-risk chart (build-time engine data, SVG) | builder | P1-31, P1-11 |
@@ -66,7 +67,7 @@ flowchart LR
   S11 --> W15[P1-15]
   W13 --> W15 --> W16[P1-16] --> W17[P1-17] --> W18[P1-18] --> W20[P1-20]
   W17 --> W19[P1-19] --> W20
-  W13 --> L21[P1-21] --> G29[P1-29] --> G30[P1-30] --> G31[P1-31] --> L22[P1-22] --> SEO23[P1-23]
+  W13 --> L21[P1-21] --> G29[P1-29] --> G29b[P1-29b] --> G30[P1-30] --> G31[P1-31] --> L22[P1-22] --> SEO23[P1-23]
   S11 --> L22
   G30 --> G32[P1-32]
   W20 --> G32
@@ -784,7 +785,7 @@ tasks, following the guide. Document order below is the work order.
 ---
 
 ## P1-29: Design: `@vorchain/ui` design-system package and design guide (ADR-0013)
-- [ ] Done
+- [x] Done
 - **Owner:** builder
 - **Why:** one modular, modern design system (Tailwind 4) that every page uses, instead of styles
   spread over the app. ADR-0013: shared package, no micro-frontends.
@@ -813,6 +814,27 @@ tasks, following the guide. Document order below is the work order.
   `feat(ui): add section primitives and logo`, `docs(ui): add design guide`
 - **Size note:** the move commit is mechanical; if the PR grows past ~400 lines without it, split
   the primitives into the next PR.
+
+---
+
+## P1-29b: Design: `@vorchain/ui` content primitives (card, badge, feature card, stat, callout, CTA band, logo)
+- [ ] Done
+- **Owner:** builder
+- **Why:** split from P1-29 by its size note (P1-29 alone was ~600 changed lines without the move
+  commit). P1-29 delivered the package, theme, fluid type, `cn()`, the moved primitives,
+  `Container`, `Section`, `SectionHeader`, boundaries and the design guide.
+- **Acceptance criteria:**
+  1. `Card` (+ header, title, description, content), `Badge` (default, signal, critical, warning,
+     ok, outline), `FeatureCard` (icon, title, text; container query), `Stat`/`StatGroup`
+     (`dl`/`dt`/`dd`, tabular value, tone), `Callout` (`role="note"`, tone), `CtaBand` (labelled
+     region, tone), `Logo` (SVG mark + wordmark, `variant="mark"` is a named image; Q7) in
+     `packages/ui`, with `cva` variants, tokens only, Server Components, text via props.
+  2. Match the table in `docs/design/README.md` and drop its "P1-29b" markers.
+- **Test plan:** Vitest roles and variants per primitive; `@vorchain/ui` coverage >= 90 %;
+  screenshots of a preview at 1280/360 px, light and dark, in the PR.
+- **Packages:** `packages/ui`, `docs/design`
+- **Branch:** `feat/ui-primitives` (a local branch with a first draft exists from P1-29)
+- **Commits:** `feat(ui): add content primitives and logo`
 
 ---
 

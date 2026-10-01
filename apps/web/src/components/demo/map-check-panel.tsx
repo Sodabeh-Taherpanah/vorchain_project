@@ -4,7 +4,7 @@ import { CircleCheck, CircleMinus, CircleX, TriangleAlert } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useId } from 'react';
 
-import { cn } from '@/lib/utils.ts';
+import { cn } from '@vorchain/ui/lib/utils';
 
 import type { LoadSummary } from '../../workers/analysis-service.ts';
 import { DataIssueText, type DataIssue } from './data-issue-text.tsx';

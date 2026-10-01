@@ -99,6 +99,7 @@ flowchart LR
   web["apps/web<br/>(Next.js)"] --> parsers["@vorchain/parsers"]
   web --> engine["@vorchain/engine"]
   web --> sample["@vorchain/sample-data"]
+  web --> ui["@vorchain/ui<br/>theme + React primitives"]
   parsers --> engine
   sample -. "devDependency only<br/>(scale generator uses types)" .-> engine
   config["@vorchain/config<br/>tsconfig, eslint, prettier, vitest presets"]
@@ -106,13 +107,16 @@ flowchart LR
   parsers -.-> config
   engine -.-> config
   sample -.-> config
+  ui -.-> config
 ```
 
 Rules (enforced by `eslint-plugin-boundaries` from Task 0 on):
 - `engine` imports nothing internal and no platform APIs (no DOM, no Node built-ins, no `Date.now()`).
 - `parsers` imports only `engine` (for domain types) plus `papaparse`, `xlsx`, `zod`. It takes
   `{ name, bytes }`, never a DOM `File`, so it also runs in Node (tests, Phase 2 backend).
-- `apps/web` is the only package that knows about React, Next.js, i18n and the Worker.
+- `ui` (ADR-0013) holds the Tailwind theme and presentational React primitives. It imports nothing
+  internal and no Next.js, `next-intl`, worker or Node APIs; only `apps/web` imports it.
+- `apps/web` is the only package that knows about Next.js, i18n and the Worker.
 
 ### 4.2 Engine components (`packages/engine`)
 

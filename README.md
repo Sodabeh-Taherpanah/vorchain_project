@@ -29,7 +29,7 @@ pnpm dev           # http://localhost:3000
 | `pnpm lint` | ESLint, including the package boundary rules (`web -> parsers -> engine`) |
 | `pnpm typecheck` | `tsc --noEmit` in every package (strict TypeScript) |
 | `pnpm test` | Vitest unit tests in every package |
-| `pnpm coverage` | Unit tests with coverage gates (engine 95 %, parsers 90 %, web 80 %) |
+| `pnpm coverage` | Unit tests with coverage gates (engine 95 %, parsers 90 %, ui 90 %, web 80 %) |
 | `pnpm test:e2e` | Playwright against the production build (run `pnpm --filter @vorchain/web exec playwright install chromium` once) |
 | `pnpm format` / `pnpm format:check` | Prettier write / check |
 | `pnpm lhci` | Lighthouse CI (placeholder until P1-27) |
@@ -41,6 +41,7 @@ apps/web              Next.js 16 App Router site and demo
 packages/engine       pure domain logic (no I/O, DOM or Node APIs)
 packages/parsers      CSV/XLSX -> validated engine input
 packages/sample-data  demo datasets and generator
+packages/ui           design system: Tailwind theme and React primitives
 packages/config       shared tsconfig, ESLint, Prettier and Vitest presets
 ```
 
@@ -55,6 +56,7 @@ packages/config       shared tsconfig, ESLint, Prettier and Vitest presets
 | CI and runbooks | [`docs/runbooks/`](docs/runbooks/ci.md) |
 | Conventions for humans and AI agents | [`AGENTS.md`](AGENTS.md) |
 | Reference algorithm (Python) | [`reference/python-prototype/`](reference/python-prototype/) |
+| Design guide (type, colour, primitives) | [`docs/design/README.md`](docs/design/README.md) |
 | Engine API and parity process | [`packages/engine/README.md`](packages/engine/README.md) |
 
 ## Working with AI agents

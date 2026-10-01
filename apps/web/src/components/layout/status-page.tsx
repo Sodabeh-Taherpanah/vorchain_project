@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import { Container } from './container.tsx';
+import { Container } from '@vorchain/ui/components/container';
 
 interface StatusPageProps {
   /** Short, already translated label above the heading, e.g. "Fehler 404". */

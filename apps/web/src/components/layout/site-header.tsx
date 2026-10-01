@@ -2,7 +2,7 @@ import { useTranslations } from 'next-intl';
 
 import { Link } from '@/i18n/navigation.ts';
 
-import { Container } from './container.tsx';
+import { Container } from '@vorchain/ui/components/container';
 import { LocaleSwitcher } from './locale-switcher.tsx';
 import { ThemeToggle } from './theme-toggle.tsx';
 

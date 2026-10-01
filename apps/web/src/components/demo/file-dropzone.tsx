@@ -4,7 +4,7 @@ import { Upload } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useId, useRef, useState, type ChangeEvent, type DragEvent } from 'react';
 
-import { Button } from '@/components/ui/button.tsx';
+import { Button } from '@vorchain/ui/components/button';
 
 /** File types the parsers read (P1-10); others are rejected there with a specific message. */
 export const ACCEPTED_FILE_TYPES = '.csv,.xlsx';

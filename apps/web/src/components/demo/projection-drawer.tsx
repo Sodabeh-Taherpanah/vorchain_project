@@ -6,14 +6,14 @@ import { useLocale, useTranslations } from 'next-intl';
 import dynamic from 'next/dynamic';
 import { useEffect, useMemo, useState } from 'react';
 
-import { Button } from '@/components/ui/button.tsx';
+import { Button } from '@vorchain/ui/components/button';
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from '@/components/ui/sheet.tsx';
+} from '@vorchain/ui/components/sheet';
 
 import { formatIsoDate } from './analysis-settings-model.ts';
 import {
