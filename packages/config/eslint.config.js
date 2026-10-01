@@ -9,8 +9,9 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 const WEB_FILES = ['apps/web/**/*.{js,jsx,mjs,ts,tsx}'];
+const UI_FILES = ['packages/ui/**/*.{ts,tsx}'];
 /** React code: the web app and the design-system package (ADR-0013). */
-const REACT_FILES = [...WEB_FILES, 'packages/ui/**/*.{ts,tsx}'];
+const REACT_FILES = [...WEB_FILES, ...UI_FILES];
 const TEST_FILES = ['**/*.test.{ts,tsx}', '**/e2e/**'];
 const WEB_UI_FILES = [
   'apps/web/src/app/**/*.tsx',
@@ -236,6 +237,17 @@ export function createEslintConfig({ rootDir }) {
       settings: { next: { rootDir: `${rootDir}/apps/web` } },
       languageOptions: { globals: { ...globals.browser } },
       rules: { ...jsxA11y.flatConfigs.recommended.rules },
+    },
+    {
+      // `@vorchain/ui` is framework-neutral React (ADR-0013): Next.js-specific rules do not apply.
+      name: 'vorchain/ui/no-next-rules',
+      files: UI_FILES,
+      rules: Object.fromEntries(
+        nextVitals
+          .flatMap((config) => Object.keys(config.rules ?? {}))
+          .filter((rule) => rule.startsWith('@next/next/'))
+          .map((rule) => [rule, 'off']),
+      ),
     },
     {
       // Every user-facing string goes through next-intl (AGENTS.md §2.4, P1-12). Props such as
