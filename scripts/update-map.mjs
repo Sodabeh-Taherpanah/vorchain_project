@@ -8,9 +8,9 @@ const backlog = readFileSync(new URL('docs/backlog.md', root), 'utf8');
 const mapUrl = new URL('PROJECT_MAP.html', root);
 const map = readFileSync(mapUrl, 'utf8');
 
-// Each task section starts with "## <ID>: <title>" followed by a "- [ ] Done" / "- [x] Done" line.
+// Each task section starts with "## <ID>: <title>" (split tasks add a letter, e.g. P1-29b) followed by a "- [ ] Done" / "- [x] Done" line.
 const tasks = [];
-const re = /^## (Task 0|P1-\d{2}):[^\n]*\n+- \[( |x|X)\] Done/gm;
+const re = /^## (Task 0|P1-\d{2}[a-z]?):[^\n]*\n+- \[( |x|X)\] Done/gm;
 for (const m of backlog.matchAll(re)) tasks.push({ id: m[1], done: m[2] !== ' ' });
 
 const TRACKS = [
@@ -20,7 +20,7 @@ const TRACKS = [
   ['اسکلت سایت', 'Web shell', 'زبان، طراحی، انتشار', 'i18n, design, deploy', [12, 13, 14]],
   ['دمو', 'Demo', 'صفحه اصلی محصول', 'Interactive demo', [15, 16, 17, 18, 19, 20]],
   ['صفحه معرفی', 'Landing page', 'landing و SEO', 'Marketing &amp; SEO', [21, 22, 23]],
-  ['طراحی', 'Design', 'ظاهر همه صفحه‌ها', 'Visual design, all pages', [29, 30, 31, 32]],
+  ['طراحی', 'Design', 'ظاهر همه صفحه‌ها', 'Visual design, all pages', [29, 'P1-29b', 30, 31, 32]],
   [
     'قانونی و انتشار',
     'Legal &amp; launch',
