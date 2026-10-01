@@ -110,6 +110,7 @@ Overall coverage gate: 80% (web), 95% (engine). Tests must be deterministic: fix
 - [ ] Tests added/updated and passing; coverage gates hold
 - [ ] `pnpm lint && pnpm typecheck && pnpm test && pnpm build` green; e2e green if UI changed
 - [ ] i18n keys in both `de` and `en`
+- [ ] UI changes: screenshots (1280 px and 360 px, light and dark) in the PR, and the page follows `docs/design/README.md`
 - [ ] Docs updated (README, ADR if a decision was made, architecture diagram if structure changed)
 - [ ] Conventional commit(s), PR description complete
 - [ ] Task ticked "Done" in `docs/backlog.md` in the same PR (updates `PROJECT_MAP.html`)

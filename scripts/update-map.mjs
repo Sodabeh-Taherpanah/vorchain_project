@@ -20,6 +20,7 @@ const TRACKS = [
   ['اسکلت سایت', 'Web shell', 'زبان، طراحی، انتشار', 'i18n, design, deploy', [12, 13, 14]],
   ['دمو', 'Demo', 'صفحه اصلی محصول', 'Interactive demo', [15, 16, 17, 18, 19, 20]],
   ['صفحه معرفی', 'Landing page', 'landing و SEO', 'Marketing &amp; SEO', [21, 22, 23]],
+  ['طراحی', 'Design', 'ظاهر همه صفحه‌ها', 'Visual design, all pages', [29, 30, 31]],
   [
     'قانونی و انتشار',
     'Legal &amp; launch',
