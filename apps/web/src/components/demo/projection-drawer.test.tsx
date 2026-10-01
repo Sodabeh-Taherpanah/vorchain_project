@@ -198,6 +198,30 @@ describe('ProjectionDrawer', () => {
     expect(await screen.findByTestId('chart-stub')).toHaveProperty('textContent', 'M0030');
   });
 
+  it('drops an answer that arrives after closing and asks again on reopen', async () => {
+    const answers = [deferred<ProjectionSeries | null>(), deferred<ProjectionSeries | null>()];
+    let call = 0;
+    const getProjection = vi.fn(() => answers[call++]?.promise ?? Promise.resolve(null));
+    const { rerender } = renderDrawer({ getProjection });
+
+    rerender({ open: false, getProjection });
+    await act(async () => {
+      // The first request's answer says "unavailable"; it must not stick to the next opening.
+      answers[0]?.resolve(null);
+      await Promise.resolve();
+    });
+    rerender({ open: true, getProjection });
+
+    expect(getProjection).toHaveBeenCalledTimes(2);
+    expect(screen.getByRole('status').textContent).toBe(de.demo.report.drawer.loading);
+    expect(screen.queryByRole('alert')).toBeNull();
+    await act(async () => {
+      answers[1]?.resolve(sampleSeries);
+      await Promise.resolve();
+    });
+    expect(await screen.findByTestId('projection-summary')).toBeDefined();
+  });
+
   it('closes on Escape and returns focus to the button that opened it', async () => {
     const trigger = document.createElement('button');
     document.body.append(trigger);
