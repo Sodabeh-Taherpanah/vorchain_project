@@ -1,16 +1,20 @@
-import { useTranslations } from 'next-intl';
+import { ContactCtaSection } from '@/components/sections/contact-cta-section.tsx';
+import { FaqSection } from '@/components/sections/faq-section.tsx';
+import { Hero } from '@/components/sections/hero.tsx';
+import { HowItWorksSection } from '@/components/sections/how-it-works-section.tsx';
+import { PrivacySection } from '@/components/sections/privacy-section.tsx';
+import { ProblemSection } from '@/components/sections/problem-section.tsx';
 
-import { Container } from '@/components/layout/container.tsx';
-
-// Placeholder landing page; the content sections follow in P1-21.
+/** Landing page (spec §3): static Server Components only, so `/` ships no page-specific JS. */
 export default function HomePage() {
-  const t = useTranslations('home');
   return (
-    <Container className="py-12 sm:py-20">
-      <h1 className="max-w-3xl text-3xl font-semibold tracking-tight text-balance sm:text-5xl">
-        {t('title')}
-      </h1>
-      <p className="mt-4 max-w-prose text-lg text-muted-foreground">{t('tagline')}</p>
-    </Container>
+    <>
+      <Hero />
+      <ProblemSection />
+      <HowItWorksSection />
+      <PrivacySection />
+      <FaqSection />
+      <ContactCtaSection />
+    </>
   );
 }
