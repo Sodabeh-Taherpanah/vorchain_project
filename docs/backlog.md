@@ -747,7 +747,7 @@ order.
 ---
 
 ## P1-21: Landing page: sections and content
-- [ ] Done
+- [x] Done
 - **Owner:** builder
 - **Why:** explains the problem in seconds and leads to the demo and contact (spec §3).
 - **Acceptance criteria:**
