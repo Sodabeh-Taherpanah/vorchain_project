@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/Sodabeh-Taherpanah/vorchain_project/compare/v0.4.1...v0.5.0) (2026-10-01)
+
+
+### Features
+
+* **demo:** add projection chart drawer with table alternative ([#37](https://github.com/Sodabeh-Taherpanah/vorchain_project/issues/37)) ([1fd16d3](https://github.com/Sodabeh-Taherpanah/vorchain_project/commit/1fd16d364762ea23f3d5ec96c48a328139725913))
+
 ## [0.4.1](https://github.com/Sodabeh-Taherpanah/vorchain_project/compare/v0.4.0...v0.4.1) (2026-09-30)
 
 
