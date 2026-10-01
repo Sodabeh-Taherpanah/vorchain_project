@@ -11,8 +11,9 @@ updates:
       timezone: Europe/Berlin
     open-pull-requests-limit: 10
     commit-message:
-      prefix: build
-      include: scope
+      # Fixed scope: `include: scope` would emit "deps-dev" for dev dependencies, which
+      # commitlint's scope-enum rejects. Dependabot adds the ": " after the prefix itself.
+      prefix: build(deps)
     groups:
       # One PR for all minor/patch updates per dependency type; majors come one by one.
       production:
