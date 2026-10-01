@@ -696,7 +696,7 @@ order.
 ---
 
 ## P1-19: Demo: supplier reliability table, CSV export, printable report
-- [ ] Done
+- [x] Done
 - **Owner:** builder
 - **Why:** planners need to take results into their daily meeting (spec §4.1 steps 4 and 5).
 - **Acceptance criteria:**
