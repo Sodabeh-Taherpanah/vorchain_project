@@ -55,7 +55,7 @@ export function ExceptionTable({ exceptions, supplierName, onSelect }: Exception
         tabIndex={0}
         className="overflow-x-auto rounded-lg border focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none print:overflow-visible"
       >
-        <table id={tableId} data-total={exceptions.length} className="w-full text-sm">
+        <table id={tableId} data-total={exceptions.length} className="w-full text-sm print:text-xs">
           <caption className="p-3 text-left font-medium">
             <span className="print:hidden">
               {t('caption', { shown, total: exceptions.length })}
@@ -190,7 +190,7 @@ function ExceptionRow({
           <span className="text-muted-foreground">{t('table.notHidden')}</span>
         )}
       </td>
-      <td className="min-w-64 p-3">
+      <td className="min-w-64 p-3 print:min-w-0">
         <ul className="space-y-1">
           {distinctReasons(exception.reasons).map(({ key, reason }) => (
             <li key={key}>
@@ -199,7 +199,7 @@ function ExceptionRow({
           ))}
         </ul>
       </td>
-      <td className="min-w-56 p-3">
+      <td className="min-w-56 p-3 print:min-w-0">
         <ul className="space-y-1">
           {exception.actions.map((action) => (
             <li key={JSON.stringify(action)}>

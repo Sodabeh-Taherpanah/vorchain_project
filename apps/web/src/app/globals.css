@@ -183,7 +183,7 @@
 
 /*
  * Printed report (backlog P1-19): black on white whatever the theme, so it reads in black and
- * white. Fills turn white and labels carry the meaning; badges get an outline in their components.
+ * white. Fills are dropped and labels carry the meaning; badges get an outline in their components.
  * Navigation, controls and the drawer are hidden with `print:hidden` or below.
  */
 @media print {
@@ -201,7 +201,7 @@
     --muted: oklch(1 0 0);
     --muted-foreground: oklch(0.3 0 0);
     --border: oklch(0.45 0 0);
-    --signal: oklch(1 0 0);
+    --signal: oklch(0.45 0 0);
     --signal-foreground: oklch(0 0 0);
     --critical: oklch(0 0 0);
     --critical-foreground: oklch(0 0 0);
@@ -211,7 +211,8 @@
 
   /* Severity badges use the fill colour as background; on paper they are outlined labels. */
   .bg-critical,
-  .bg-warning {
+  .bg-warning,
+  .bg-signal {
     background: none;
   }
 
