@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.1](https://github.com/Sodabeh-Taherpanah/vorchain_project/compare/v0.4.0...v0.4.1) (2026-09-30)
+
+
+### Bug Fixes
+
+* **demo:** resolve supplier names from own keys only ([#35](https://github.com/Sodabeh-Taherpanah/vorchain_project/issues/35)) ([422808d](https://github.com/Sodabeh-Taherpanah/vorchain_project/commit/422808dfdf973e1513f71fb0c993d15ef6aa1f3f))
+
 ## [0.4.0](https://github.com/Sodabeh-Taherpanah/vorchain_project/compare/v0.3.1...v0.4.0) (2026-09-30)
 
 
