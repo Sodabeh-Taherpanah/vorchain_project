@@ -122,7 +122,10 @@ async function openDemo(page: Page, locale: 'de' | 'en' = 'de') {
   await expect(page.getByTestId('file-input')).toBeAttached();
 }
 
-/** Uploads files and fixes the analysis date to the golden one (uploads default to today). */
+/**
+ * Uploads files and fixes the analysis date to the golden one (uploads default to today), then
+ * waits until the report for that date is shown.
+ */
 async function analyseUpload(
   page: Page,
   files: Parameters<Page['setInputFiles']>[1],
@@ -131,6 +134,12 @@ async function analyseUpload(
   const messages = locale === 'de' ? de : en;
   await page.getByTestId('file-input').setInputFiles(files);
   await page.getByLabel(messages.demo.settings.asOf).fill(golden.asOf);
+  // The upload is analysed first with today's date, and that report can have the same number of
+  // rows as the golden one. Wait for the report of the golden date before reading anything.
+  const [year, month, day] = golden.asOf.split('-');
+  const asOf = locale === 'de' ? `${day ?? ''}.${month ?? ''}.${year ?? ''}` : golden.asOf;
+  const scope = messages.demo.report.scope.replace('{asOf}', asOf).split('{days}')[0] ?? '';
+  await expect(page.getByText(scope)).toBeVisible();
   const table = page
     .getByRole('region', { name: messages.demo.report.table.region })
     .getByRole('table');
