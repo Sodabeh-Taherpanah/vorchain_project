@@ -31,7 +31,7 @@ export function LocaleSwitcher() {
                 'inline-flex h-9 min-w-9 items-center justify-center rounded-md px-2 font-medium',
                 'text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground',
                 'aria-[current=true]:text-foreground aria-[current=true]:underline',
-                'aria-[current=true]:decoration-signal aria-[current=true]:decoration-2',
+                'aria-[current=true]:decoration-foreground aria-[current=true]:decoration-2',
                 'aria-[current=true]:underline-offset-4',
               )}
             >

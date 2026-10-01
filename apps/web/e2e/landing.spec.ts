@@ -28,7 +28,8 @@ for (const { locale, messages, contact } of LOCALES) {
     test('the hero CTA opens the demo', async ({ page }) => {
       await page.goto(`/${locale}`);
 
-      await page.getByRole('link', { name: m.hero.cta }).click();
+      // Scoped to <main>: the header repeats the same call to action on every page.
+      await page.getByRole('main').getByRole('link', { name: m.hero.cta }).click();
 
       await expect(page).toHaveURL(new RegExp(`/${locale}/demo$`));
       await expect(page.getByRole('heading', { level: 1 })).toHaveText(messages.demo.title);
