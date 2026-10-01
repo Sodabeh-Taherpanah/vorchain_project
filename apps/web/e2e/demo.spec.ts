@@ -1,24 +1,45 @@
 /**
- * The demo's privacy promise (backlog P1-20, ADR-0003, ADR-0008): uploaded data never leaves the
- * browser.
+ * The demo's core promises on Chromium, Firefox and WebKit (backlog P1-20, ADR-0003, ADR-0008):
+ * uploaded data never leaves the browser, CSV and XLSX give the same result, wrong files get a
+ * specific message, and every state is free of serious accessibility violations.
  */
 import { readFileSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 
+import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page, type Request } from '@playwright/test';
 
 import golden from '../../../reference/python-prototype/golden/sample_data_de.json' with { type: 'json' };
 import de from '../messages/de.json' with { type: 'json' };
 import en from '../messages/en.json' with { type: 'json' };
-import { MARKED_DESCRIPTION, PRIVACY_MARKER } from './fixtures/generate.ts';
+import {
+  DATE_TYPO_LINE,
+  DATE_TYPO_VALUE,
+  MARKED_DESCRIPTION,
+  PRIVACY_MARKER,
+} from './fixtures/generate.ts';
 
 const SAMPLE_NAMES = ['artikel', 'bedarf', 'bestellungen', 'lieferanten', 'lieferhistorie'];
 const FIXTURES = new URL('./fixtures/', import.meta.url);
+const SAMPLE_CSV = new URL('../../../reference/python-prototype/sample_data_de/', import.meta.url);
+/** Golden-equivalent workbooks of the same sample (packages/parsers/scripts/generate-xlsx-fixtures.py). */
+const SAMPLE_XLSX = new URL(
+  '../../../packages/parsers/test/fixtures/xlsx/sample_data_de/',
+  import.meta.url,
+);
 
 const MIME = {
   csv: 'text/csv',
   xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
 } as const;
+
+function sampleFiles(dir: URL, extension: keyof typeof MIME) {
+  return SAMPLE_NAMES.map((name) => ({
+    name: `${name}.${extension}`,
+    mimeType: MIME[extension],
+    buffer: readFileSync(new URL(`${name}.${extension}`, dir)),
+  }));
+}
 
 function fixture(path: string, mimeType: string) {
   return {
@@ -115,6 +136,20 @@ async function analyseUpload(
   return table;
 }
 
+async function counts(page: Page) {
+  const tile = (key: string) => page.getByTestId(`tile-${key}`).locator('dd').first().textContent();
+  return {
+    critical: await tile('critical'),
+    warning: await tile('warning'),
+    hidden: await tile('hidden'),
+    total: await page.locator('table[data-total]').getAttribute('data-total'),
+    ranking: await page
+      .getByRole('region', { name: de.demo.report.table.region })
+      .getByRole('rowheader')
+      .allTextContents(),
+  };
+}
+
 test.describe('privacy', () => {
   test('no request carries the uploaded content: load, analyse, drawer and export', async ({
     page,
@@ -156,3 +191,108 @@ test.describe('privacy', () => {
     expect(sockets).toEqual([]);
   });
 });
+
+test.describe('file formats and errors', () => {
+  test('the sample as XLSX shows the same counts and ranking as the CSV', async ({ page }) => {
+    await openDemo(page);
+    await analyseUpload(page, sampleFiles(SAMPLE_CSV, 'csv'));
+    const csv = await counts(page);
+
+    await openDemo(page);
+    await analyseUpload(page, sampleFiles(SAMPLE_XLSX, 'xlsx'));
+    for (const table of ['materials', 'open_purchase_orders', 'demand', 'supplier_history']) {
+      await expect(page.getByTestId(`table-${table}`)).toContainText('.xlsx');
+    }
+    const xlsx = await counts(page);
+
+    expect(xlsx).toEqual(csv);
+    expect(xlsx.critical).toBe(
+      String(golden.exceptions.filter((e) => e.severity === 'CRITICAL').length),
+    );
+    expect(xlsx.hidden).toBe(
+      String(golden.exceptions.filter((e) => e.hidden_risk === 'yes').length),
+    );
+    expect(xlsx.ranking.slice(0, 3).map((id) => id.slice(0, 5))).toEqual(
+      golden.exceptions.slice(0, 3).map((e) => e.material_id),
+    );
+  });
+
+  for (const extension of ['pdf', 'xls'] as const) {
+    test(`a .${extension} file gets the unsupported-file-type message`, async ({ page }) => {
+      await openDemo(page);
+
+      await page
+        .getByTestId('file-input')
+        .setInputFiles(fixture(`wrong-type/bestellungen.${extension}`, 'application/octet-stream'));
+
+      await expect(page.getByRole('status')).toContainText(/Probleme? gefunden/);
+      await expect(page.getByRole('heading', { name: de.demo.mapCheck.fileErrors })).toBeVisible();
+      await expect(
+        page.getByText(
+          `bestellungen.${extension}: Dateien mit der Endung .${extension} werden nicht unterstützt.`,
+        ),
+      ).toBeVisible();
+    });
+  }
+
+  test('a German date typo in a CSV names the file, line and column', async ({ page }) => {
+    await openDemo(page);
+
+    await page
+      .getByTestId('file-input')
+      .setInputFiles(fixture('date-typo/bestellungen.csv', MIME.csv));
+
+    const orders = page.getByTestId('table-open_purchase_orders');
+    await expect(orders).toHaveAttribute('data-status', 'invalid');
+    await expect(orders).toContainText(
+      `bestellungen.csv, Zeile ${String(DATE_TYPO_LINE)}, Spalte „Liefertermin“: ` +
+        `„${DATE_TYPO_VALUE}“ ist kein gültiges Datum.`,
+    );
+  });
+});
+
+/** Fails on serious or critical axe violations anywhere on the page. */
+async function expectNoSeriousViolations(page: Page) {
+  const results = await new AxeBuilder({ page }).analyze();
+  const serious = results.violations
+    .filter((v) => v.impact === 'serious' || v.impact === 'critical')
+    .map((v) => ({ id: v.id, impact: v.impact, targets: v.nodes.map((n) => n.target) }));
+  expect(serious).toEqual([]);
+}
+
+type DemoState = 'initial' | 'results' | 'drawer open';
+
+/** Brings `/<locale>/demo` into `state` with the bundled sample. */
+async function showState(page: Page, locale: 'de' | 'en', state: DemoState) {
+  const messages = locale === 'de' ? de : en;
+  await openDemo(page, locale);
+  if (state === 'initial') return;
+
+  await page.getByRole('button', { name: messages.demo.dataSource.loadSample }).click();
+  await expect(
+    page.getByRole('region', { name: messages.demo.report.table.region }).getByRole('table'),
+  ).toBeVisible();
+  if (state === 'results') return;
+
+  const [first] = golden.exceptions;
+  if (first === undefined) throw new Error('golden file has no exceptions');
+  await page
+    .getByRole('button', {
+      name: messages.demo.report.table.details.replace('{materialId}', first.material_id),
+    })
+    .click();
+  await expect(page.getByRole('dialog').locator('.recharts-line-curve')).toHaveCount(2);
+}
+
+for (const locale of ['de', 'en'] as const) {
+  for (const state of ['initial', 'results', 'drawer open'] as const) {
+    test(`/${locale}/demo has no serious axe violations (${state})`, async ({ page }) => {
+      // axe walks the whole results table (every row stays in the DOM for printing); on WebKit
+      // and on two-core CI runners that alone can take 10 s or more.
+      test.setTimeout(60_000);
+      await showState(page, locale, state);
+
+      await expectNoSeriousViolations(page);
+    });
+  }
+}
