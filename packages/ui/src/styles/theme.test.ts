@@ -114,6 +114,33 @@ describe('dark theme', () => {
   });
 });
 
+/** Fluid steps, largest first: `--text-<step>: clamp(<min>rem, ..., <max>rem)`. */
+const FLUID_STEPS = ['display', 'title', 'heading', 'lead'] as const;
+
+function fluidRange(step: string): { min: number; max: number } {
+  const match = new RegExp(
+    String.raw`--text-${step}:\s*clamp\(([\d.]+)rem, [^,]+, ([\d.]+)rem\);`,
+  ).exec(css);
+  if (match === null) throw new Error(`--text-${step} is not a clamp() in rem`);
+  return { min: Number(match[1]), max: Number(match[2]) };
+}
+
+describe('fluid type scale', () => {
+  it.each(FLUID_STEPS)('%s grows with the viewport and stays readable', (step) => {
+    const { min, max } = fluidRange(step);
+    expect(min).toBeGreaterThanOrEqual(1);
+    expect(max).toBeGreaterThan(min);
+  });
+
+  it('keeps every step larger than the next one at both ends', () => {
+    const ranges = FLUID_STEPS.map(fluidRange);
+    for (const [larger, smaller] of ranges.slice(0, -1).map((range, i) => [range, ranges[i + 1]])) {
+      expect(larger?.min).toBeGreaterThan(smaller?.min ?? Infinity);
+      expect(larger?.max).toBeGreaterThan(smaller?.max ?? Infinity);
+    }
+  });
+});
+
 function componentFiles(dir: string): string[] {
   return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
     const path = join(dir, entry.name);

@@ -16,4 +16,9 @@ describe('cn', () => {
       'bg-background text-signal-strong',
     );
   });
+
+  it('treats the fluid type steps as font sizes, not colours', () => {
+    expect(cn('text-lg', 'text-title')).toBe('text-title');
+    expect(cn('text-display text-muted-foreground')).toBe('text-display text-muted-foreground');
+  });
 });
