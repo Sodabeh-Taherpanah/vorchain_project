@@ -55,23 +55,22 @@ CSS only, short (150 to 300 ms), and only via `motion-safe:` (for example
 
 ## Primitives (`@vorchain/ui`)
 Import by path: `import { Section } from '@vorchain/ui/components/section'`. All are Server
-Components except `sheet`. Text always comes in through props or children. Rows marked P1-29b
-are specified here and land in that follow-up task (split for PR size).
+Components except `sheet`. Text always comes in through props or children.
 
 | Primitive | Use it for | Notes |
 |---|---|---|
 | `Container` | the page column | `size`: default, narrow, wide |
 | `Section` | each full-width band of a page | `tone`: default, muted, inverted; `spacing`; name it with `aria-labelledby` |
 | `SectionHeader` | eyebrow, title, lead at the top of a section | `as` h1/h2/h3, `size="display"` for the hero, `align` |
-| `Card` (+ Header, Title, Description, Content) (P1-29b) | grouped content, comparison panels | `CardTitle as` sets the level |
-| `FeatureCard` (P1-29b) | a benefit or a step with an icon | lays out side by side when the card is wide (container query) |
-| `Stat`, `StatGroup` (P1-29b) | key figures (summary tiles) | `dl`/`dt`/`dd`, mono tabular value, `tone` for signal/critical/ok |
-| `Callout` (P1-29b) | a promise or warning beside the content (privacy) | `role="note"`, `tone`: neutral, ok, signal, critical |
-| `CtaBand` (P1-29b) | the closing call to action of a page | `tone`: primary, muted; pass `secondary` buttons on primary |
-| `Badge` (P1-29b) | severity and "hidden risk" labels | `signal` only for hidden risk |
+| `Card` (+ Header, Title, Description, Content) | grouped content, comparison panels | `CardTitle as` sets the level |
+| `FeatureCard` | a benefit or a step with an icon | lays out side by side when the card is wide (container query) |
+| `Stat`, `StatGroup` | key figures (summary tiles) | `dl`/`dt`/`dd`, mono tabular value, `tone` for signal/critical/ok |
+| `Callout` | a promise or warning beside the content (privacy) | `role="note"`, `tone`: neutral, ok, signal, critical |
+| `CtaBand` | the closing call to action of a page | `tone`: primary, muted; pass `secondary` buttons on primary |
+| `Badge` | severity and "hidden risk" labels | `signal` only for hidden risk |
 | `Button`, `buttonVariants` | actions; `buttonVariants` styles links as buttons | `className` overrides win |
 | `Sheet` | side drawer (`"use client"`) | `closeLabel` is required (translated) |
-| `Logo` (P1-29b) | header, footer | `variant="mark"` alone is an image named by `name` |
+| `Logo` | header, footer | `variant="mark"` alone is an image named by `name` |
 
 Add new shadcn components into `packages/ui` (its `components.json`), keep them token-only.
 
