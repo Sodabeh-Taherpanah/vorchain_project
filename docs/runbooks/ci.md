@@ -22,7 +22,7 @@ production deploys to Hetzner + Coolify, preview deployments and the GHCR image 
 | Typecheck | `pnpm typecheck` | yes |
 | Unit tests (coverage) | `pnpm coverage`; per-package gates; coverage uploaded as artifact `coverage` | yes |
 | Build | `pnpm build` | yes |
-| E2E (Playwright, Chromium) | `pnpm test:e2e` on the production build; report + traces uploaded on failure | yes |
+| E2E (Playwright, Chromium / Firefox / WebKit) | one job per browser (`--project`) on the production build: Chromium runs every spec, Firefox and WebKit run `demo.spec.ts`; first checks that the e2e fixtures are up to date (`e2e:fixtures:check`); report + traces uploaded on every run (`playwright-report-<browser>`) | yes |
 | Secret scan (gitleaks) | full history scan | yes |
 | Dependency audit | `pnpm audit --prod --audit-level=high` | **no** (see below) |
 
@@ -47,7 +47,8 @@ Branch protection for `main` is not stored in the repo. Set it in *Settings -> R
 *Branches*): require a PR, 1 approving review (CODEOWNERS), linear history, squash merge only,
 no force pushes or deletions, and these required checks:
 `Lint`, `PR title (Conventional Commit)`, `Typecheck`, `Unit tests (coverage)`, `Build`,
-`E2E (Playwright, Chromium)`, `Secret scan (gitleaks)`,
+`E2E (Playwright, Chromium)`, `E2E (Playwright, Firefox)`, `E2E (Playwright, WebKit)`,
+`Secret scan (gitleaks)`,
 `Analyze (javascript-typescript)`, `Analyze (actions)`.
 
 ## Releases (release-please, ADR-0009)
