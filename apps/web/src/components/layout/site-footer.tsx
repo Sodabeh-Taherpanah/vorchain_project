@@ -15,7 +15,7 @@ export function SiteFooter() {
   const t = useTranslations('footer');
 
   return (
-    <footer className="border-t bg-muted">
+    <footer className="border-t bg-muted print:hidden">
       <Container className="flex flex-col gap-4 py-6 sm:flex-row sm:items-center sm:justify-between">
         <p className="inline-flex items-center gap-2 text-sm text-muted-foreground">
           <ShieldCheck aria-hidden="true" className="size-4 shrink-0 text-ok" />

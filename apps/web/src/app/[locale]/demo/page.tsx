@@ -17,10 +17,10 @@ export default function DemoPage() {
   const locale = useLocale();
   return (
     <Container className="py-12 sm:py-16">
-      <h1 className="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
+      <h1 className="text-3xl font-semibold tracking-tight text-balance sm:text-4xl print:hidden">
         {t('title')}
       </h1>
-      <p className="mt-4 max-w-prose text-muted-foreground">{t('lead')}</p>
+      <p className="mt-4 max-w-prose text-muted-foreground print:hidden">{t('lead')}</p>
       {/* Only the demo catalog is serialized for the island, not every page's messages. */}
       <NextIntlClientProvider locale={locale} messages={{ demo }}>
         <DemoDataSource reportMessages={reportMessages} />

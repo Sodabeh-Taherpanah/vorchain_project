@@ -75,7 +75,9 @@ export function DemoAnalysis({
 
   return (
     <>
-      <AnalysisSettingsForm settings={settings} onChange={onSettingsChange} />
+      <div className="print:hidden">
+        <AnalysisSettingsForm settings={settings} onChange={onSettingsChange} />
+      </div>
       <NextIntlClientProvider
         locale={reportLocale}
         messages={{ demo: { report: reportMessages[reportLocale] } }}
@@ -125,9 +127,11 @@ function DemoResults({
       data-testid="demo-results"
       className="space-y-4"
     >
-      <h2 id={headingId} className="text-xl font-semibold">
+      <h2 id={headingId} className="text-xl font-semibold print:hidden">
         {t('heading')}
       </h2>
+      {/* Print view (backlog P1-19): the report's own title replaces the on-screen step heading. */}
+      <p className="hidden text-2xl font-semibold print:block">{t('export.title')}</p>
       {report === null ? (
         <p className="text-muted-foreground">{t('analysing')}</p>
       ) : (

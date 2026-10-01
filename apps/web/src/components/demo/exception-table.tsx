@@ -43,7 +43,7 @@ export function ExceptionTable({ exceptions, supplierName, onSelect }: Exception
   const t = useTranslations('demo.report.table');
   const tableId = useId();
   const [expanded, setExpanded] = useState(false);
-  const rows = expanded ? exceptions : exceptions.slice(0, TOP_ROWS);
+  const shown = expanded ? exceptions.length : Math.min(exceptions.length, TOP_ROWS);
   return (
     <div className="space-y-3">
       <div
@@ -53,11 +53,19 @@ export function ExceptionTable({ exceptions, supplierName, onSelect }: Exception
         // screens (WCAG 2.1.1, axe `scrollable-region-focusable`); the rule does not know that.
         // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
         tabIndex={0}
-        className="overflow-x-auto rounded-lg border focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+        className="overflow-x-auto rounded-lg border focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none print:overflow-visible"
       >
         <table id={tableId} data-total={exceptions.length} className="w-full text-sm">
           <caption className="p-3 text-left font-medium">
-            {t('caption', { shown: rows.length, total: exceptions.length })}
+            <span className="print:hidden">
+              {t('caption', { shown, total: exceptions.length })}
+            </span>
+            {/* The printed report always lists every row (backlog P1-19). */}
+            {shown < exceptions.length && (
+              <span className="hidden print:inline">
+                {t('caption', { shown: exceptions.length, total: exceptions.length })}
+              </span>
+            )}
           </caption>
           <thead className="bg-muted text-left">
             <tr>
@@ -80,13 +88,14 @@ export function ExceptionTable({ exceptions, supplierName, onSelect }: Exception
             </tr>
           </thead>
           <tbody>
-            {rows.map((exception, index) => (
+            {exceptions.map((exception, index) => (
               <ExceptionRow
                 // Duplicate material rows are possible, so the rank is part of the key.
                 key={`${exception.materialId}-${String(index)}`}
                 exception={exception}
                 supplierName={supplierName}
                 onSelect={onSelect}
+                printOnly={index >= shown}
               />
             ))}
           </tbody>
@@ -96,6 +105,7 @@ export function ExceptionTable({ exceptions, supplierName, onSelect }: Exception
         <Button
           type="button"
           variant="outline"
+          className="print:hidden"
           aria-controls={tableId}
           aria-expanded={expanded}
           onClick={() => {
@@ -115,21 +125,27 @@ function ExceptionRow({
   exception,
   supplierName,
   onSelect,
+  printOnly,
 }: {
   readonly exception: ShortageException;
   readonly supplierName: SupplierName;
   readonly onSelect: ExceptionTableProps['onSelect'];
+  /** Beyond the top rows while collapsed: hidden on screen, printed (CSS only, no JS on print). */
+  readonly printOnly: boolean;
 }) {
   const t = useTranslations('demo.report');
   const format = useFormatter();
   const locale = useLocale();
   const id = <span className="font-mono">{exception.materialId}</span>;
   return (
-    <tr className="border-t align-top">
+    <tr
+      data-print-only={printOnly ? '' : undefined}
+      className={cn('border-t align-top', printOnly && 'hidden print:table-row')}
+    >
       <td className="p-3">
         <span
           className={cn(
-            'inline-block rounded-full px-2 py-0.5 text-xs font-semibold',
+            'inline-block rounded-full px-2 py-0.5 text-xs font-semibold print:border print:border-foreground',
             SEVERITY_STYLE[exception.severity],
           )}
         >
@@ -166,7 +182,7 @@ function ExceptionRow({
         {exception.hidden ? (
           <span
             data-testid="hidden-badge"
-            className="inline-block rounded-full bg-signal px-2 py-0.5 text-xs font-semibold whitespace-nowrap text-signal-foreground"
+            className="inline-block rounded-full bg-signal px-2 py-0.5 text-xs font-semibold whitespace-nowrap text-signal-foreground print:border print:border-foreground"
           >
             {t('table.hiddenBadge')}
           </span>
