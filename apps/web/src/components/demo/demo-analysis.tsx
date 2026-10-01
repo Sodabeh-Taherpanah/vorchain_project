@@ -19,6 +19,7 @@ import { ExceptionTable, type ExceptionTableProps } from './exception-table.tsx'
 import { supplierNameLookup } from './explanation-text.tsx';
 import { ProjectionDrawer, type DrawerSelection } from './projection-drawer.tsx';
 import { OverdueNote, SummaryTiles } from './summary-tiles.tsx';
+import { SupplierTable } from './supplier-table.tsx';
 
 /** The results' messages in every locale, so the report language can differ from the page's. */
 export type ReportMessages = Readonly<Record<Locale, Messages['demo']['report']>>;
@@ -158,6 +159,7 @@ function ReportView({
 }) {
   const t = useTranslations('demo.report');
   const locale = useLocale();
+  const suppliersId = useId();
   return (
     <>
       <p className="text-muted-foreground">
@@ -174,6 +176,13 @@ function ReportView({
           onSelect={onSelect}
         />
       )}
+      <section aria-labelledby={suppliersId} className="space-y-3 pt-4">
+        <h3 id={suppliersId} className="text-lg font-semibold">
+          {t('suppliers.heading')}
+        </h3>
+        <p className="text-sm text-muted-foreground">{t('suppliers.intro')}</p>
+        <SupplierTable stats={report.supplierStats} supplierName={supplierName} />
+      </section>
     </>
   );
 }

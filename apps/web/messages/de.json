@@ -152,6 +152,21 @@
         "showAll": "Alle anzeigen ({count})",
         "showTop": "Nur die ersten {count} anzeigen"
       },
+      "suppliers": {
+        "heading": "Termintreue der Lieferanten",
+        "caption": "Termintreue der Lieferanten, unzuverlässigste zuerst",
+        "region": "Tabelle der Termintreue der Lieferanten",
+        "intro": "Verzug in Arbeitstagen zwischen bestätigtem und tatsächlichem Liefertermin, aus der Lieferhistorie.",
+        "empty": "Keine Lieferhistorie vorhanden, daher keine Lieferantenstatistik.",
+        "supplier": "Lieferant",
+        "onTime": "Termintreue",
+        "meanDelay": "Ø Verzug (Arbeitstage)",
+        "p80Delay": "P80-Verzug (Arbeitstage)",
+        "deliveries": "Lieferungen",
+        "confidence": "Aussagekraft",
+        "low": "gering",
+        "sufficient": "ausreichend"
+      },
       "severity": {
         "CRITICAL": "Kritisch",
         "WARNING": "Warnung"
