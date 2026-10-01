@@ -720,7 +720,7 @@ order.
 ---
 
 ## P1-20: Demo: e2e suite (privacy network assertion, XLSX, errors, cross-browser, axe)
-- [ ] Done
+- [x] Done
 - **Owner:** builder (qa reviews)
 - **Why:** the privacy promise and the main demo paths must be proven on every PR (ADR-0003,
   ADR-0008).

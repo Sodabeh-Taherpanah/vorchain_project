@@ -110,10 +110,22 @@ jobs:
       - run: pnpm build
 
   e2e:
-    name: E2E (Playwright, Chromium)
+    # Chromium runs every spec; Firefox and WebKit run the demo's core suite `demo.spec.ts`
+    # (playwright.config.ts, P1-20). One browser per job keeps each job well under 5 minutes.
+    name: E2E (Playwright, ${{ matrix.name }})
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - project: chromium
+            name: Chromium
+          - project: firefox
+            name: Firefox
+          - project: webkit
+            name: WebKit
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -122,6 +134,8 @@ jobs:
       - uses: ./.github/actions/setup
         with:
           turbo-cache-key: build
+      - name: E2E fixtures match the sample data (P1-20)
+        run: pnpm --filter @vorchain/web e2e:fixtures:check
       - name: Get Playwright version
         id: playwright
         run: echo "version=$(pnpm --filter @vorchain/web exec playwright --version | awk '{print $2}')" >> "$GITHUB_OUTPUT"
@@ -130,19 +144,21 @@ jobs:
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}-chromium
-      - name: Install Chromium with system dependencies
+          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}-${{ matrix.project }}
+      - name: Install ${{ matrix.name }} with system dependencies
         if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: pnpm --filter @vorchain/web exec playwright install --with-deps chromium
+        run: pnpm --filter @vorchain/web exec playwright install --with-deps ${{ matrix.project }}
       - name: Install system dependencies only
         if: steps.playwright-cache.outputs.cache-hit == 'true'
-        run: pnpm --filter @vorchain/web exec playwright install-deps chromium
-      - run: pnpm test:e2e
+        run: pnpm --filter @vorchain/web exec playwright install-deps ${{ matrix.project }}
+      - run: pnpm exec turbo run test:e2e -- --project=${{ matrix.project }}
+      # Always (unless cancelled): the HTML report of a green run shows timings and retries
+      # (flaky tests), not only failures.
       - name: Upload Playwright report and traces
-        if: failure()
+        if: ${{ !cancelled() }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: playwright-report
+          name: playwright-report-${{ matrix.project }}
           path: |
             apps/web/playwright-report/
             apps/web/test-results/

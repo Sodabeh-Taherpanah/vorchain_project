@@ -12,7 +12,9 @@
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
     "coverage": "vitest run --coverage",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "e2e:fixtures": "node e2e/fixtures/generate.ts",
+    "e2e:fixtures:check": "node e2e/fixtures/generate.ts --check"
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.3.3",
