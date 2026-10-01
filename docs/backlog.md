@@ -666,7 +666,7 @@ order.
 ---
 
 ## P1-18: Demo: row detail drawer with projection chart and table alternative
-- [ ] Done
+- [x] Done
 - **Owner:** builder
 - **Why:** shows *why* visually: ERP view vs realistic view for one material (spec §4.1 step 4).
 - **Acceptance criteria:**
@@ -684,6 +684,14 @@ order.
 - **Packages:** `apps/web`
 - **Branch:** `feat/demo-projection-drawer`
 - **Commits:** `feat(demo): add projection chart drawer with table alternative`
+- **Note (P1-18):** the drawer lives with the results, so a new load (files, sample or reset)
+  unmounts it; `useAnalysis.getProjection` resolves `null` when a newer load replaced the data
+  while it ran, and the drawer drops any series whose material, start day or length differs from
+  the report on screen (an analysis still running) and asks again when the report changes. The
+  summary describes each view on its own: first stock-out, else first day below safety stock,
+  else "no shortage". Lines are drawn as steps (end-of-day stock). `react-is@19` is a direct
+  dependency because Recharts takes it as a peer and pnpm would otherwise resolve 17. The e2e
+  suite asserts that no script fetched before the drawer opens contains Recharts.
 
 ---
 

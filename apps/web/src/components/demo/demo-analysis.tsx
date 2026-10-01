@@ -1,6 +1,6 @@
 'use client';
 
-import type { MaterialId, Report } from '@vorchain/engine';
+import type { Report } from '@vorchain/engine';
 import {
   NextIntlClientProvider,
   useLocale,
@@ -8,15 +8,16 @@ import {
   type Locale,
   type Messages,
 } from 'next-intl';
-import { useEffect, useId, useRef, useState } from 'react';
+import { useCallback, useEffect, useId, useRef, useState } from 'react';
 
 import type { AnalysisState, UseAnalysis } from '../../hooks/use-analysis.ts';
 import type { LoadSummary } from '../../workers/analysis-service.ts';
 import { AnalysisSettingsForm, type EffectiveSettings } from './analysis-settings.tsx';
 import { formatIsoDate, type AnalysisSettings } from './analysis-settings-model.ts';
 import { trackDemoEvent } from './demo-events.ts';
-import { ExceptionTable } from './exception-table.tsx';
+import { ExceptionTable, type ExceptionTableProps } from './exception-table.tsx';
 import { supplierNameLookup } from './explanation-text.tsx';
+import { ProjectionDrawer, type DrawerSelection } from './projection-drawer.tsx';
 import { OverdueNote, SummaryTiles } from './summary-tiles.tsx';
 
 /** The results' messages in every locale, so the report language can differ from the page's. */
@@ -31,8 +32,8 @@ export interface DemoAnalysisProps {
   readonly reportMessages: ReportMessages;
   /** Runs once per load, when its first report is shown (funnel event hook point). */
   readonly onCompleted?: () => void;
-  /** Opens the detail drawer of a material (P1-18). */
-  readonly onSelect?: (materialId: MaterialId) => void;
+  /** Loads one material's projection for the detail drawer (P1-18). */
+  readonly getProjection: UseAnalysis['getProjection'];
 }
 
 const completed = () => {
@@ -51,7 +52,7 @@ export function DemoAnalysis({
   onSettingsChange,
   reportMessages,
   onCompleted = completed,
-  onSelect,
+  getProjection,
 }: DemoAnalysisProps) {
   const { asOf, horizonDays, reportLocale } = settings;
 
@@ -81,7 +82,7 @@ export function DemoAnalysis({
           report={report}
           busy={state.status === 'analysing'}
           supplierNames={load.supplierNames}
-          onSelect={onSelect}
+          getProjection={getProjection}
         />
       </NextIntlClientProvider>
     </>
@@ -92,16 +93,29 @@ function DemoResults({
   report,
   busy,
   supplierNames,
-  onSelect,
+  getProjection,
 }: {
   readonly report: Report | null;
   readonly busy: boolean;
   readonly supplierNames: LoadSummary['supplierNames'];
-  readonly onSelect: ((materialId: MaterialId) => void) | undefined;
+  readonly getProjection: UseAnalysis['getProjection'];
 }) {
   const t = useTranslations('demo.report');
   const headingId = useId();
   const supplierName = supplierNameLookup(supplierNames);
+  // The drawer lives as long as these results: a new load unmounts them and so closes it. The
+  // selection outlives `open` so the content stays during the closing animation.
+  const [open, setOpen] = useState(false);
+  const [selection, setSelection] = useState<DrawerSelection | null>(null);
+  const select = useCallback(
+    (materialId: DrawerSelection['materialId'], trigger: HTMLElement) => {
+      const description =
+        report?.exceptions.find((e) => e.materialId === materialId)?.description ?? '';
+      setSelection({ materialId, description, trigger });
+      setOpen(true);
+    },
+    [report],
+  );
   return (
     <section
       aria-labelledby={headingId}
@@ -115,7 +129,19 @@ function DemoResults({
       {report === null ? (
         <p className="text-muted-foreground">{t('analysing')}</p>
       ) : (
-        <ReportView report={report} supplierName={supplierName} onSelect={onSelect} />
+        <>
+          <ReportView report={report} supplierName={supplierName} onSelect={select} />
+          <ProjectionDrawer
+            open={open}
+            selection={selection}
+            asOf={report.asOf}
+            horizonDays={report.horizonDays}
+            getProjection={getProjection}
+            onClose={() => {
+              setOpen(false);
+            }}
+          />
+        </>
       )}
     </section>
   );
@@ -128,7 +154,7 @@ function ReportView({
 }: {
   readonly report: Report;
   readonly supplierName: ReturnType<typeof supplierNameLookup>;
-  readonly onSelect: ((materialId: MaterialId) => void) | undefined;
+  readonly onSelect: ExceptionTableProps['onSelect'];
 }) {
   const t = useTranslations('demo.report');
   const locale = useLocale();
@@ -145,7 +171,7 @@ function ReportView({
         <ExceptionTable
           exceptions={report.exceptions}
           supplierName={supplierName}
-          {...(onSelect === undefined ? {} : { onSelect })}
+          onSelect={onSelect}
         />
       )}
     </>

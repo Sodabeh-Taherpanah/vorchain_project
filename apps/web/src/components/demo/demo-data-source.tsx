@@ -25,7 +25,7 @@ import { SampleTemplates } from './sample-templates.tsx';
 export function DemoDataSource({ reportMessages }: { readonly reportMessages: ReportMessages }) {
   const t = useTranslations('demo');
   const locale = useLocale();
-  const { state, loadFiles, loadSample, analyse, reset } = useAnalysis();
+  const { state, loadFiles, loadSample, analyse, getProjection, reset } = useAnalysis();
   const [source, setSource] = useState<DataSource>(NO_SOURCE);
   const [settings, setSettings] = useState<AnalysisSettings>({
     asOf: null,
@@ -118,6 +118,7 @@ export function DemoDataSource({ reportMessages }: { readonly reportMessages: Re
           load={state.load}
           state={state}
           analyse={analyse}
+          getProjection={getProjection}
           settings={{ ...settings, asOf: settings.asOf ?? defaultAsOf(state.load.asOf, now) }}
           onSettingsChange={(change) => {
             setSettings((current) => ({ ...current, ...change }));

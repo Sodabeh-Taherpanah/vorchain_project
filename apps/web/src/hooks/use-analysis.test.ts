@@ -174,6 +174,38 @@ describe('useAnalysis', () => {
     expect(hook.result.current.state.status).toBe('mapped');
   });
 
+  it('drops a projection whose data was replaced by a newer load while it ran', async () => {
+    const pending = deferred<ProjectionSeries>();
+    const { hook } = setup(fakeService({ getProjection: () => pending.promise }));
+    await act(() => hook.result.current.loadSample('de'));
+    let projection: Promise<ProjectionSeries | null> = Promise.resolve(null);
+    act(() => {
+      projection = hook.result.current.getProjection(materialId('M1'));
+    });
+
+    await act(() => hook.result.current.loadSample('en'));
+    pending.resolve(series);
+
+    await expect(projection).resolves.toBeNull();
+  });
+
+  it('drops a projection that was running when the files were removed', async () => {
+    const pending = deferred<ProjectionSeries>();
+    const { hook } = setup(fakeService({ getProjection: () => pending.promise }));
+    await act(() => hook.result.current.loadSample('de'));
+    let projection: Promise<ProjectionSeries | null> = Promise.resolve(null);
+    act(() => {
+      projection = hook.result.current.getProjection(materialId('M1'));
+    });
+
+    act(() => {
+      hook.result.current.reset();
+    });
+    pending.resolve(series);
+
+    await expect(projection).resolves.toBeNull();
+  });
+
   it('terminates the worker on unmount', async () => {
     const { hook, terminate } = setup();
     await act(() => hook.result.current.loadSample('de'));

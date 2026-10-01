@@ -53,8 +53,9 @@ export function OverdueNote({
     <div data-testid="overdue-note" className="space-y-2 rounded-lg border bg-muted p-4 text-sm">
       <p>{t('note', { count: overdue.length })}</p>
       <ul className="list-disc space-y-1 pl-5">
-        {overdue.map((po) => (
-          <li key={po.poId}>
+        {overdue.map((po, index) => (
+          // PO IDs are not unique in customer data (one PO, several lines or materials).
+          <li key={`${po.poId}-${po.materialId}-${String(index)}`}>
             {t('item', {
               poId: po.poId,
               materialId: po.materialId,

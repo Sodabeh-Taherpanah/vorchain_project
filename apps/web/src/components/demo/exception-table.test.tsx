@@ -134,7 +134,10 @@ describe('ExceptionTable', () => {
     await userEvent.tab();
     await userEvent.keyboard(' ');
 
-    expect(onSelect.mock.calls).toEqual([[materialId('M0011')], [materialId('M0030')]]);
+    expect(onSelect.mock.calls).toEqual([
+      [materialId('M0011'), screen.getByRole('button', { name: 'Details zu M0011' })],
+      [materialId('M0030'), screen.getByRole('button', { name: 'Details zu M0030' })],
+    ]);
   });
 });
 
@@ -196,6 +199,20 @@ describe('OverdueNote', () => {
       .map((li) => li.textContent);
     expect(items[0]).toContain(dropped);
     expect(items[1]).toBe(listed);
+  });
+
+  it('lists two lines of the same PO without a duplicate React key', () => {
+    // One PO number can cover several materials in customer data (P1-17 QA note).
+    const errors = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const [first] = overdue;
+    if (first === undefined) throw new Error('fixture has no PO');
+    const sameNumber = [first, { ...first, materialId: materialId('M0006') }, first];
+
+    renderIn('de', <OverdueNote overdue={sameNumber} supplierName={supplierName} />);
+
+    expect(within(screen.getByTestId('overdue-note')).getAllByRole('listitem')).toHaveLength(3);
+    expect(errors.mock.calls.flat().join(' ')).not.toMatch(/same key/);
+    errors.mockRestore();
   });
 
   it('renders nothing without overdue POs', () => {
