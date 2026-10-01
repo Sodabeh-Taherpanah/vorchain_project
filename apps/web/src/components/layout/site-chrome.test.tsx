@@ -50,6 +50,14 @@ describe('SiteHeader', () => {
     expect(nav.getByRole('link', { name: m.nav.contact }).getAttribute('href')).toBe(contact);
   });
 
+  it('offers the primary demo button and the menu button', () => {
+    const m = renderWith('en', <SiteHeader />);
+
+    const banner = within(screen.getByRole('banner'));
+    expect(banner.getByRole('link', { name: m.nav.cta }).getAttribute('href')).toBe('/en/demo');
+    expect(banner.getByRole('button', { name: m.nav.menu })).toBeDefined();
+  });
+
   it('contains the locale switcher and the theme toggle', () => {
     const m = renderWith('de', <SiteHeader />);
 
@@ -60,6 +68,22 @@ describe('SiteHeader', () => {
 });
 
 describe('SiteFooter', () => {
+  it('groups the links in lists named product, legal and project', () => {
+    const m = renderWith('de', <SiteFooter />);
+
+    const footer = within(screen.getByRole('contentinfo'));
+    const nav = within(footer.getByRole('navigation', { name: m.footer.label }));
+    for (const heading of [
+      m.footer.productHeading,
+      m.footer.legalHeading,
+      m.footer.projectHeading,
+    ]) {
+      expect(nav.getByRole('list', { name: heading })).toBeDefined();
+    }
+    expect(footer.getByText(m.footer.tagline)).toBeDefined();
+    expect(footer.getByRole('link', { name: m.site.home })).toBeDefined();
+  });
+
   it.each([
     ['de', '/de/impressum', '/de/datenschutz'],
     ['en', '/en/legal-notice', '/en/privacy'],
