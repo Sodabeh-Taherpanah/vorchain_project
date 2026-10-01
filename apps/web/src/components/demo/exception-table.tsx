@@ -22,7 +22,7 @@ const SEVERITY_STYLE = {
  * Duplicate material rows (ADR-0005 item 10) and repeated POs could yield the same reason twice;
  * one sentence per distinct reason is enough.
  */
-function distinctReasons(reasons: readonly Reason[]): { key: string; reason: Reason }[] {
+export function distinctReasons(reasons: readonly Reason[]): { key: string; reason: Reason }[] {
   const seen = new Map<string, Reason>();
   for (const reason of reasons) seen.set(JSON.stringify(reason), reason);
   return Array.from(seen, ([key, reason]) => ({ key, reason }));

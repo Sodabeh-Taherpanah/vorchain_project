@@ -18,6 +18,7 @@ import { trackDemoEvent } from './demo-events.ts';
 import { ExceptionTable, type ExceptionTableProps } from './exception-table.tsx';
 import { supplierNameLookup } from './explanation-text.tsx';
 import { ProjectionDrawer, type DrawerSelection } from './projection-drawer.tsx';
+import { ReportActions } from './report-actions.tsx';
 import { OverdueNote, SummaryTiles } from './summary-tiles.tsx';
 import { SupplierTable } from './supplier-table.tsx';
 
@@ -165,6 +166,7 @@ function ReportView({
       <p className="text-muted-foreground">
         {t('scope', { asOf: formatIsoDate(report.asOf, locale), days: report.horizonDays })}
       </p>
+      <ReportActions report={report} supplierName={supplierName} />
       <SummaryTiles summary={report.summary} />
       <OverdueNote overdue={report.overduePurchaseOrders} supplierName={supplierName} />
       {report.exceptions.length === 0 ? (

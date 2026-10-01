@@ -167,6 +167,16 @@
         "low": "gering",
         "sufficient": "ausreichend"
       },
+      "export": {
+        "label": "Bericht exportieren",
+        "csv": "CSV exportieren",
+        "print": "Bericht drucken",
+        "title": "Vorchain – Fehlteil-Bericht",
+        "description": "Bezeichnung",
+        "daysUntil": "Tage bis kritisch",
+        "yes": "Ja",
+        "no": "Nein"
+      },
       "severity": {
         "CRITICAL": "Kritisch",
         "WARNING": "Warnung"

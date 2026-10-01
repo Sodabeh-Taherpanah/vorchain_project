@@ -167,6 +167,16 @@
         "low": "low",
         "sufficient": "sufficient"
       },
+      "export": {
+        "label": "Export report",
+        "csv": "Export CSV",
+        "print": "Print report",
+        "title": "Vorchain – shortage report",
+        "description": "Description",
+        "daysUntil": "Days until critical",
+        "yes": "Yes",
+        "no": "No"
+      },
       "severity": {
         "CRITICAL": "Critical",
         "WARNING": "Warning"
