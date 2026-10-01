@@ -170,6 +170,44 @@
         "PULL_FORWARD": "Ask {supplier} to pull {poId} forward before {before}, or source elsewhere.",
         "EXPEDITE": "Expedite {poId} or ask for a partial delivery before {before}.",
         "REVIEW_QTY_OR_DEMAND": "Increase the order quantity or check the demand plan."
+      },
+      "drawer": {
+        "title": "Stock projection {materialId}",
+        "intro": "Day by day for {days} days from {asOf}: ERP view with the confirmed delivery dates (dashed) and realistic view with the supplier's typical delay (solid).",
+        "close": "Close",
+        "loading": "Calculating projection …",
+        "unavailable": "The projection is not available right now. Please close this view and try again.",
+        "summary": "Realistic view: {realistic}, ERP view: {erp}.",
+        "outlook": {
+          "stockOut": "stock-out on {date}",
+          "belowSafety": "below safety stock from {date}",
+          "none": "no shortage within the horizon"
+        },
+        "showTable": "Show as table",
+        "showChart": "Show as chart",
+        "chartLoading": "Loading chart …",
+        "legend": {
+          "label": "Legend",
+          "erp": "ERP view (confirmed dates)",
+          "realistic": "Realistic view (with delay)",
+          "stockOut": "Stock-out (stock below 0)",
+          "safetyStock": "Safety stock ({value, number})",
+          "erpReceipt": "Goods receipt per ERP",
+          "realisticReceipt": "Realistic goods receipt"
+        },
+        "axis": {
+          "stock": "Stock"
+        },
+        "table": {
+          "caption": "Projected stock of {materialId} per day (safety stock {safetyStock, number})",
+          "region": "Stock projection table",
+          "date": "Date",
+          "demand": "Demand",
+          "erpReceipts": "Receipts ERP",
+          "realisticReceipts": "Receipts realistic",
+          "erpStock": "Stock ERP",
+          "realisticStock": "Stock realistic"
+        }
       }
     }
   },

@@ -91,6 +91,10 @@ export interface UseAnalysis {
    * (also while one runs): only the newest run reaches the state, older ones resolve `null`.
    */
   readonly analyse: (options: AnalysisOptions) => Promise<Report | null>;
+  /**
+   * One material's projection for the latest analysis' options. Resolves `null` when the worker
+   * failed or a newer load replaced the data meanwhile, so a stale series never reaches the page.
+   */
   readonly getProjection: (materialId: MaterialId) => Promise<ProjectionSeries | null>;
   /** Forgets the last load (e.g. the user removed every file); a pending load is ignored. */
   readonly reset: () => void;
@@ -188,7 +192,12 @@ export function useAnalysis({
   );
 
   const getProjection = useCallback(
-    (materialId: MaterialId) => call((service) => service.getProjection(materialId)),
+    async (materialId: MaterialId) => {
+      const generation = loadGeneration.current;
+      const series = await call((service) => service.getProjection(materialId));
+      // The data it was computed from was replaced meanwhile (new files, sample or reset).
+      return generation === loadGeneration.current ? series : null;
+    },
     [call],
   );
 

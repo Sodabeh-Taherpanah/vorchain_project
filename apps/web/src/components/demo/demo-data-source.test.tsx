@@ -1,6 +1,6 @@
-import { act, fireEvent, render, screen, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import type { IsoDate } from '@vorchain/engine';
+import { addDays, type IsoDate, type ProjectionSeries } from '@vorchain/engine';
 import { NextIntlClientProvider } from 'next-intl';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -28,13 +28,26 @@ const incomplete: LoadSummary = {
   supplierNames: {},
 };
 
+/** A 28-day projection from the sample date where nothing happens; enough to open the drawer. */
+function flatSeries(materialId: ProjectionSeries['materialId']): ProjectionSeries {
+  const points = Array.from({ length: 28 }, (_, day) => ({
+    date: addDays('2026-10-05' as IsoDate, day),
+    demand: 0,
+    erpReceipts: 0,
+    realisticReceipts: 0,
+    erpStock: 50,
+    realisticStock: 50,
+  }));
+  return { materialId, safetyStock: 0, points };
+}
+
 const service = {
   loadFiles: vi.fn<AnalysisService['loadFiles']>(() => Promise.resolve(incomplete)),
   loadSample: vi.fn(() => Promise.resolve(complete)),
   analyse: vi.fn<AnalysisService['analyse']>((options) =>
     Promise.resolve(testReport({ asOf: options.asOf, horizonDays: options.horizonDays })),
   ),
-  getProjection: vi.fn(),
+  getProjection: vi.fn<AnalysisService['getProjection']>((id) => Promise.resolve(flatSeries(id))),
 } satisfies AnalysisService;
 
 vi.mock('../../workers/connect-analysis-worker.ts', () => ({
@@ -221,6 +234,24 @@ describe('DemoDataSource', () => {
 
     expect(trackDemoEvent).toHaveBeenCalledOnce();
     expect(trackDemoEvent).toHaveBeenCalledWith('demo_completed');
+  });
+
+  it('opens the projection drawer from a row by keyboard and returns focus on Escape', async () => {
+    renderDemo();
+    await userEvent.click(screen.getByRole('button', { name: de.demo.dataSource.loadSample }));
+    const details = await screen.findByRole('button', { name: 'Details zu M0030' });
+
+    details.focus();
+    await userEvent.keyboard('{Enter}');
+
+    const dialog = await screen.findByRole('dialog', { name: 'Bestandsverlauf M0030' });
+    expect(await within(dialog).findByTestId('projection-summary')).toBeDefined();
+    expect(service.getProjection).toHaveBeenCalledWith('M0030');
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog')).toBeNull();
+    });
+    expect(document.activeElement).toBe(details);
   });
 
   it('shows a worker failure as an alert', async () => {

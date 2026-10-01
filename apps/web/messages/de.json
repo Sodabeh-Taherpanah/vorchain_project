@@ -170,6 +170,44 @@
         "PULL_FORWARD": "{supplier} bitten, {poId} vor {before} vorzuziehen, oder alternativ beschaffen.",
         "EXPEDITE": "{poId} nachfassen oder Teillieferung vor {before} anfragen.",
         "REVIEW_QTY_OR_DEMAND": "Bestellmenge erhöhen oder Bedarfsplanung prüfen."
+      },
+      "drawer": {
+        "title": "Bestandsverlauf {materialId}",
+        "intro": "Tag für Tag über {days} Tage ab {asOf}: ERP-Sicht mit den bestätigten Lieferterminen (gestrichelt) und realistische Sicht mit dem typischen Verzug des Lieferanten (durchgezogen).",
+        "close": "Schließen",
+        "loading": "Projektion wird berechnet …",
+        "unavailable": "Die Projektion ist gerade nicht verfügbar. Bitte schließen Sie die Ansicht und versuchen Sie es erneut.",
+        "summary": "Realistische Sicht: {realistic}, ERP-Sicht: {erp}.",
+        "outlook": {
+          "stockOut": "Fehlteil am {date}",
+          "belowSafety": "unter Sicherheitsbestand ab {date}",
+          "none": "kein Engpass im Horizont"
+        },
+        "showTable": "Als Tabelle anzeigen",
+        "showChart": "Als Diagramm anzeigen",
+        "chartLoading": "Diagramm wird geladen …",
+        "legend": {
+          "label": "Legende",
+          "erp": "ERP-Sicht (bestätigte Termine)",
+          "realistic": "Realistische Sicht (mit Verzug)",
+          "stockOut": "Fehlteil (Bestand unter 0)",
+          "safetyStock": "Sicherheitsbestand ({value, number})",
+          "erpReceipt": "Wareneingang laut ERP",
+          "realisticReceipt": "Wareneingang realistisch"
+        },
+        "axis": {
+          "stock": "Bestand"
+        },
+        "table": {
+          "caption": "Projizierter Bestand von {materialId} je Tag (Sicherheitsbestand {safetyStock, number})",
+          "region": "Tabelle des Bestandsverlaufs",
+          "date": "Datum",
+          "demand": "Bedarf",
+          "erpReceipts": "Zugang ERP",
+          "realisticReceipts": "Zugang realistisch",
+          "erpStock": "Bestand ERP",
+          "realisticStock": "Bestand realistisch"
+        }
       }
     }
   },

@@ -31,8 +31,11 @@ function distinctReasons(reasons: readonly Reason[]): { key: string; reason: Rea
 export interface ExceptionTableProps {
   readonly exceptions: readonly ShortageException[];
   readonly supplierName: SupplierName;
-  /** Opens the detail drawer of a material (P1-18); without it the material is plain text. */
-  readonly onSelect?: (materialId: MaterialId) => void;
+  /**
+   * Opens the detail drawer of a material (P1-18) with the button that asked for it, so focus can
+   * return there; without it the material is plain text.
+   */
+  readonly onSelect?: ((materialId: MaterialId, trigger: HTMLElement) => void) | undefined;
 }
 
 /** The ranked exceptions as a semantic table, top 10 first (spec §4.1 step 4). */
@@ -115,7 +118,7 @@ function ExceptionRow({
 }: {
   readonly exception: ShortageException;
   readonly supplierName: SupplierName;
-  readonly onSelect: ((materialId: MaterialId) => void) | undefined;
+  readonly onSelect: ExceptionTableProps['onSelect'];
 }) {
   const t = useTranslations('demo.report');
   const format = useFormatter();
@@ -141,8 +144,8 @@ function ExceptionRow({
             type="button"
             aria-label={t('table.details', { materialId: exception.materialId })}
             className="rounded-sm underline underline-offset-4 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-            onClick={() => {
-              onSelect(exception.materialId);
+            onClick={(event) => {
+              onSelect(exception.materialId, event.currentTarget);
             }}
           >
             {id}
