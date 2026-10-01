@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/Sodabeh-Taherpanah/vorchain_project/compare/v0.5.0...v0.6.0) (2026-10-01)
+
+
+### Features
+
+* **demo:** add supplier table, CSV export and printable report ([#40](https://github.com/Sodabeh-Taherpanah/vorchain_project/issues/40)) ([d9c656f](https://github.com/Sodabeh-Taherpanah/vorchain_project/commit/d9c656fabe33f68b53be72cab34ea0e8e6134cf9))
+
 ## [0.5.0](https://github.com/Sodabeh-Taherpanah/vorchain_project/compare/v0.4.1...v0.5.0) (2026-10-01)
 
 
