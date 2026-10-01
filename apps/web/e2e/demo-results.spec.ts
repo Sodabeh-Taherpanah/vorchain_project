@@ -12,7 +12,10 @@ async function analyseSample(page: Page, locale: 'de' | 'en' = 'de') {
   const messages = locale === 'de' ? de : en;
   await page.goto(`/${locale}/demo`);
   await page.getByRole('button', { name: messages.demo.dataSource.loadSample }).click();
-  const table = page.getByRole('table');
+  // The exception table; the supplier table follows it.
+  const table = page
+    .getByRole('region', { name: messages.demo.report.table.region })
+    .getByRole('table');
   await expect(table).toBeVisible();
   return table;
 }

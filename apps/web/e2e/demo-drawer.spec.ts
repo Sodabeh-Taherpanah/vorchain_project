@@ -45,7 +45,9 @@ async function showSampleResults(page: Page, locale: 'de' | 'en' = 'de') {
   const messages = locale === 'de' ? de : en;
   await page.goto(`/${locale}/demo`);
   await page.getByRole('button', { name: messages.demo.dataSource.loadSample }).click();
-  await expect(page.getByRole('table')).toBeVisible();
+  await expect(
+    page.getByRole('region', { name: messages.demo.report.table.region }).getByRole('table'),
+  ).toBeVisible();
 }
 
 test('the drawer for M0030 summarises both views with the golden dates', async ({ page }) => {
