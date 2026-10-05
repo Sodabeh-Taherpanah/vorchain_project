@@ -22,12 +22,12 @@
     "@vorchain/engine": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^24.19.0",
-    "@vitest/coverage-v8": "^5.0.2",
+    "@types/node": "^24.19.1",
+    "@vitest/coverage-v8": "^5.0.3",
     "@vorchain/config": "workspace:*",
     "@vorchain/parsers": "workspace:*",
     "typescript": "~6.0.3",
-    "vite": "^8.3.1",
-    "vitest": "^5.0.2"
+    "vite": "^8.3.2",
+    "vitest": "^5.0.3"
   }
 }
