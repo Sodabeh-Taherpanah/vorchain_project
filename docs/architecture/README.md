@@ -1,7 +1,8 @@
 # Architecture: Vorchain Phase 1
 
-Status: **target architecture for Phase 1**, planned 2026-09-25. Nothing below is built yet; the
-backlog (`docs/backlog.md`) builds it step by step. Every PR that changes structure (new package,
+Status: **target architecture for Phase 1**, planned 2026-09-25, partly built (see
+[`docs/STATUS.md`](../STATUS.md) for the real state per task). Elements marked *planned* below do not
+exist yet; the backlog (`docs/backlog.md`) builds them step by step. Every PR that changes structure (new package,
 new container, new external service, changed data flow) **must update this file in the same PR**.
 
 Related: [glossary](glossary.md) (German ERP terms and code names) · [ADRs](../adr/) · [spec](../spec/phase-1-demo.md)
@@ -86,8 +87,10 @@ flowchart TB
   pages -- "event name only" --> plaus
 ```
 
-Security boundary: the browser's CSP `connect-src` allows only `'self'` and the analytics origin, so
-even a bug in our code cannot post file contents to a third party. The e2e network test proves no
+*Planned (P1-27, P1-25, P1-26): the CSP, the `submitContact` Server Action, the Brevo call and the analytics call are not implemented yet; today the host only serves static pages.*
+
+Security boundary (planned, P1-27): the browser's CSP `connect-src` allows only `'self'` and the analytics origin, so
+even a bug in our code cannot post file contents to a third party. The e2e network test (built, P1-20) proves no
 request carries file content (ADR-0003, ADR-0008).
 
 ## 4. C4 Level 3: Components
@@ -387,8 +390,8 @@ changing any number (ADR-0005 item 5); the demo shows the note in P1-17.
 
 ```mermaid
 flowchart LR
-  dev["Developer / agent<br/>branch + PR"] --> gha["GitHub Actions<br/>lint, typecheck, test, e2e, lhci"]
-  gha -- "PR" --> preview["Coolify preview deployment<br/>(Hetzner, from P1-28)"]
+  dev["Developer / agent<br/>branch + PR"] --> gha["GitHub Actions<br/>lint, typecheck, test, e2e, gitleaks, CodeQL (lhci planned)"]
+  gha -- "PR" --> preview["Coolify preview deployment<br/>(Hetzner, planned P1-28; nothing is rented yet)"]
   gha -- "merge to main" --> rp["release-please<br/>release PR"]
   rp -- "release published" --> prod["Coolify production<br/>(Hetzner, Germany), vorchain domain"]
   rp -- "release published" --> ghcr["GHCR image<br/>ghcr.io/&lt;owner&gt;/vorchain-web:vX.Y.Z<br/>(output: standalone)"]

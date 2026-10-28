@@ -7,7 +7,7 @@
 
 Vorchain compares the ERP's *promised* supplier dates with each supplier's *real* delivery history. It then flags materials that will run out even though the ERP says everything is fine. Phase 1 is a website with an in-browser demo, where **your files never leave your browser**.
 
-**Status:** Phase 1 in progress. The workspace, tooling and CI are set up (Task 0); features follow the [backlog](docs/backlog.md).
+**Status:** Phase 1 in progress. Built: engine (Python parity), parsers, sample data, design system, the demo (upload, ranked table, drawer, exports, e2e) and the landing page sections. Not built yet: SEO metadata, legal pages content, contact form, analytics, security headers/CSP, Lighthouse CI and the production deploy. Verified status per task: [`docs/STATUS.md`](docs/STATUS.md).
 
 ## Quick start
 Requires Node.js 24 LTS (see `.nvmrc`) and pnpm via Corepack (version pinned in `package.json`).
@@ -32,7 +32,8 @@ pnpm dev           # http://localhost:3000
 | `pnpm coverage` | Unit tests with coverage gates (engine 95 %, parsers 90 %, ui 90 %, web 80 %) |
 | `pnpm test:e2e` | Playwright against the production build (run `pnpm --filter @vorchain/web exec playwright install chromium` once) |
 | `pnpm format` / `pnpm format:check` | Prettier write / check |
-| `pnpm lhci` | Lighthouse CI (placeholder until P1-27) |
+| `pnpm lhci` | Placeholder: prints a notice only; Lighthouse CI arrives with P1-27 |
+| `pnpm bench` | Engine and parse+analyse benchmarks (also run in CI) |
 | `pnpm map` | Refresh the task progress in `PROJECT_MAP.html` (also runs automatically when `docs/backlog.md` is committed) |
 
 ## Repository layout
@@ -65,4 +66,4 @@ Start with [`START_HERE.md`](START_HERE.md). Agents: **architect** → **builder
 - GitHub Copilot: `.github/agents/`
 
 ## License
-TBD (decide before making the repository public).
+**Not decided yet.** The repository is already public, but no `LICENSE` file exists, so by default all rights are reserved. This is a personal project with possible commercial intent and is **not open source**. Two options are prepared in [`docs/license-options/`](docs/license-options/README.md); the owner chooses one.
