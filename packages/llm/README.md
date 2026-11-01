@@ -22,3 +22,18 @@ Provider-neutral interface for talking to a language model, plus a deterministic
 - Output is JSON validated by zod (`structuredExplanationSchema`, `supplierEmailSchema`). Invalid output is retried
   once; transport failures are not.
 - The e-mail is a draft for a human to edit and send. Nothing is sent from here.
+
+## Guardrails (V-06)
+Layers, outermost first (`src/guard/`):
+1. Strict facts schema (V-05): no rows or file content.
+2. `sanitizeFacts`: in the two free-text fields, instruction-like text becomes `[removed]` (`looksLikeInjection`, German and
+   English patterns, zero-width and full-width tricks normalised), and URLs, e-mails, IBANs and phone numbers become
+   `[URL]`, `[EMAIL]`, `[IBAN]`, `[PHONE]` (`maskPii`). `<` is escaped in the prompt so nothing can close the `<facts>` block.
+3. The system prompt declares the block inert data.
+4. Output is schema-validated, then `isUnsafeOutput` rejects links, addresses, IBANs, phone numbers and HTML, so a steered
+   model cannot put a phishing link into a draft.
+5. A person reads every draft before anything is sent.
+
+Known limits: the injection and PII patterns are heuristics (paraphrases, other languages and unusual number formats can
+slip through), which is why layers 1, 3, 4 and 5 do not depend on them. Tests: `src/guard/guard.test.ts` (20 injection
+strings, each checked to produce a prompt identical to a neutral name, and a hijacked model's answers rejected).

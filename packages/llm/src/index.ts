@@ -24,3 +24,8 @@ export type { ExplanationFacts } from './explain/facts.ts';
 export type { ExplainError, ExplainOptions, ExplainResult, Language } from './explain/run.ts';
 export { draftSupplierEmail, supplierEmailSchema } from './explain/supplier-email.ts';
 export type { SupplierEmailDraft } from './explain/supplier-email.ts';
+export { isUnsafeOutput } from './guard/output.ts';
+export { looksLikeInjection } from './guard/injection.ts';
+export { containsPii, maskPii } from './guard/pii.ts';
+export { REMOVED_PLACEHOLDER, sanitizeFacts } from './guard/sanitize-facts.ts';
+export type { SanitizedFacts } from './guard/sanitize-facts.ts';

@@ -33,10 +33,10 @@ Status: todo | doing | blocked | done. "done" needs evidence.
 - Evidence: packages/llm/src/explain/explain.test.ts: zod-validated output (schema failures return INVALID_RESPONSE) and describe "privacy gate: raw files cannot reach the provider" (strict facts schema; 9 bad inputs per function give INVALID_FACTS with `provider.calls` empty; sent block keys equal the schema keys); 98 tests in package pass, 99% lines / 96% branches (gate 90); `pnpm lint && pnpm typecheck && pnpm test` green
 
 ## V-06 Prompt injection guardrails + PII masking
-- Status: todo
+- Status: done
 - Depends on: V-05
 - Acceptance: injection test strings fail to change behavior
-- Evidence:
+- Evidence: packages/llm/src/guard/guard.test.ts: 20 injection strings x 2 functions each produce a prompt deep-equal to the neutral-name baseline and the attack text is absent from `provider.calls`; hijacked-model outputs (link, e-mail, IBAN, phone, HTML) return INVALID_RESPONSE "answer failed the output guard"; PII masking table; 200 tests in package pass, 99% lines / 96% branches (gate 90); `pnpm lint && pnpm typecheck && pnpm test` green
 
 ## V-07 Evaluation set (about 20 cases)
 - Status: todo

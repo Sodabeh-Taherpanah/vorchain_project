@@ -1,5 +1,7 @@
 import type { z } from 'zod';
 
+import { isUnsafeOutput } from '../guard/output.ts';
+import { sanitizeFacts } from '../guard/sanitize-facts.ts';
 import type { LlmError, LlmMessage, LlmProvider } from '../types.ts';
 import { explanationFactsSchema, type ExplanationFacts } from './facts.ts';
 
@@ -42,7 +44,7 @@ export function checkFacts(
   raw: unknown,
 ): { ok: true; value: ExplanationFacts } | { ok: false; error: ExplainError } {
   const parsed = explanationFactsSchema.safeParse(raw);
-  if (parsed.success) return { ok: true, value: parsed.data };
+  if (parsed.success) return { ok: true, value: sanitizeFacts(parsed.data).facts };
   const fields = [...new Set(parsed.error.issues.map((i) => i.path.join('.') || '(root)'))];
   return { ok: false, error: { code: 'INVALID_FACTS', fields } };
 }
@@ -69,15 +71,24 @@ export async function completeJson<T>(
     });
     if (!result.ok) return result;
     const parsed = schema.safeParse(parseJson(result.value.text));
-    if (parsed.success) return { ok: true, value: parsed.data };
-    last = { code: 'INVALID_RESPONSE', detail: 'answer does not match the schema' };
+    if (parsed.success && !isUnsafeOutput(parsed.data)) return { ok: true, value: parsed.data };
+    last = {
+      code: 'INVALID_RESPONSE',
+      detail: parsed.success
+        ? 'answer failed the output guard'
+        : 'answer does not match the schema',
+    };
   }
   return { ok: false, error: last };
 }
 
-/** Facts go in as one JSON block that the system prompt declares to be data, not instructions. */
+/**
+ * Facts go in as one JSON block that the system prompt declares to be data, not instructions.
+ * `<` is escaped (valid JSON, same value) so no string can close the block early.
+ */
 export function factsMessage(facts: ExplanationFacts): LlmMessage {
-  return { role: 'user', content: `<facts>\n${JSON.stringify(facts)}\n</facts>` };
+  const json = JSON.stringify(facts).replace(/</g, String.raw`\u003c`);
+  return { role: 'user', content: `<facts>\n${json}\n</facts>` };
 }
 
 export const languageName = (language: Language): string =>
