@@ -21,10 +21,10 @@ Status: todo | doing | blocked | done. "done" needs evidence.
 - Evidence: `pnpm lint && pnpm typecheck && pnpm test` green; `pnpm --filter @vorchain/llm coverage` 100% lines (gate 90); packages/llm/src/fake-provider.test.ts (6 tests); ESLint boundaries rejects `import '@vorchain/llm'` in packages/engine/src (checked by hand)
 
 ## V-04 Ollama + OpenAI-compatible + Anthropic adapters
-- Status: todo
+- Status: done
 - Depends on: V-03
 - Acceptance: each adapter passes the same contract tests (fake HTTP)
-- Evidence:
+- Evidence: `describe.each` contract suite in packages/llm/src/adapters/contract.test.ts runs against all 3 adapters (60 tests in the package pass); `pnpm --filter @vorchain/llm coverage` 99% lines, 95% branches (gate 90); `pnpm lint && pnpm typecheck && pnpm test` green
 
 ## V-05 Structured explanation + supplier email draft
 - Status: todo
