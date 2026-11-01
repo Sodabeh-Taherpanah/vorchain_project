@@ -27,10 +27,10 @@ Status: todo | doing | blocked | done. "done" needs evidence.
 - Evidence: `describe.each` contract suite in packages/llm/src/adapters/contract.test.ts runs against all 3 adapters (60 tests in the package pass); `pnpm --filter @vorchain/llm coverage` 99% lines, 95% branches (gate 90); `pnpm lint && pnpm typecheck && pnpm test` green
 
 ## V-05 Structured explanation + supplier email draft
-- Status: todo
+- Status: done
 - Depends on: V-03
 - Acceptance: JSON validated by schema; test proves raw files cannot reach the provider
-- Evidence:
+- Evidence: packages/llm/src/explain/explain.test.ts: zod-validated output (schema failures return INVALID_RESPONSE) and describe "privacy gate: raw files cannot reach the provider" (strict facts schema; 9 bad inputs per function give INVALID_FACTS with `provider.calls` empty; sent block keys equal the schema keys); 98 tests in package pass, 99% lines / 96% branches (gate 90); `pnpm lint && pnpm typecheck && pnpm test` green
 
 ## V-06 Prompt injection guardrails + PII masking
 - Status: todo

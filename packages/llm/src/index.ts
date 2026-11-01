@@ -17,3 +17,10 @@ export type {
   LlmRole,
   LlmUsage,
 } from './types.ts';
+export { explainShortageWithLlm, structuredExplanationSchema } from './explain/explain-shortage.ts';
+export type { StructuredExplanation } from './explain/explain-shortage.ts';
+export { explanationFactsSchema } from './explain/facts.ts';
+export type { ExplanationFacts } from './explain/facts.ts';
+export type { ExplainError, ExplainOptions, ExplainResult, Language } from './explain/run.ts';
+export { draftSupplierEmail, supplierEmailSchema } from './explain/supplier-email.ts';
+export type { SupplierEmailDraft } from './explain/supplier-email.ts';
