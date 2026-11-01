@@ -29,3 +29,7 @@ export { looksLikeInjection } from './guard/injection.ts';
 export { containsPii, maskPii } from './guard/pii.ts';
 export { REMOVED_PLACEHOLDER, sanitizeFacts } from './guard/sanitize-facts.ts';
 export type { SanitizedFacts } from './guard/sanitize-facts.ts';
+export { EVAL_CASES } from './eval/cases.ts';
+export type { CheckName, EvalCase } from './eval/cases.ts';
+export { runEvaluation } from './eval/run.ts';
+export type { CaseOutcome, EvalReport } from './eval/run.ts';

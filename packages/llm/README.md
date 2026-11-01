@@ -37,3 +37,14 @@ Layers, outermost first (`src/guard/`):
 Known limits: the injection and PII patterns are heuristics (paraphrases, other languages and unusual number formats can
 slip through), which is why layers 1, 3, 4 and 5 do not depend on them. Tests: `src/guard/guard.test.ts` (20 injection
 strings, each checked to produce a prompt identical to a neutral name, and a hijacked model's answers rejected).
+
+## Evaluation set (V-07)
+`EVAL_CASES` (`src/eval/cases.ts`) holds 23 cases: 14 typical and edge explanations, 3 e-mail drafts, 6 deliberately bad
+answers. `runEvaluation(cases, makeProvider)` runs each case and applies checks (`src/eval/checks.ts`): the answer parses,
+every number comes from the facts, the material is named, the language is right, confidence is `low` without a reliable
+supplier, hidden risks mention the ERP, e-mails keep the `[Name]` placeholder and ask for a delivery date, and attack text
+never appears in a request. A bad case passes only when exactly its intended check fails.
+
+CI runs it with the fake provider (scripted answers), so it guards the harness, the prompts' inputs and the guardrails, not
+a model's quality. To measure a real model, call `runEvaluation` with a real provider factory on the good cases
+(`expectFail === undefined`) by hand; this is never run in CI.
