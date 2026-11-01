@@ -9,10 +9,10 @@ Status: todo | doing | blocked | done. "done" needs evidence.
 - Evidence: docs/STATUS.md (commit ec4d93c); 26 Done and 10 open tasks checked against code
 
 ## V-02 License decision (waiting for owner)
-- Status: todo
+- Status: done
 - Depends on: V-01
 - Acceptance: LICENSE and README note match the owner's choice
-- Evidence:
+- Evidence: owner chose option 2; LICENSE is PolyForm Noncommercial 1.0.0 + Required Notice; README License section and package.json "license" match; docs/license-options removed
 
 ## V-03 LlmProvider interface + fake provider
 - Status: todo

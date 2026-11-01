@@ -66,4 +66,4 @@ Start with [`START_HERE.md`](START_HERE.md). Agents: **architect** → **builder
 - GitHub Copilot: `.github/agents/`
 
 ## License
-**Not decided yet.** The repository is already public, but no `LICENSE` file exists, so by default all rights are reserved. This is a personal project with possible commercial intent and is **not open source**. Two options are prepared in [`docs/license-options/`](docs/license-options/README.md); the owner chooses one.
+This is a personal project with possible commercial intent. The code is public so that it can be read and evaluated (for example as a portfolio). It is **not open source**. Copyright (c) 2026 Sodabeh Taherpanah. Licensed under [PolyForm Noncommercial 1.0.0](LICENSE). Commercial use needs written permission from the copyright holder.

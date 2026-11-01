@@ -47,5 +47,5 @@ was not re-run in this audit; CI runs it on three browsers.
 Commit authors: 51 commits by the owner (two git identities, same email) and 1 by `dependabot[bot]`. No outside human contributor. Open PRs: #48 release-please (owner, release 0.8.0), #59 and #60 Dependabot dependency bumps (not merged by this audit).
 
 ## Open questions
-- Which license option (see `docs/license-options/README.md`)?
+- License: decided by the owner, PolyForm Noncommercial 1.0.0 (see `LICENSE`).
 - ADR numbers 0007 to 0010 are already taken (contact form, testing, commits, toolchain). The new ADRs in Phase B and C need numbers from 0014 on, not 0007 to 0010 as the task text says. Confirm.
