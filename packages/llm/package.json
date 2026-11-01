@@ -1,0 +1,24 @@
+{
+  "name": "@vorchain/llm",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Provider-neutral LLM interface and a deterministic fake provider. No vendor SDKs, no engine dependency.",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "coverage": "vitest run --coverage"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "^5.0.2",
+    "@vorchain/config": "workspace:*",
+    "typescript": "~6.0.3",
+    "vite": "^8.3.1",
+    "vitest": "^5.0.2"
+  }
+}

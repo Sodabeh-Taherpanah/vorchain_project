@@ -15,10 +15,10 @@ Status: todo | doing | blocked | done. "done" needs evidence.
 - Evidence: owner chose option 2; LICENSE is PolyForm Noncommercial 1.0.0 + Required Notice; README License section and package.json "license" match; docs/license-options removed
 
 ## V-03 LlmProvider interface + fake provider
-- Status: todo
+- Status: done
 - Depends on: V-01
 - Acceptance: packages/llm builds; unit tests pass; engine does not import it
-- Evidence:
+- Evidence: `pnpm lint && pnpm typecheck && pnpm test` green; `pnpm --filter @vorchain/llm coverage` 100% lines (gate 90); packages/llm/src/fake-provider.test.ts (6 tests); ESLint boundaries rejects `import '@vorchain/llm'` in packages/engine/src (checked by hand)
 
 ## V-04 Ollama + OpenAI-compatible + Anthropic adapters
 - Status: todo

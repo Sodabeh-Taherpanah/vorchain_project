@@ -28,6 +28,7 @@ const config = {
         'engine',
         'parsers',
         'sample-data',
+        'llm',
         'web',
         'demo',
         'i18n',
