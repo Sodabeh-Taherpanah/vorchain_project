@@ -36,7 +36,7 @@ Status: todo | doing | blocked | done. "done" needs evidence.
 - Status: done
 - Depends on: V-05
 - Acceptance: injection test strings fail to change behavior
-- Evidence: packages/llm/src/guard/guard.test.ts: 20 injection strings x 2 functions each produce a prompt deep-equal to the neutral-name baseline and the attack text is absent from `provider.calls`; hijacked-model outputs (link, e-mail, IBAN, phone, HTML) return INVALID_RESPONSE "answer failed the output guard"; PII masking table; 200 tests in package pass, 99% lines / 96% branches (gate 90); `pnpm lint && pnpm typecheck && pnpm test` green
+- Evidence: packages/llm/src/guard/guard.test.ts: 20 injection strings x 2 functions each produce a prompt deep-equal to the neutral-name baseline and the attack text is absent from `provider.calls`; hijacked-model outputs (link, e-mail, IBAN, phone, HTML) return INVALID_RESPONSE "answer failed the output guard"; PII masking table; 211 tests in package pass (after QA fixes), 99% lines / 96% branches (gate 90); `pnpm lint && pnpm typecheck && pnpm test` green
 
 ## V-07 Evaluation set (about 20 cases)
 - Status: todo

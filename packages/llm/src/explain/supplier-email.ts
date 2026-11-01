@@ -11,7 +11,7 @@ import {
 } from './run.ts';
 
 // eslint-disable-next-line no-control-regex -- a subject is one line: reject control characters
-const NO_CONTROL = /^[^\u0000-\u001f\u007f]*$/;
+const NO_CONTROL = /^[^\u0000-\u001f\u007f\u0085\u2028\u2029]*$/;
 
 export const supplierEmailSchema = z
   .object({

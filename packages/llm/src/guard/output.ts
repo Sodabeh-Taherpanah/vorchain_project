@@ -1,6 +1,7 @@
 import { containsPii } from './pii.ts';
 
-const MARKUP = /<\s*\/?\s*[a-z!][^>]*>/i;
+// HTML tags and Markdown links `[text](target)`.
+const MARKUP = /<\s*\/?\s*[a-z!][^>]*>|\]\(/i;
 
 function anyString(value: unknown, test: (text: string) => boolean): boolean {
   if (typeof value === 'string') return test(value);

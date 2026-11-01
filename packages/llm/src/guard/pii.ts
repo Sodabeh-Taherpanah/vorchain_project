@@ -5,6 +5,9 @@
  * ids or numbers.
  */
 const URL_PATTERN = /\b(?:https?:\/\/|www\.)\S+/gi;
+// Bare domains with a path or a common TLD (evil.example/login, bit.ly/x) carry a link without a scheme.
+const BARE_DOMAIN_PATTERN =
+  /(?<![\w@.-])(?:[a-z0-9-]+\.)+(?:(?:com|net|org|de|eu|info|biz|io|ly|co|ru|cn|xyz|top|shop|app|at|ch)\b(?:[/?#]\S*)?|[a-z]{2,}[/?#]\S*)/gi;
 const EMAIL_PATTERN = /[\w.+-]+@[\w-]+(?:\.[\w-]+)+/g;
 // Country code, check digits, then groups of four; spaces optional (DE89 3704 0044 0532 0130 00).
 const IBAN_PATTERN = /\b[A-Z]{2}\d{2}(?: ?[A-Z0-9]{4}){3,7}(?: ?[A-Z0-9]{1,3})?\b/g;
@@ -14,6 +17,7 @@ const NATIONAL_PHONE = /(?<![\w])0\d{2,5}[\s/-]?\d{3,}(?:[\s-]?\d+)*/g;
 const MASKS: readonly (readonly [RegExp, string])[] = [
   [URL_PATTERN, '[URL]'],
   [EMAIL_PATTERN, '[EMAIL]'],
+  [BARE_DOMAIN_PATTERN, '[URL]'],
   [IBAN_PATTERN, '[IBAN]'],
   [INTERNATIONAL_PHONE, '[PHONE]'],
   [NATIONAL_PHONE, '[PHONE]'],

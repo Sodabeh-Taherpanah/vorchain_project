@@ -19,11 +19,14 @@ function cleanText(text: string): string {
 }
 
 /**
- * Cleans the free-text fields of already validated facts (`materialName`, `supplier.name`).
- * Ids, numbers, dates and codes are fixed formats and pass through unchanged.
+ * Cleans the free-text fields of already validated facts (`materialId`, `materialName`,
+ * `supplier.name`). Numbers, dates and codes are fixed formats and pass through unchanged.
  */
 export function sanitizeFacts(facts: ExplanationFacts): SanitizedFacts {
   const sanitizedFields: string[] = [];
+  // The id is also a short free-text line the schema cannot tell from an attack string.
+  const materialId = cleanText(facts.materialId);
+  if (materialId !== facts.materialId) sanitizedFields.push('materialId');
   const materialName = cleanText(facts.materialName);
   if (materialName !== facts.materialName) sanitizedFields.push('materialName');
 
@@ -35,5 +38,5 @@ export function sanitizeFacts(facts: ExplanationFacts): SanitizedFacts {
       supplier = { ...supplier, name };
     }
   }
-  return { facts: { ...facts, materialName, supplier }, sanitizedFields };
+  return { facts: { ...facts, materialId, materialName, supplier }, sanitizedFields };
 }

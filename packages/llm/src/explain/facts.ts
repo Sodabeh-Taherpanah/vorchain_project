@@ -9,7 +9,7 @@ import { z } from 'zod';
 const SHORT_LINE_MAX = 80;
 // No control characters (including newlines and tabs): one line, nothing that looks like a file.
 // eslint-disable-next-line no-control-regex -- rejecting control characters is the point
-const NO_CONTROL = /^[^\u0000-\u001f\u007f]*$/;
+const NO_CONTROL = /^[^\u0000-\u001f\u007f\u0085\u2028\u2029]*$/;
 
 const shortLine = z.string().min(1).max(SHORT_LINE_MAX).regex(NO_CONTROL);
 const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
