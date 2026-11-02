@@ -51,10 +51,10 @@ Status: todo | doing | blocked | done. "done" needs evidence.
 - Evidence: packages/mcp/src/server.test.ts calls both tools through an in-memory MCP client (filters, limit, invalid args, unknown material, hidden risk found) and packages/mcp/src/stdio.test.ts starts bin.ts over real stdio; 20 tests pass (after QA fixes), 100% lines/branches (gate 90); `pnpm lint && pnpm typecheck && pnpm test` green
 
 ## V-09 Agent with human approval
-- Status: todo
+- Status: done
 - Depends on: V-05, V-08
 - Acceptance: real interrupt, state saved, nothing sent automatically
-- Evidence:
+- Evidence: packages/agent/src/agent.test.ts: `startRun` takes no sender (cannot send), saves the state as JSON and returns `awaiting_approval`; `resumeRun` in a fresh call loads that JSON and sends only approved proposals, once (second approve gives ALREADY_DECIDED); bad edits, unknown or duplicate decisions send nothing; failed send is recorded, not retried. packages/agent/src/mcp-tools.test.ts reads `list_shortages` through a real MCP client. 14 tests, 100% lines / 97.9% branches (gate 90); `pnpm check` green; ESLint boundaries rejected `engine -> agent` and `agent -> engine` imports (checked by hand)
 
 ## V-10 ADRs 0007 to 0010 + C4 + threat model
 - Status: todo

@@ -7,6 +7,7 @@ export const COVERAGE_GATES = {
   parsers: 90,
   llm: 90,
   mcp: 90,
+  agent: 90,
   'sample-data': 80,
   config: 80,
   ui: 90,

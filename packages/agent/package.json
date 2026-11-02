@@ -1,0 +1,30 @@
+{
+  "name": "@vorchain/agent",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Review agent: drafts supplier e-mails for top shortages, then stops until a human approves. Nothing is sent automatically.",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.2",
+    "@vorchain/llm": "workspace:*",
+    "zod": "~4.6.5"
+  },
+  "devDependencies": {
+    "@types/node": "^24.19.0",
+    "@vitest/coverage-v8": "^5.0.2",
+    "@vorchain/config": "workspace:*",
+    "typescript": "~6.0.3",
+    "vite": "^8.3.1",
+    "vitest": "^5.0.2"
+  }
+}
