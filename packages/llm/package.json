@@ -18,10 +18,10 @@
     "zod": "~4.6.5"
   },
   "devDependencies": {
-    "@vitest/coverage-v8": "^5.0.2",
+    "@vitest/coverage-v8": "^5.0.5",
     "@vorchain/config": "workspace:*",
     "typescript": "~6.0.3",
-    "vite": "^8.3.1",
-    "vitest": "^5.0.2"
+    "vite": "^8.3.5",
+    "vitest": "^5.0.5"
   }
 }
