@@ -32,7 +32,7 @@ Method: STRIDE-style walk over assets and trust boundaries. Last reviewed 2026-1
 | T15 | API key typed in the browser is stolen (XSS, extension, shoulder surfing) | Key in React state only: no storage, URL or logs; gone on reload; remote provider needs a separate consent naming the host (ADR-0018) | `demo-ai.spec.ts` "nothing is stored" | Medium. Any XSS on `/demo` could read it; a CSP (P1-27) is still open |
 | T16 | Model text rendered as HTML (XSS via AI) | Output is schema-validated, checked by `isUnsafeOutput` and rendered as React text, never as HTML | `ai-explain-panel.test.tsx` (markup shown as characters) | Low |
 | T17 | Free text from the file leaves the browser | Only material and supplier name, one short line each, sanitised; consent text says so; opt-in per session | `demo-ai.spec.ts` (keys equal facts schema; other materials absent) | Medium by design: the visitor chooses this |
-| T18 | CORS or mixed-content blocks the call, or a wrong URL sends facts to an unintended host | Host shown in the consent; URL must be http(s); errors map to a plain message | `demo-ai.spec.ts` | Low. A stubbed e2e cannot prove a real provider works |
+| T18 | CORS or mixed-content blocks the call, or a wrong URL sends facts to an unintended host | Host shown in the consent; local URL must be loopback, remote URL https without credentials; redirects refused; errors map to a plain message | `demo-ai.spec.ts` | Low. A stubbed e2e cannot prove a real provider works |
 
 ## Out of scope for now
 Authentication and multi-tenant storage (Phase 2), the contact-form server action (ADR-0007), supply chain

@@ -44,11 +44,23 @@ export type AiResult =
 
 const TIMEOUT_MS = 60_000;
 
-/** Host shown in the remote consent text; `null` when the URL is not usable. */
-export function hostOf(baseUrl: string): string | null {
+const LOOPBACK = new Set(['localhost', '127.0.0.1', '[::1]']);
+
+/**
+ * Host shown in the consent text; `null` when the URL is not usable for that kind. Local means the
+ * visitor's own machine (loopback only, so "local" can never name a foreign host). A remote host
+ * must use https, because the API key travels with every request. URLs with credentials are
+ * refused: the consent names a host, and `fetch` rejects them anyway.
+ */
+export function hostOf(baseUrl: string, kind: 'local' | 'remote' = 'remote'): string | null {
   try {
     const url = new URL(baseUrl);
-    return url.protocol === 'https:' || url.protocol === 'http:' ? url.host : null;
+    if (url.username !== '' || url.password !== '') return null;
+    const loopback = LOOPBACK.has(url.hostname);
+    if (kind === 'local') {
+      return loopback && (url.protocol === 'http:' || url.protocol === 'https:') ? url.host : null;
+    }
+    return url.protocol === 'https:' ? url.host : null;
   } catch {
     return null;
   }
@@ -61,7 +73,14 @@ export async function explainWithAi(
   signal?: AbortSignal,
 ): Promise<AiResult> {
   const llm = await import('@vorchain/llm');
-  const fetchFn = (input: string, init: RequestInit) => fetch(input, init);
+  // No redirects (a 307 would replay the body elsewhere), no cookies, no referrer.
+  const fetchFn = (input: string, init: RequestInit) =>
+    fetch(input, {
+      ...init,
+      redirect: 'error',
+      credentials: 'omit',
+      referrerPolicy: 'no-referrer',
+    });
   const base = {
     baseUrl: config.baseUrl,
     model: config.model,

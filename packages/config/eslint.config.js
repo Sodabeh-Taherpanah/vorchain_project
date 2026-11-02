@@ -298,6 +298,23 @@ export function createEslintConfig({ rootDir }) {
       },
     },
     {
+      // In the gateway the import must stay dynamic (a static one pulls the package into the `/`
+      // bundle). Type-only imports are erased and stay allowed.
+      name: 'vorchain/web/llm-gateway-dynamic-only',
+      files: ['apps/web/src/ai/gateway.ts'],
+      rules: {
+        'no-restricted-syntax': [
+          'error',
+          {
+            selector:
+              "ImportDeclaration[importKind!='type'][source.value=/^@vorchain\\/llm/], ExportNamedDeclaration[exportKind!='type'][source.value=/^@vorchain\\/llm/], ExportAllDeclaration[source.value=/^@vorchain\\/llm/]",
+            message:
+              'Load @vorchain/llm with a dynamic import() so it stays out of the / bundle (ADR-0018).',
+          },
+        ],
+      },
+    },
+    {
       // `@vorchain/ui` is framework-neutral React (ADR-0013): Next.js-specific rules do not apply.
       name: 'vorchain/ui/no-next-rules',
       files: UI_FILES,

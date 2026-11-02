@@ -21,9 +21,11 @@ person is the approver and drafts are not sent anywhere).
 - Off on every load; state and the API key live in React state only (no storage, no URL, no logs).
 - Consent step (de/en) lists what is sent (derived numbers, engine codes, material and supplier
   name) and to whom. A remote provider needs a second, separate agreement that names its host.
+- "Local" accepts loopback addresses only (`localhost`, `127.0.0.1`, `[::1]`); a remote URL must be
+  `https:` without credentials. Requests use `redirect: 'error'`, no cookies and no referrer.
 - Nothing is sent until "Explain" is pressed for one material; output is shown as plain text.
 - `src/ai/gateway.ts` is the only file allowed to import `@vorchain/llm`, via dynamic `import()`
-  (ESLint `no-restricted-imports`), so it is not in the bundle of `/` or loaded before consent.
+  (ESLint `no-restricted-imports`; `no-restricted-syntax` forbids a static value import there), so it is not in the bundle of `/` or loaded before consent.
 - `src/ai/explanation-facts.ts` maps an exception to the facts; the llm package's strict schema
   checks them again. No analytics event for AI actions (ADR-0012).
 

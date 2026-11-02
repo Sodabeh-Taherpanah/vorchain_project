@@ -50,7 +50,7 @@ export const AI_OFF: AiSession = {
 /** The provider settings if they are complete; a remote one also needs its separate consent. */
 export function providerConfig(session: AiSession): AiProviderConfig | null {
   if (session.mode === 'local') {
-    return hostOf(session.localUrl) === null || session.localModel.trim() === ''
+    return hostOf(session.localUrl, 'local') === null || session.localModel.trim() === ''
       ? null
       : { kind: 'local', baseUrl: session.localUrl.trim(), model: session.localModel.trim() };
   }
@@ -185,7 +185,7 @@ function ConsentForm({
             id={`${id}-lurl`}
             label={t('consent.baseUrl')}
             value={session.localUrl}
-            invalid={hostOf(session.localUrl) === null}
+            invalid={hostOf(session.localUrl, 'local') === null}
             onChange={(localUrl) => {
               set({ localUrl });
             }}
