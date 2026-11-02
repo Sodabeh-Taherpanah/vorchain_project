@@ -69,7 +69,7 @@ vorchain/
 ├─ .github/                    # workflows, agents, templates, CODEOWNERS
 └─ AGENTS.md
 ```
-Dependency rule: `apps/web → parsers → engine` and `apps/web → ui`. `engine` and `ui` depend on nothing internal (`ui` = `packages/ui`, the shared design system, ADR-0013; no micro-frontends). Enforce this with ESLint `no-restricted-imports` or `eslint-plugin-boundaries`.
+Dependency rule: `apps/web → parsers → engine` and `apps/web → ui`; `apps/web → llm` only through the lazy gateway `src/ai/gateway.ts` (ADR-0018). `engine` and `ui` depend on nothing internal (`ui` = `packages/ui`, the shared design system, ADR-0013; no micro-frontends). Enforce this with ESLint `no-restricted-imports` or `eslint-plugin-boundaries`.
 
 ## 5. Coding standards
 - Functions stay small and named by intent. Avoid `any`; use `unknown` + zod at boundaries. Model domain types explicitly (`MaterialId` branded strings, `IsoDate`).

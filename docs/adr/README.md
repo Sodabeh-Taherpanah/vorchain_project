@@ -22,3 +22,4 @@ Status `proposed` means the owner still has to confirm (usually cost or an exter
 | [0015](0015-privacy-gate-and-guardrails-for-ai.md) | Privacy gate and layered guardrails for AI prompts | accepted |
 | [0016](0016-read-only-mcp-server.md) | Read-only MCP server as the agent's door to the engine | accepted |
 | [0017](0017-agent-human-approval-interrupt.md) | Review agent stops for human approval; sending is a separate step | accepted |
+| [0018](0018-ai-explanation-in-the-web-app.md) | AI explanation in the web app: opt-in, in-memory, lazy, one gateway | accepted |

@@ -19,7 +19,7 @@ unknown keys rejected, free text limited to one short line; bad facts return `IN
 called. (2) `sanitizeFacts` replaces instruction-like text and masks URLs, e-mails, IBANs, phones; `<` is escaped.
 (3) The system prompt marks the facts block as inert data. (4) Output is schema-validated and `isUnsafeOutput`
 rejects links, addresses, IBANs, phones and HTML. (5) A person reads every draft. Layers 1, 3, 4, 5 do not rely on
-heuristics. The web app does not use the AI packages yet; when it does, AI must be opt-in and off by default, and a remote provider a separate explicit choice (open item for the integration task).
+heuristics. In the web app (V-19, ADR-0018) AI is opt-in and off by default, and a remote provider is a separate explicit choice.
 
 ## Consequences
 - Positive: raw files cannot reach a provider (tested); a hijacked model cannot plant a link in a draft.
