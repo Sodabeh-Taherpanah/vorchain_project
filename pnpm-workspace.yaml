@@ -28,3 +28,19 @@ minimumReleaseAgeExclude:
   - '@vitest/mocker@5.0.2'
   - '@vitest/spy@5.0.2'
   - vitest@5.0.2
+  - '@next/env@16.4.4'
+  - '@next/swc-darwin-arm64@16.4.4'
+  - '@next/swc-darwin-x64@16.4.4'
+  - '@next/swc-linux-arm64-gnu@16.4.4'
+  - '@next/swc-linux-arm64-musl@16.4.4'
+  - '@next/swc-linux-x64-gnu@16.4.4'
+  - '@next/swc-linux-x64-musl@16.4.4'
+  - '@next/swc-win32-arm64-msvc@16.4.4'
+  - '@next/swc-win32-x64-msvc@16.4.4'
+  - next@16.4.4
+
+# Security overrides (pnpm audit). Remove when the parent package ships a patched range.
+overrides:
+  handlebars: '>=4.7.10' # via eslint-plugin-boundaries (GHSA-8r5x-fm3f-whwj and related)
+  source-map-js: '>=1.2.2' # via postcss (event-loop DoS advisory)
+  zod: '~4.6.6' # via eslint-plugin-react-hooks > zod-validation-error (memory exhaustion advisory)
