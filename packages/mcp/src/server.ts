@@ -18,6 +18,8 @@ import { z } from 'zod';
 export const SERVER_NAME = 'vorchain';
 export const DEFAULT_LIMIT = 20;
 export const MAX_LIMIT = 100;
+/** Bounds the id echoed back in the unknown-material error. */
+export const MAX_ID_LENGTH = 64;
 
 /** Dataset and settings one server instance answers for. */
 export interface ServerData {
@@ -41,7 +43,11 @@ const listShortagesArgs = {
 };
 
 const getProjectionArgs = {
-  materialId: z.string().min(1).describe('Material number from list_shortages or the ERP.'),
+  materialId: z
+    .string()
+    .min(1)
+    .max(MAX_ID_LENGTH)
+    .describe('Material number from list_shortages or the ERP.'),
 };
 
 function success(value: Record<string, unknown>): CallToolResult {

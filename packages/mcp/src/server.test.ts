@@ -4,7 +4,7 @@ import { analyse } from '@vorchain/engine';
 import { beforeAll, describe, expect, it } from 'vitest';
 
 import { loadDataset, loadSampleData } from './sample.ts';
-import { createVorchainServer, DEFAULT_LIMIT, type ServerData } from './server.ts';
+import { createVorchainServer, DEFAULT_LIMIT, MAX_ID_LENGTH, type ServerData } from './server.ts';
 
 interface Listing {
   asOf: string;
@@ -96,16 +96,45 @@ describe('get_projection', () => {
     expect(body.materialId).toBe(first?.materialId);
     expect(body.points).toHaveLength(data.options.horizonDays);
     expect(body.points[0]?.date).toBe(data.options.asOf);
-    // The realistic view of a CRITICAL material must go below zero (spec §5.2).
-    if (first?.severity === 'CRITICAL') {
+  });
+
+  it('realistic stock goes below zero for every CRITICAL material (spec 5.2)', async () => {
+    const critical = analyse(data.input, data.options).exceptions.filter(
+      (e) => e.severity === 'CRITICAL',
+    );
+    expect(critical.length).toBeGreaterThan(0);
+    for (const e of critical) {
+      const body = (await call('get_projection', { materialId: e.materialId }))
+        .structuredContent as Series;
       expect(Math.min(...body.points.map((p) => p.realisticStock))).toBeLessThan(0);
     }
+  });
+
+  it('shows a hidden risk as short in the realistic view while the ERP view stays ahead', async () => {
+    const hidden = analyse(data.input, data.options).exceptions.find(
+      (e) => e.hidden && e.severity === 'CRITICAL',
+    );
+    expect(hidden).toBeDefined();
+    const body = (await call('get_projection', { materialId: hidden?.materialId }))
+      .structuredContent as Series;
+    const realistic = body.points.find((p) => p.date === hidden?.criticalDate);
+    expect(realistic?.realisticStock).toBeLessThan(0);
+    expect(realistic?.erpStock).toBeGreaterThanOrEqual(0);
   });
 
   it('reports an unknown material as a tool error, not a crash', async () => {
     const result = await call('get_projection', { materialId: 'NOPE-404' });
     expect(result.isError).toBe(true);
     expect(JSON.stringify(result.content)).toContain('Unknown material: NOPE-404');
+  });
+
+  it('rejects an over-long material id instead of echoing it', async () => {
+    const result = await call('get_projection', {
+      materialId: 'X'.repeat(MAX_ID_LENGTH + 1),
+    }).catch((e: unknown) => e);
+    const failed = result instanceof Error || (result as { isError?: boolean }).isError === true;
+    expect(failed).toBe(true);
+    expect(JSON.stringify(result)).not.toContain('X'.repeat(MAX_ID_LENGTH + 1));
   });
 
   it('rejects an empty material id', async () => {

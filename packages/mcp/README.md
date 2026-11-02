@@ -5,7 +5,7 @@ Read-only [MCP](https://modelcontextprotocol.io) server that lets an AI agent as
 | Tool | Arguments | Returns |
 |---|---|---|
 | `list_shortages` | `severity?`, `hiddenOnly?`, `limit?` (1-100, default 20) | `asOf`, `horizonDays`, `summary`, `total`, ranked `exceptions` with reasons and actions |
-| `get_projection` | `materialId` | day-by-day ERP and realistic stock for one material; unknown id gives a tool error |
+| `get_projection` | `materialId` (1-64 chars) | day-by-day ERP and realistic stock for one material; unknown id gives a tool error |
 
 - Both tools are annotated read-only. The server has no write, file or network access: the dataset is passed to
   `createVorchainServer({ input, options })` by the caller.
