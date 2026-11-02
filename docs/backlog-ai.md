@@ -63,6 +63,18 @@ Status: todo | doing | blocked | done. "done" needs evidence.
 - Acceptance: files exist and are consistent with the code
 - Evidence: docs/adr/0014..0017 (LLM layer, privacy gate, MCP server, agent approval) indexed in docs/adr/README.md; C4 section 10 added to docs/architecture/README.md; docs/architecture/threat-model.md (14 threats, each mapped to a control and test); claims checked against packages/llm, mcp, agent and the ESLint boundaries in packages/config/eslint.config.js; `prettier --check docs/adr docs/architecture` clean
 
+## V-19 Wire the AI packages into apps/web (AI off by default)
+- Status: todo
+- Depends on: V-09, V-10
+- Acceptance: AI is off by default; turning it on needs an explicit consent notice (German first, then English) that says what is sent and to whom; a remote provider is a separate explicit choice; only derived facts reach a provider (ADR-0015); e2e network test proves no request carries file content while AI is off and that, when on, only the facts schema leaves; i18n keys in `de` and `en`; JS budget for `/` holds (AI code lazy-loaded on `/demo` only)
+- Evidence:
+
+## V-20 ADRs: optional server module and database, cloud and hosting, GDPR and EU AI Act
+- Status: todo
+- Depends on: V-10
+- Acceptance: short ADRs (numbered from 0018) for (1) an optional server module and its database, (2) cloud and hosting options beyond ADR-0006, (3) a GDPR and EU AI Act assessment of the AI track (risk class, transparency duties, data transfers, DPA needs); threat model updated where they change a risk
+- Evidence:
+
 ## V-12 Benchmarks and performance budgets
 - Status: todo
 - Depends on: V-01
@@ -109,4 +121,13 @@ Status: todo | doing | blocked | done. "done" needs evidence.
 - Status: todo
 - Depends on: V-05
 - Acceptance: contract test against the shared JSON schema; skip if it harms structure
+- Evidence:
+
+## V-21 Make fixture generation deterministic and keep it out of committed files
+- Status: todo
+- Depends on: V-01
+- Note: found 2026-11-03. The tests do not rewrite `packages/parsers/test/fixtures/python-*.json`
+  (verified: parsers tests in main leave `git status` clean). Only `scripts/generate-python-fixtures.py` writes them, by hand.
+  Old worktrees showed them as modified because Prettier reformatted them before `.prettierignore` listed the folder (#24).
+- Acceptance: one documented command regenerates the fixtures byte-identically; CI fails if a regenerate changes a committed file; no format or test step can modify them
 - Evidence:
