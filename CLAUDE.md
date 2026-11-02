@@ -20,3 +20,10 @@ Specialised subagents live in `.claude/agents/`: architect, builder, qa, devops.
 - A task is "done" only when its acceptance checks pass. Write the evidence (test name or command) in the backlog. Never tick a task without evidence.
 - When you stop or I say "pause", run the pause routine: update `docs/SESSION.md`.
 - If a task would break the architecture (browser-only core, package boundaries, parity tests), stop and ask.
+
+## Branch workflow
+- One backlog task = one short-lived branch named <type>/<task-id>-<slug>, created from an up-to-date main. No parallel worktrees unless I ask.
+- Work and commit on that branch. When the task is done and checks pass, stop and say "ready to push". I push and merge myself after CI is green.
+- Never merge into main yourself and never push.
+- At the start of each session, after the sync check: pull main (fast-forward only); list local branches whose remote branch is gone or whose PR is merged; delete them with `git branch -d` (use -D only if the PR is merged, it exists on GitHub and has 0 unpushed commits; list them first). Remove their worktrees if clean.
+- Keep at most one open task branch at a time.
