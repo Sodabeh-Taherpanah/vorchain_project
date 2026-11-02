@@ -57,11 +57,11 @@ Status: todo | doing | blocked | done. "done" needs evidence.
 - Evidence: packages/agent/src/agent.test.ts: `startRun` takes no sender (cannot send), saves the state as JSON and returns `awaiting_approval`; `resumeRun` in a fresh call loads that JSON and sends only approved proposals, once (second approve gives ALREADY_DECIDED); bad edits, unknown or duplicate decisions send nothing; failed send is recorded, not retried. packages/agent/src/mcp-tools.test.ts reads `list_shortages` through a real MCP client. 14 tests, 100% lines / 97.9% branches (gate 90); `pnpm check` green; ESLint boundaries rejected `engine -> agent` and `agent -> engine` imports (checked by hand)
 
 ## V-10 ADRs 0007 to 0010 + C4 + threat model
-- Status: todo
-- Note: ADR numbers 0007 to 0010 already exist in docs/adr/; use 0014 and up (owner to confirm)
+- Status: done
+- Note: ADR numbers 0007 to 0010 already exist in docs/adr/; used 0014 to 0017 (owner to confirm)
 - Depends on: V-01
 - Acceptance: files exist and are consistent with the code
-- Evidence:
+- Evidence: docs/adr/0014..0017 (LLM layer, privacy gate, MCP server, agent approval) indexed in docs/adr/README.md; C4 section 10 added to docs/architecture/README.md; docs/architecture/threat-model.md (14 threats, each mapped to a control and test); claims checked against packages/llm, mcp, agent and the ESLint boundaries in packages/config/eslint.config.js; `prettier --check docs/adr docs/architecture` clean
 
 ## V-12 Benchmarks and performance budgets
 - Status: todo

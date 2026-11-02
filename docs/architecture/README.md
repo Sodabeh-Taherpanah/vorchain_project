@@ -409,3 +409,43 @@ flowchart LR
   without a rewrite (ADR-0006).
 - Nothing in Phase 1 stores customer data server-side, so Phase 2 needs its own data-protection
   design (DPA, retention, encryption) and its own ADRs.
+
+## 10. AI track (V-03 to V-09): components and trust boundaries
+
+Status: built as standalone packages; **not yet wired into `apps/web`**, so the Phase 1 privacy promise is
+unchanged. Decisions: [ADR-0014](../adr/0014-provider-neutral-llm-layer.md),
+[ADR-0015](../adr/0015-privacy-gate-and-guardrails-for-ai.md),
+[ADR-0016](../adr/0016-read-only-mcp-server.md), [ADR-0017](../adr/0017-agent-human-approval-interrupt.md).
+Risks: [threat model](threat-model.md).
+
+```mermaid
+flowchart LR
+  subgraph trusted["Local process (no network by itself)"]
+    engine["@vorchain/engine"]
+    mcp["@vorchain/mcp<br/>list_shortages, get_projection (read-only)"]
+    agent["@vorchain/agent<br/>startRun (no sender) / resumeRun"]
+    store[("StateStore<br/>RunState JSON")]
+    llm["@vorchain/llm<br/>facts schema, guardrails, adapters"]
+    mcp --> engine
+    agent -- "MCP client" --> mcp
+    agent --> llm
+    agent -- "save / load" --> store
+  end
+  human["Person: approve / edit / reject"]
+  sender["Sender (injected by caller)"]
+  ollama["Ollama (local)"]
+  remote["OpenAI-compatible / Anthropic (remote)"]
+  llm -- "derived facts only" --> ollama
+  llm -- "derived facts only, opt-in" --> remote
+  agent -. "after approval only" .-> sender
+  human --> agent
+```
+
+Dependency rules (ESLint `boundaries`, `packages/config/eslint.config.js`):
+- `llm` imports no workspace package; `engine` never imports `llm`, `mcp` or `agent`.
+- `mcp` may use `engine`, `parsers`, `sample-data`; never `llm`, `ui`, `web`; only itself may import it.
+- `agent` may use `llm` only (it reaches the engine through the MCP protocol, not by import); nothing may import it.
+
+Trust boundaries: (1) customer file text is untrusted and crosses into prompts only as validated derived facts;
+(2) model output is untrusted and is schema- and output-checked; (3) leaving the process (remote provider, sending
+an e-mail) happens only through injected functions, and sending only after a human decision.
