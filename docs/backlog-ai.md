@@ -45,10 +45,10 @@ Status: todo | doing | blocked | done. "done" needs evidence.
 - Evidence: packages/llm/src/eval/eval.test.ts runs 23 cases (`runEvaluation` + fake provider) inside `pnpm test` / `pnpm coverage` (CI step `pnpm coverage` in .github/workflows/ci.yml:83); bad answers fail exactly their intended check; 221 tests in package pass, 99.6% lines / 97% branches (gate 90); `pnpm lint && pnpm typecheck && pnpm test` green
 
 ## V-08 MCP server package
-- Status: todo
+- Status: done
 - Depends on: V-01
 - Acceptance: tools list_shortages and get_projection callable; test calls them
-- Evidence:
+- Evidence: packages/mcp/src/server.test.ts calls both tools through an in-memory MCP client (filters, limit, invalid args, unknown material, hidden risk found) and packages/mcp/src/stdio.test.ts starts bin.ts over real stdio; 17 tests pass, 100% lines/branches (gate 90); `pnpm lint && pnpm typecheck && pnpm test` green
 
 ## V-09 Agent with human approval
 - Status: todo

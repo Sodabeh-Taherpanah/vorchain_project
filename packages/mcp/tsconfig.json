@@ -1,0 +1,8 @@
+{
+  "extends": "@vorchain/config/tsconfig.base.json",
+  "compilerOptions": {
+    "types": ["node"]
+  },
+  // The parsers' hand-written papaparse typings, for the parsers source imported here.
+  "include": ["src", "bin.ts", "vitest.config.ts", "../parsers/types"]
+}
