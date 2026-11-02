@@ -62,7 +62,7 @@
         },
         "upload": {
           "question": "Are my files uploaded?",
-          "answer": "No. The analysis runs entirely in your browser. Your files are never sent to our server or to any third party."
+          "answer": "No. The analysis runs entirely in your browser. Your files are never sent to our server or to any third party. The only exception is the optional AI explanation in the demo, which is off by default. Only after your explicit consent and only when you press “Explain”, the calculated numbers of one item and two short text lines go to the model you choose; no rows or file contents."
         },
         "cost": {
           "question": "What does Vorchain cost?",
@@ -78,7 +78,7 @@
   },
   "demo": {
     "title": "Interactive demo",
-    "lead": "Check your material supply against real supplier delays. Your files are read only in your browser and never leave your computer.",
+    "lead": "Check your material supply against real supplier delays. Your files are read only in your browser and never leave your computer. Only if you turn on the optional AI explanation yourself and agree, the calculated numbers of one item and two short text lines (material and supplier name) are sent to the model you choose.",
     "dataSource": {
       "heading": "1. Choose data",
       "intro": "Start with our sample data or choose your own ERP exports as CSV or Excel files (.csv, .xlsx). Materials, open purchase orders, demand and delivery history are required; suppliers are optional.",

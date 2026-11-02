@@ -62,7 +62,7 @@
         },
         "upload": {
           "question": "Werden meine Dateien hochgeladen?",
-          "answer": "Nein. Die Analyse läuft vollständig in Ihrem Browser. Ihre Dateien werden weder an unseren Server noch an Dritte übertragen."
+          "answer": "Nein. Die Analyse läuft vollständig in Ihrem Browser. Ihre Dateien werden weder an unseren Server noch an Dritte übertragen. Einzige Ausnahme: die optionale KI-Erklärung in der Demo, die standardmäßig aus ist. Nach Ihrer ausdrücklichen Zustimmung und nur beim Klick auf „Erklären“ gehen errechnete Zahlen einer Position und zwei kurze Textzeilen an das Modell, das Sie wählen; keine Zeilen oder Dateiinhalte."
         },
         "cost": {
           "question": "Was kostet Vorchain?",
@@ -78,7 +78,7 @@
   },
   "demo": {
     "title": "Interaktive Demo",
-    "lead": "Prüfen Sie Ihre Materialversorgung mit echten Lieferverzügen. Ihre Dateien werden nur in Ihrem Browser gelesen und verlassen nie Ihren Rechner.",
+    "lead": "Prüfen Sie Ihre Materialversorgung mit echten Lieferverzügen. Ihre Dateien werden nur in Ihrem Browser gelesen und verlassen nie Ihren Rechner. Nur wenn Sie die optionale KI-Erklärung selbst einschalten und zustimmen, werden für eine einzelne Position errechnete Zahlen und zwei kurze Textzeilen (Material- und Lieferantenname) an das von Ihnen gewählte Modell gesendet.",
     "dataSource": {
       "heading": "1. Daten wählen",
       "intro": "Starten Sie mit unseren Beispieldaten oder wählen Sie eigene ERP-Exporte als CSV- oder Excel-Dateien (.csv, .xlsx). Benötigt werden Materialstamm, offene Bestellungen, Bedarf und Lieferhistorie; Lieferanten sind optional.",
