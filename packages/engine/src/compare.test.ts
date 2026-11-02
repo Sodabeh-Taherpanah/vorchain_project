@@ -40,5 +40,7 @@ describe('compareCodePoints', () => {
         expect(Math.sign(compareCodePoints(a, b))).toBe(Math.sign(reference(a, b)));
       }),
     );
-  });
+    // 100 runs finish in under 1 s alone, but exceeded the 5 s default when `turbo` ran every
+    // package's coverage in parallel; the timeout only absorbs that load.
+  }, 30_000);
 });

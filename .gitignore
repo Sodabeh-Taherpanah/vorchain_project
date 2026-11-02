@@ -41,3 +41,6 @@ pnpm-debug.log*
 
 # Next.js generated types
 next-env.d.ts
+
+# Agent worktrees (local, nested checkouts)
+.claude/worktrees/

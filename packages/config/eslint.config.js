@@ -38,6 +38,9 @@ const USER_FACING_PROP_MESSAGE =
 const ELEMENTS = [
   { type: 'engine', pattern: 'packages/engine/src' },
   { type: 'parsers', pattern: 'packages/parsers/src' },
+  { type: 'llm', pattern: 'packages/llm/src' },
+  { type: 'mcp', pattern: 'packages/mcp/src' },
+  { type: 'agent', pattern: 'packages/agent/src' },
   { type: 'sample-data', pattern: 'packages/sample-data/src' },
   { type: 'config', pattern: 'packages/config/src' },
   { type: 'ui', pattern: 'packages/ui/src' },
@@ -61,12 +64,38 @@ const BOUNDARY_POLICIES = [
   // The engine depends on no other workspace package.
   {
     from: { element: { type: 'engine' } },
-    disallow: toElements(['parsers', 'sample-data', 'config', 'web']),
+    disallow: toElements(['parsers', 'sample-data', 'llm', 'mcp', 'agent', 'config', 'web']),
   },
   {
     from: { element: { type: 'engine' } },
     disallow: { to: { module: { source: '@vorchain/*' } } },
   },
+  // The LLM layer is standalone: it depends on no workspace package, and the engine never sees it.
+  { from: { element: { type: 'llm' } }, disallow: { to: { module: { source: '@vorchain/*' } } } },
+  {
+    from: { element: { type: 'llm' } },
+    disallow: toElements([
+      'engine',
+      'parsers',
+      'sample-data',
+      'mcp',
+      'agent',
+      'ui',
+      'config',
+      'web',
+    ]),
+  },
+  // The MCP server sits on top of engine, parsers and sample-data; it never sees the UI, the LLM layer or the web app.
+  { from: { element: { type: 'mcp' } }, disallow: toElements(['llm', 'ui', 'config', 'web']) },
+  // Nothing but the MCP package itself may depend on it.
+  { from: { element: { type: '!mcp' } }, disallow: toElements(['mcp']) },
+  // The agent uses the LLM layer and talks to tools through MCP only; no engine, parsers, UI or web.
+  {
+    from: { element: { type: 'agent' } },
+    disallow: toElements(['engine', 'parsers', 'sample-data', 'mcp', 'ui', 'config', 'web']),
+  },
+  // Nothing may depend on the agent.
+  { from: { element: { type: '!agent' } }, disallow: toElements(['agent']) },
   // parsers -> engine; sample-data -> engine. Neither may use UI frameworks.
   { from: { element: { type: 'parsers' } }, disallow: toElements(['sample-data', 'config']) },
   { from: { element: { type: 'sample-data' } }, disallow: toElements(['parsers', 'config']) },

@@ -1,0 +1,10 @@
+{
+  "extends": "@vorchain/config/tsconfig.base.json",
+  "compilerOptions": {
+    // Runs in the browser worker or on a server: `AbortSignal` comes from the WebWorker lib, and no
+    // Node types are pulled in.
+    "lib": ["ES2023", "WebWorker"],
+    "types": []
+  },
+  "include": ["src", "vitest.config.ts"]
+}
