@@ -1,4 +1,4 @@
-import type { Report, ShortageException } from '@vorchain/engine';
+import type { Report, ShortageException, SupplierId } from '@vorchain/engine';
 
 /**
  * The only data about a material that may leave the browser (ADR-0015): derived numbers, engine
@@ -41,7 +41,7 @@ function shortLine(text: string, fallback: string): string {
 export function toExplanationFacts(
   exception: ShortageException,
   report: Pick<Report, 'asOf' | 'supplierStats'>,
-  supplierName: (id: string) => string,
+  supplierName: (id: SupplierId) => string,
 ): FactsForModel {
   const stats =
     exception.mainSupplierId === null

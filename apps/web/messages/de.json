@@ -301,6 +301,59 @@
           "realisticReceipts": "Zugang realistisch",
           "erpStock": "Bestand ERP",
           "realisticStock": "Bestand realistisch"
+        },
+        "ai": {
+          "heading": "KI-Erklärung (optional)",
+          "intro": "Standardmäßig aus. Wenn Sie die KI einschalten, können Sie sich eine Position von einem Sprachmodell in einfachen Worten erklären lassen. Vorher fragen wir um Ihre Zustimmung.",
+          "enable": "KI aktivieren …",
+          "consent": {
+            "sendsTitle": "Was beim Klick auf „Erklären“ gesendet wird:",
+            "sendsNumbers": "errechnete Zahlen zu dieser einen Position (Termine, Mindestbestand, Sicherheitsbestand, Verzögerung des Lieferanten)",
+            "sendsCodes": "die Codes der Gründe und Maßnahmen der Auswertung",
+            "sendsNames": "zwei kurze Textzeilen aus Ihrer Datei: Materialbezeichnung und Lieferantenname",
+            "notSent": "Nicht gesendet werden Zeilen, Spalten oder Dateiinhalte, und es wird nichts ohne Klick auf „Erklären“ gesendet.",
+            "providerLegend": "Wohin soll gesendet werden?",
+            "local": "Lokales Modell auf diesem Computer (Ollama). Die Angaben verlassen Ihren Rechner nicht.",
+            "remote": "Externer Dienst (OpenAI-kompatibel). Die Angaben werden über das Internet an diesen Anbieter gesendet.",
+            "localHint": "Ollama muss laufen und diese Seite zulassen (Umgebungsvariable OLLAMA_ORIGINS). Sonst blockiert der Browser die Anfrage.",
+            "baseUrl": "Adresse des lokalen Servers",
+            "baseUrlRemote": "Adresse des Dienstes (endet auf /v1)",
+            "model": "Modellname",
+            "apiKey": "API-Schlüssel",
+            "keyHint": "Der Schlüssel bleibt nur im Arbeitsspeicher dieser Seite und wird weder gespeichert noch protokolliert. Beim Neuladen ist er weg.",
+            "remoteWarning": "Achtung: Ein externer Dienst empfängt die oben genannten Angaben.",
+            "remoteAgree": "Ich stimme zu, dass die oben genannten Angaben an {host} gesendet werden.",
+            "remoteNeedsHost": "Geben Sie zuerst eine gültige Adresse ein, dann können Sie zustimmen.",
+            "activate": "Zustimmen und aktivieren",
+            "cancel": "Abbrechen"
+          },
+          "active": {
+            "local": "KI ist aktiv: lokales Modell auf diesem Computer.",
+            "remote": "KI ist aktiv: externer Dienst {host}."
+          },
+          "explain": "Diese Position erklären",
+          "explaining": "Die KI antwortet …",
+          "disable": "KI ausschalten",
+          "result": {
+            "drivers": "Ursachen",
+            "actions": "Empfohlene Schritte",
+            "confidence": "Sicherheit der Einschätzung: {level}",
+            "levels": {
+              "low": "niedrig",
+              "medium": "mittel",
+              "high": "hoch"
+            },
+            "disclaimer": "Lesehilfe, kein Ersatz: Maßgeblich sind die Zahlen und Gründe der Auswertung oben."
+          },
+          "errors": {
+            "INVALID_FACTS": "Die Angaben dieser Position wurden nicht gesendet, weil sie die Datenschutzprüfung nicht bestanden haben.",
+            "UNAVAILABLE": "Der Dienst ist nicht erreichbar. Läuft er, und lässt er diese Seite zu (CORS)?",
+            "TIMEOUT": "Der Dienst hat nicht rechtzeitig geantwortet.",
+            "RATE_LIMITED": "Der Dienst begrenzt die Anfragen. Bitte später erneut versuchen.",
+            "REFUSED": "Das Modell hat die Anfrage abgelehnt.",
+            "INVALID_RESPONSE": "Die Antwort war unbrauchbar oder hat eine Sicherheitsprüfung nicht bestanden und wird nicht angezeigt.",
+            "ABORTED": "Die Anfrage wurde abgebrochen."
+          }
         }
       }
     }

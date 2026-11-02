@@ -44,7 +44,7 @@ describe.each(['de', 'en'] as const)('toExplanationFacts on the %s sample data',
     const r = await report(locale);
     expect(r.exceptions.length).toBeGreaterThan(0);
     for (const exception of r.exceptions) {
-      const facts = toExplanationFacts(exception, r, (id: SupplierId | string) => String(id));
+      const facts = toExplanationFacts(exception, r, (id: SupplierId) => String(id));
       expect(Object.keys(facts).sort()).toEqual(FACT_KEYS);
       const parsed = explanationFactsSchema.safeParse(facts);
       expect(
@@ -74,8 +74,8 @@ describe('toExplanationFacts text lines', () => {
     const r = await report('de');
     const base = r.exceptions[0];
     if (base === undefined) throw new Error('no exception');
-    expect(toExplanationFacts({ ...base, description: '  ' }, r, String).materialName).toBe(
-      base.materialId,
-    );
+    expect(
+      toExplanationFacts({ ...base, description: '  ' }, r, (id) => String(id)).materialName,
+    ).toBe(base.materialId);
   });
 });

@@ -272,6 +272,32 @@ export function createEslintConfig({ rootDir }) {
       rules: { ...jsxA11y.flatConfigs.recommended.rules },
     },
     {
+      // The LLM layer is loaded lazily and only after consent (ADR-0018): `src/ai/gateway.ts` is the
+      // one file that may import it, through a dynamic `import()`. Everything else goes through it.
+      name: 'vorchain/web/llm-only-via-gateway',
+      files: ['apps/web/src/**/*.{ts,tsx}'],
+      ignores: [...TEST_FILES, 'apps/web/src/ai/gateway.ts'],
+      rules: {
+        'no-restricted-imports': [
+          'error',
+          {
+            paths: [
+              {
+                name: '@vorchain/llm',
+                message: 'Import the LLM layer only in src/ai/gateway.ts (ADR-0018).',
+              },
+            ],
+            patterns: [
+              {
+                group: ['@vorchain/llm/*'],
+                message: 'Import the LLM layer only in src/ai/gateway.ts (ADR-0018).',
+              },
+            ],
+          },
+        ],
+      },
+    },
+    {
       // `@vorchain/ui` is framework-neutral React (ADR-0013): Next.js-specific rules do not apply.
       name: 'vorchain/ui/no-next-rules',
       files: UI_FILES,

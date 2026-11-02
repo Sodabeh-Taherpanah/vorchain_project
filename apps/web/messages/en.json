@@ -301,6 +301,59 @@
           "realisticReceipts": "Receipts realistic",
           "erpStock": "Stock ERP",
           "realisticStock": "Stock realistic"
+        },
+        "ai": {
+          "heading": "AI explanation (optional)",
+          "intro": "Off by default. If you turn AI on, a language model can explain one item in plain words. We ask for your consent first.",
+          "enable": "Turn on AI …",
+          "consent": {
+            "sendsTitle": "What is sent when you press “Explain”:",
+            "sendsNumbers": "calculated numbers for this one item (dates, lowest stock, safety stock, supplier delay)",
+            "sendsCodes": "the codes of the reasons and actions from the analysis",
+            "sendsNames": "two short text lines from your file: the material name and the supplier name",
+            "notSent": "Rows, columns or file contents are not sent, and nothing is sent until you press “Explain”.",
+            "providerLegend": "Where should it be sent?",
+            "local": "Local model on this computer (Ollama). The data does not leave your machine.",
+            "remote": "External service (OpenAI-compatible). The data is sent over the internet to this provider.",
+            "localHint": "Ollama must be running and allow this page (environment variable OLLAMA_ORIGINS). Otherwise the browser blocks the request.",
+            "baseUrl": "Address of the local server",
+            "baseUrlRemote": "Address of the service (ends in /v1)",
+            "model": "Model name",
+            "apiKey": "API key",
+            "keyHint": "The key stays in this page’s memory only and is neither stored nor logged. It is gone when you reload.",
+            "remoteWarning": "Note: an external service receives the data listed above.",
+            "remoteAgree": "I agree that the data listed above is sent to {host}.",
+            "remoteNeedsHost": "Enter a valid address first, then you can agree.",
+            "activate": "Agree and turn on",
+            "cancel": "Cancel"
+          },
+          "active": {
+            "local": "AI is on: local model on this computer.",
+            "remote": "AI is on: external service {host}."
+          },
+          "explain": "Explain this item",
+          "explaining": "The AI is answering …",
+          "disable": "Turn off AI",
+          "result": {
+            "drivers": "Causes",
+            "actions": "Recommended steps",
+            "confidence": "Confidence of this assessment: {level}",
+            "levels": {
+              "low": "low",
+              "medium": "medium",
+              "high": "high"
+            },
+            "disclaimer": "A reading aid, not a replacement: the numbers and reasons of the analysis above are authoritative."
+          },
+          "errors": {
+            "INVALID_FACTS": "This item’s data was not sent because it failed the privacy check.",
+            "UNAVAILABLE": "The service is not reachable. Is it running, and does it allow this page (CORS)?",
+            "TIMEOUT": "The service did not answer in time.",
+            "RATE_LIMITED": "The service is limiting requests. Please try again later.",
+            "REFUSED": "The model refused the request.",
+            "INVALID_RESPONSE": "The answer was unusable or failed a safety check and is not shown.",
+            "ABORTED": "The request was cancelled."
+          }
         }
       }
     }
