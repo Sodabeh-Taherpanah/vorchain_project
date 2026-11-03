@@ -15,6 +15,8 @@ import {
   SheetTitle,
 } from '@vorchain/ui/components/sheet';
 
+import type { FactsForModel } from '../../ai/explanation-facts.ts';
+import { AiExplainPanel, type AiSession } from './ai-explain-panel.tsx';
 import { formatIsoDate } from './analysis-settings-model.ts';
 import {
   matchesWindow,
@@ -53,6 +55,12 @@ export interface ProjectionDrawerProps {
   readonly horizonDays: number;
   readonly getProjection: (materialId: MaterialId) => Promise<ProjectionSeries | null>;
   readonly onClose: () => void;
+  /** Optional AI reading aid (V-19). In memory only; off until the visitor agrees. */
+  readonly ai?: {
+    readonly session: AiSession;
+    readonly onSessionChange: (next: AiSession) => void;
+    readonly facts: FactsForModel | null;
+  };
 }
 
 type ProjectionState =
@@ -105,6 +113,7 @@ export function ProjectionDrawer({
   horizonDays,
   getProjection,
   onClose,
+  ai,
 }: ProjectionDrawerProps) {
   const t = useTranslations('demo.report.drawer');
   const locale = useLocale();
@@ -166,6 +175,13 @@ export function ProjectionDrawer({
               onToggle={() => {
                 setAsTable(!asTable);
               }}
+            />
+          )}
+          {ai !== undefined && (
+            <AiExplainPanel
+              session={ai.session}
+              onSessionChange={ai.onSessionChange}
+              facts={ai.facts}
             />
           )}
         </div>

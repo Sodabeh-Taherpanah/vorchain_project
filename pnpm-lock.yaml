@@ -210,6 +210,9 @@ importers:
       '@vorchain/engine':
         specifier: workspace:*
         version: link:../../packages/engine
+      '@vorchain/llm':
+        specifier: workspace:*
+        version: link:../../packages/llm
       '@vorchain/parsers':
         specifier: workspace:*
         version: link:../../packages/parsers

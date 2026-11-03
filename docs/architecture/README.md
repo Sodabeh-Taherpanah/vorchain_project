@@ -120,6 +120,8 @@ Rules (enforced by `eslint-plugin-boundaries` from Task 0 on):
 - `ui` (ADR-0013) holds the Tailwind theme and presentational React primitives. It imports nothing
   internal and no Next.js, `next-intl`, worker or Node APIs; only `apps/web` imports it.
 - `apps/web` is the only package that knows about Next.js, i18n and the Worker.
+- `apps/web` may use `@vorchain/llm` only in `src/ai/gateway.ts`, through a dynamic `import()` after the
+  visitor's consent (ADR-0018, ESLint `no-restricted-imports`). `mcp` and `agent` are not used by the web app.
 
 ### 4.2 Engine components (`packages/engine`)
 
@@ -412,10 +414,11 @@ flowchart LR
 
 ## 10. AI track (V-03 to V-09): components and trust boundaries
 
-Status: built as standalone packages; **not yet wired into `apps/web`**, so the Phase 1 privacy promise is
-unchanged. Decisions: [ADR-0014](../adr/0014-provider-neutral-llm-layer.md),
+Status: `llm` is wired into `apps/web` as an opt-in, lazy-loaded explanation (V-19, ADR-0018); `mcp` and
+`agent` stay standalone (server/CLI). Decisions: [ADR-0014](../adr/0014-provider-neutral-llm-layer.md),
 [ADR-0015](../adr/0015-privacy-gate-and-guardrails-for-ai.md),
-[ADR-0016](../adr/0016-read-only-mcp-server.md), [ADR-0017](../adr/0017-agent-human-approval-interrupt.md).
+[ADR-0016](../adr/0016-read-only-mcp-server.md), [ADR-0017](../adr/0017-agent-human-approval-interrupt.md),
+[ADR-0018](../adr/0018-ai-explanation-in-the-web-app.md).
 Risks: [threat model](threat-model.md).
 
 ```mermaid

@@ -64,15 +64,15 @@ Status: todo | doing | blocked | done. "done" needs evidence.
 - Evidence: docs/adr/0014..0017 (LLM layer, privacy gate, MCP server, agent approval) indexed in docs/adr/README.md; C4 section 10 added to docs/architecture/README.md; docs/architecture/threat-model.md (14 threats, each mapped to a control and test); claims checked against packages/llm, mcp, agent and the ESLint boundaries in packages/config/eslint.config.js; `prettier --check docs/adr docs/architecture` clean
 
 ## V-19 Wire the AI packages into apps/web (AI off by default)
-- Status: todo
+- Status: in review (tick done after CI e2e is green)
 - Depends on: V-09, V-10
 - Acceptance: AI is off by default; turning it on needs an explicit consent notice (German first, then English) that says what is sent and to whom; a remote provider is a separate explicit choice; only derived facts reach a provider (ADR-0015); e2e network test proves no request carries file content while AI is off and that, when on, only the facts schema leaves; i18n keys in `de` and `en`; JS budget for `/` holds (AI code lazy-loaded on `/demo` only)
-- Evidence:
+- Evidence: apps/web/e2e/demo-ai.spec.ts (Chromium, local): AI off by default with no off-origin request and no llm chunk loaded; agreeing sends nothing; the click sends one request whose facts keys equal the schema keys and which holds no other material; remote needs its own host-naming consent; key not stored after reload; axe clean for intro, consent and remote consent; full Chromium suite 105 passed. apps/web/src/ai/explanation-facts.test.ts maps every sample exception (de, en) through the llm `explanationFactsSchema`. apps/web/src/components/demo/ai-explain-panel.test.tsx (9 tests). ESLint rule `vorchain/web/llm-only-via-gateway` fires on a temporary violation. ADR-0018; `/` HTML and chunks hold no AI strings or llm code (checked in `.next`). Firefox/WebKit e2e: CI only
 
 ## V-20 ADRs: optional server module and database, cloud and hosting, GDPR and EU AI Act
 - Status: todo
 - Depends on: V-10
-- Acceptance: short ADRs (numbered from 0018) for (1) an optional server module and its database, (2) cloud and hosting options beyond ADR-0006, (3) a GDPR and EU AI Act assessment of the AI track (risk class, transparency duties, data transfers, DPA needs); threat model updated where they change a risk
+- Acceptance: short ADRs (numbered from 0019) for (1) an optional server module and its database, (2) cloud and hosting options beyond ADR-0006, (3) a GDPR and EU AI Act assessment of the AI track (risk class, transparency duties, data transfers, DPA needs); threat model updated where they change a risk
 - Evidence:
 
 ## V-12 Benchmarks and performance budgets

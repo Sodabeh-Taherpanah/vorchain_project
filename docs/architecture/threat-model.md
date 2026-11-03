@@ -1,7 +1,7 @@
 # Threat model: Vorchain AI track
 
 Scope: `@vorchain/llm`, `@vorchain/mcp`, `@vorchain/agent` (see [architecture §10](README.md#10-ai-track-v-03-to-v-09-components-and-trust-boundaries)).
-Phase 1 web demo: files stay in the browser (ADR-0003); the AI packages are not wired into it yet.
+Phase 1 web demo: files stay in the browser (ADR-0003). `llm` is wired into the demo as an opt-in explanation (ADR-0018); `mcp` and `agent` are not.
 Method: STRIDE-style walk over assets and trust boundaries. Last reviewed 2026-11-02.
 
 ## Assets
@@ -29,11 +29,15 @@ Method: STRIDE-style walk over assets and trust boundaries. Last reviewed 2026-1
 | T12 | Engine gains network or AI access | ESLint boundaries forbid `engine` to import `llm`, `mcp`, `agent` | `packages/config/eslint.config.js` | Low. Enforced only while lint is a CI gate |
 | T13 | Remote provider data retention or cross-border transfer | Ollama (local) is the privacy-first option; remote is opt-in | ADR-0014, ADR-0015 | Needs a DPA and customer consent before real data goes to a remote provider |
 | T14 | Quality of AI text (wrong advice) | Numbers must come from facts, checked by the evaluation harness; confidence `low` without a reliable supplier | `eval/eval.test.ts` (fake provider, guards the harness) | Medium. Real-model quality is measured by hand only |
+| T15 | API key typed in the browser is stolen (XSS, extension, shoulder surfing) | Key in React state only: no storage, URL or logs; gone on reload; remote provider needs a separate consent naming the host (ADR-0018) | `demo-ai.spec.ts` "nothing is stored" | Medium. Any XSS on `/demo` could read it; a CSP (P1-27) is still open |
+| T16 | Model text rendered as HTML (XSS via AI) | Output is schema-validated, checked by `isUnsafeOutput` and rendered as React text, never as HTML | `ai-explain-panel.test.tsx` (markup shown as characters) | Low |
+| T17 | Free text from the file leaves the browser | Only material and supplier name, one short line each, sanitised; consent text says so; opt-in per session | `demo-ai.spec.ts` (keys equal facts schema; other materials absent) | Medium by design: the visitor chooses this |
+| T18 | CORS or mixed-content blocks the call, or a wrong URL sends facts to an unintended host | Host shown in the consent; local URL must be loopback, remote URL https without credentials; redirects refused; errors map to a plain message | `demo-ai.spec.ts` | Low. A stubbed e2e cannot prove a real provider works |
 
 ## Out of scope for now
 Authentication and multi-tenant storage (Phase 2), the contact-form server action (ADR-0007), supply chain
 (V-16), server hardening (V-18). Each gets its own review.
 
 ## Open items
-- Wire AI into the web app only as opt-in, off by default, with the remote provider a separate explicit choice.
+- Add a CSP with `connect-src` limited to the chosen hosts on `/demo` (P1-27) and describe the AI path in the Datenschutz page (P1-24).
 - Decide whether `RunState` needs a signature or integrity check before a shared store is used.

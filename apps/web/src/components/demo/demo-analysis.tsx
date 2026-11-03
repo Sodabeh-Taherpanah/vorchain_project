@@ -17,6 +17,8 @@ import { formatIsoDate, type AnalysisSettings } from './analysis-settings-model.
 import { trackDemoEvent } from './demo-events.ts';
 import { ExceptionTable, type ExceptionTableProps } from './exception-table.tsx';
 import { supplierNameLookup } from './explanation-text.tsx';
+import { toExplanationFacts } from '../../ai/explanation-facts.ts';
+import { AI_OFF, type AiSession } from './ai-explain-panel.tsx';
 import { ProjectionDrawer, type DrawerSelection } from './projection-drawer.tsx';
 import { ReportActions } from './report-actions.tsx';
 import { OverdueNote, SummaryTiles } from './summary-tiles.tsx';
@@ -111,6 +113,8 @@ function DemoResults({
   // selection outlives `open` so the content stays during the closing animation.
   const [open, setOpen] = useState(false);
   const [selection, setSelection] = useState<DrawerSelection | null>(null);
+  // AI is off on every load and lives in memory only (ADR-0018); a new file resets it.
+  const [aiSession, setAiSession] = useState<AiSession>(AI_OFF);
   const select = useCallback(
     (materialId: DrawerSelection['materialId'], trigger: HTMLElement) => {
       const description =
@@ -146,11 +150,25 @@ function DemoResults({
             onClose={() => {
               setOpen(false);
             }}
+            ai={{
+              session: aiSession,
+              onSessionChange: setAiSession,
+              facts: aiFactsFor(report, selection, supplierName),
+            }}
           />
         </>
       )}
     </section>
   );
+}
+
+function aiFactsFor(
+  report: Report,
+  selection: DrawerSelection | null,
+  supplierName: ReturnType<typeof supplierNameLookup>,
+) {
+  const exception = report.exceptions.find((e) => e.materialId === selection?.materialId);
+  return exception === undefined ? null : toExplanationFacts(exception, report, supplierName);
 }
 
 function ReportView({

@@ -19,6 +19,7 @@
   "dependencies": {
     "@tailwindcss/postcss": "^4.3.3",
     "@vorchain/engine": "workspace:*",
+    "@vorchain/llm": "workspace:*",
     "@vorchain/parsers": "workspace:*",
     "@vorchain/sample-data": "workspace:*",
     "@vorchain/ui": "workspace:*",
