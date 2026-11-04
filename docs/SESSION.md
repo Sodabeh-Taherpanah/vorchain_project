@@ -1,10 +1,8 @@
 # Session state
 
-- Current task: V-19 (wire AI into apps/web), branch `feat/V-19-ai-in-web`, 7 commits ahead of main, NOT pushed
-- Last finished: V-10 (merged in #62), deps audit fix (#63). V-19 built, QA done (fixes in a399d1e), all local checks green (lint, typecheck, coverage, build, Chromium e2e 105 passed)
-- Half-done: V-19 is "in review" in docs/backlog-ai.md. Not ticked done until CI e2e (Firefox/WebKit) is green
-- Next step: ask the owner "Push this branch, open a PR, and merge it when CI is green?" (owner runs `! git push -u origin feat/V-19-ai-in-web` because .claude/settings.json still denies git push). Then PR, wait for CI, ask before merge, tick V-19 done, then V-20 (ADRs from 0019), then V-12
-- Open questions: PR title check does not re-run on title edit (ci.yml pull_request types lack `edited`); optional small CI task. V-21 = deterministic fixture generation. Revoke the GitHub token that was in an old dropped stash (commit 3e8f672 is still in .git until gc)
-- Local-only note: Chromium e2e runs here via a symlink ~/Library/Caches/ms-playwright/chromium_headless_shell-1243 -> 1248 (the Playwright download is blocked, 403); Firefox/WebKit are CI only. Run `pnpm --filter @vorchain/web build` before e2e
-- Known gaps for V-19: no test that a new file resets the AI session; real-provider CORS cannot be proven by the stubbed e2e; no CSP yet (P1-27); Datenschutz page still a stub (P1-24)
+- Current task: V-20 (ADRs 0019-0021), branch `docs/V-20-server-hosting-gdpr-adrs`, 1 commit ahead of main, NOT pushed. Status "in review" in docs/backlog-ai.md
+- Last finished: V-19 code is on main (#66); its backlog entry still says "in review" and the local branch `feat/V-19-ai-in-web` is not deleted. Owner said to check V-19 and the old branches later (`gh` timed out on 2026-11-04)
+- Half-done: kept `feat/ui-primitives` (8 commits not on main), `feat/ui-primitives-content`
+- Next step: ask the owner "Push this branch, open a PR, and merge it when CI is green?" for V-20. Then V-12 (benchmarks), then V-21. Small follow-up idea: limits note ("can be wrong") in the AI consent step (de, en), from ADR-0021
+- Open questions: owner confirms ADRs 0019-0021 (status proposed); a lawyer reviews ADR-0021 before launch; revoke the GitHub token in the old dropped stash (commit 3e8f672); PR title check does not re-run on title edit
 - Check commands: pnpm check
