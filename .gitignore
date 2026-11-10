@@ -44,3 +44,7 @@ next-env.d.ts
 
 # Agent worktrees (local, nested checkouts)
 .claude/worktrees/
+
+# Local benchmark output (perf/bench-baseline.json is the committed baseline).
+perf/bench-current.json
+.lighthouseci/

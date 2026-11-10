@@ -1,0 +1,31 @@
+{
+  "node": "v24.21.0",
+  "platform": "darwin-x64",
+  "calibrationMs": 231,
+  "results": [
+    {
+      "demandRows": 10000,
+      "materials": 2000,
+      "parseMs": 82,
+      "analyseMs": 11,
+      "exceptions": 505,
+      "runs": 3
+    },
+    {
+      "demandRows": 100000,
+      "materials": 20000,
+      "parseMs": 756,
+      "analyseMs": 139,
+      "exceptions": 5264,
+      "runs": 3
+    },
+    {
+      "demandRows": 1000000,
+      "materials": 200000,
+      "parseMs": 8287,
+      "analyseMs": 1702,
+      "exceptions": 53200,
+      "runs": 1
+    }
+  ]
+}

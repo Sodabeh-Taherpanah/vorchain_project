@@ -166,6 +166,60 @@ jobs:
             apps/web/test-results/
           retention-days: 14
 
+  perf:
+    # V-12: bundle-size and benchmark regression gates. Both compare with baselines stored in
+    # perf/ and use generous relative limits, so a slow runner does not fail them (docs/performance.md).
+    name: Performance budgets (bundle, benchmarks)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      # Same Turborepo cache key as the build job, so `pnpm build` is a cache hit.
+      - uses: ./.github/actions/setup
+        with:
+          turbo-cache-key: build
+      - name: Gate scripts (unit tests)
+        run: pnpm test:scripts
+      - run: pnpm build
+      - name: First-load JS of / stays within budget and baseline
+        run: pnpm budget:bundle
+      - name: Benchmarks at 10k / 100k / 1M rows stay within the baseline
+        run: pnpm bench:gate
+      - name: Upload benchmark report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: bench-report
+          path: perf/bench-current.json
+          retention-days: 14
+          if-no-files-found: ignore
+
+  lighthouse:
+    # V-12: budgets from AGENTS.md section 6 live in lighthouserc.json.
+    name: Lighthouse CI
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup
+        with:
+          turbo-cache-key: build
+      - run: pnpm build
+      - run: pnpm lhci
+      - name: Upload Lighthouse reports
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: lighthouse-reports
+          path: .lighthouseci/
+          retention-days: 14
+          if-no-files-found: ignore
+
   secrets:
     name: Secret scan (gitleaks)
     runs-on: ubuntu-latest
