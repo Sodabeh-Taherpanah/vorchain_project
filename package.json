@@ -24,7 +24,7 @@
     "bench:gate": "pnpm --filter @vorchain/sample-data bench:scale --out \"$PWD/perf/bench-current.json\" && node scripts/bench-gate.mjs perf/bench-current.json",
     "bench:update": "pnpm --filter @vorchain/sample-data bench:scale --out \"$PWD/perf/bench-current.json\" && node scripts/bench-gate.mjs perf/bench-current.json --update",
     "budget:bundle": "node scripts/bundle-size.mjs",
-    "test:scripts": "node --test scripts/",
+    "test:scripts": "node --test \"scripts/*.test.mjs\"",
     "check": "turbo run lint typecheck test",
     "check:all": "prettier --check . && turbo run lint typecheck test build test:e2e",
     "map": "node scripts/update-map.mjs",
