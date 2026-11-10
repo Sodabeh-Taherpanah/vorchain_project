@@ -70,10 +70,10 @@ Status: todo | doing | blocked | done. "done" needs evidence.
 - Evidence: apps/web/e2e/demo-ai.spec.ts (Chromium, local): AI off by default with no off-origin request and no llm chunk loaded; agreeing sends nothing; the click sends one request whose facts keys equal the schema keys and which holds no other material; remote needs its own host-naming consent; key not stored after reload; axe clean for intro, consent and remote consent; full Chromium suite 105 passed. apps/web/src/ai/explanation-facts.test.ts maps every sample exception (de, en) through the llm `explanationFactsSchema`. apps/web/src/components/demo/ai-explain-panel.test.tsx (9 tests). ESLint rule `vorchain/web/llm-only-via-gateway` fires on a temporary violation. ADR-0018; `/` HTML and chunks hold no AI strings or llm code (checked in `.next`). Firefox/WebKit e2e: CI only
 
 ## V-20 ADRs: optional server module and database, cloud and hosting, GDPR and EU AI Act
-- Status: todo
+- Status: in review
 - Depends on: V-10
 - Acceptance: short ADRs (numbered from 0019) for (1) an optional server module and its database, (2) cloud and hosting options beyond ADR-0006, (3) a GDPR and EU AI Act assessment of the AI track (risk class, transparency duties, data transfers, DPA needs); threat model updated where they change a risk
-- Evidence:
+- Evidence: docs/adr/0019 (optional server + Postgres, separate service, demo stays server-free), 0020 (Hetzner first, EU-owned managed DB later, hyperscaler only on demand), 0021 (AI Act risk class, Art. 50 transparency, GDPR roles, transfers, DPA needs); all three `proposed`; indexed in docs/adr/README.md; threat model: T19 added, T6 and T13 updated; UI claims in 0021 checked against `apps/web/messages/en.json`; `prettier --check docs` clean (see commit)
 
 ## V-12 Benchmarks and performance budgets
 - Status: todo

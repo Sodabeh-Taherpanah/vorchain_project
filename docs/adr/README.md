@@ -23,3 +23,6 @@ Status `proposed` means the owner still has to confirm (usually cost or an exter
 | [0016](0016-read-only-mcp-server.md) | Read-only MCP server as the agent's door to the engine | accepted |
 | [0017](0017-agent-human-approval-interrupt.md) | Review agent stops for human approval; sending is a separate step | accepted |
 | [0018](0018-ai-explanation-in-the-web-app.md) | AI explanation in the web app: opt-in, in-memory, lazy, one gateway | accepted |
+| [0019](0019-optional-server-module-and-database.md) | Optional server module and database (Phase 2); the demo stays server-free | proposed |
+| [0020](0020-cloud-and-hosting-beyond-phase-1.md) | Cloud and hosting options beyond Phase 1 (Hetzner first, EU-owned managed DB later) | proposed |
+| [0021](0021-gdpr-and-eu-ai-act-assessment-of-the-ai-track.md) | GDPR and EU AI Act assessment of the AI track | proposed |
