@@ -15,6 +15,7 @@
     "test": "vitest run --project unit",
     "coverage": "vitest run --project unit --coverage",
     "bench": "vitest run --project bench --reporter=verbose",
+    "bench:scale": "node scripts/measure-scale.ts",
     "sync": "node scripts/sync-reference.ts",
     "check": "node scripts/sync-reference.ts --check"
   },
