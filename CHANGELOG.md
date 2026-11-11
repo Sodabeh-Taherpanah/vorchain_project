@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.8.1](https://github.com/Sodabeh-Taherpanah/vorchain_project/compare/v0.8.0...v0.8.1) (2026-11-11)
+
+
+### Bug Fixes
+
+* **web:** pin Playwright 1.63 and axe 4.13 to stop Firefox page crashes ([103c18b](https://github.com/Sodabeh-Taherpanah/vorchain_project/commit/103c18b899f64e777db13752ca3cd584ef433ea7))
+* **web:** pin Playwright 1.63 and axe 4.13 to stop Firefox page crashes ([93681fc](https://github.com/Sodabeh-Taherpanah/vorchain_project/commit/93681fc94cb2622a1b23fce9cbe737422b20668e))
+
 ## [0.8.0](https://github.com/Sodabeh-Taherpanah/vorchain_project/compare/v0.7.0...v0.8.0) (2026-11-11)
 
 

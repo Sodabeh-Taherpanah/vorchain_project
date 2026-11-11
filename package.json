@@ -1,6 +1,6 @@
 {
   "name": "vorchain",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "private": true,
   "license": "PolyForm-Noncommercial-1.0.0",
   "description": "Vorchain: see the material shortages your ERP does not show.",
