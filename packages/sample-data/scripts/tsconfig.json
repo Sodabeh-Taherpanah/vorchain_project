@@ -1,8 +1,9 @@
 {
-  // The sync script runs on Node (type stripping) and reads reference/ with `node:fs`.
+  // The scripts run on Node (type stripping) and read reference/ with `node:fs`.
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "types": ["node"]
   },
-  "include": ["."]
+  // The parsers' hand-written papaparse typings, for the parsers source `measure-scale.ts` imports.
+  "include": [".", "../../parsers/types"]
 }

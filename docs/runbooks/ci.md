@@ -8,7 +8,7 @@ production deploys to Hetzner + Coolify, preview deployments and the GHCR image 
 
 | Workflow | Trigger | Jobs |
 |---|---|---|
-| `.github/workflows/ci.yml` | every PR, push to `main` | `lint`, `pr-title`, `typecheck`, `test`, `build`, `e2e`, `secrets`, `audit` |
+| `.github/workflows/ci.yml` | every PR, push to `main` | `lint`, `pr-title`, `typecheck`, `test`, `build`, `e2e`, `perf`, `lighthouse`, `secrets`, `audit` |
 | `.github/workflows/codeql.yml` | PRs to `main`, push to `main`, weekly | CodeQL for `javascript-typescript` and `actions` |
 | `.github/workflows/release-please.yml` | push to `main` | opens/updates the release PR; merging it tags `vX.Y.Z` and publishes a GitHub release |
 | `.github/dependabot.yml` | weekly (npm), monthly (actions) | grouped update PRs |
@@ -23,6 +23,8 @@ production deploys to Hetzner + Coolify, preview deployments and the GHCR image 
 | Unit tests (coverage) | `pnpm coverage`; per-package gates; coverage uploaded as artifact `coverage` | yes |
 | Build | `pnpm build` | yes |
 | E2E (Playwright, Chromium / Firefox / WebKit) | one job per browser (`--project`) on the production build: Chromium runs every spec, Firefox and WebKit run `demo.spec.ts`; first checks that the e2e fixtures are up to date (`e2e:fixtures:check`); report + traces uploaded on every run (`playwright-report-<browser>`) | yes |
+| Performance budgets (bundle, benchmarks) | gate-script unit tests, `pnpm budget:bundle` (first-load JS of `/`), `pnpm bench:gate` (10k/100k/1M rows vs `perf/bench-baseline.json`); how to update baselines: `docs/performance.md` | yes |
+| Lighthouse CI | `pnpm lhci` on `/de` and `/en` (budgets in `lighthouserc.json`); reports uploaded as `lighthouse-reports` | yes |
 | Secret scan (gitleaks) | full history scan | yes |
 | Dependency audit | `pnpm audit --prod --audit-level=high` | **no** (see below) |
 
@@ -47,7 +49,7 @@ Branch protection for `main` is not stored in the repo. Set it in *Settings -> R
 *Branches*): require a PR, 1 approving review (CODEOWNERS), linear history, squash merge only,
 no force pushes or deletions, and these required checks:
 `Lint`, `PR title (Conventional Commit)`, `Typecheck`, `Unit tests (coverage)`, `Build`,
-`E2E (Playwright, Chromium)`, `E2E (Playwright, Firefox)`, `E2E (Playwright, WebKit)`,
+`E2E (Playwright, Chromium)`, `E2E (Playwright, Firefox)`, `E2E (Playwright, WebKit)`, `Performance budgets (bundle, benchmarks)`, `Lighthouse CI`,
 `Secret scan (gitleaks)`,
 `Analyze (javascript-typescript)`, `Analyze (actions)`.
 
