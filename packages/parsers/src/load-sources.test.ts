@@ -104,3 +104,60 @@ describe('loadSources with workbooks', () => {
     expect(streamed.errors.length).toBeGreaterThan(0);
   });
 });
+
+describe('loadSources progress', () => {
+  const csv = (rows: number): Uint8Array =>
+    utf8(
+      ['Artikelnummer;Datum;Menge', ...Array.from({ length: rows }, () => 'M1;05.10.2026;3')].join(
+        '\n',
+      ),
+    );
+
+  it('reports growing byte counts that end at the total size', async () => {
+    const bytes = csv(400);
+    const seen: [number, number][] = [];
+    await loadSources([chunkSourceFromBytes('bedarf.csv', bytes, 500)], {
+      onProgress: (read, total) => void seen.push([read, total]),
+    });
+    expect(seen.length).toBeGreaterThan(3);
+    expect(seen.every(([, total]) => total === bytes.byteLength)).toBe(true);
+    expect(seen.map(([read]) => read)).toEqual(
+      [...seen.map(([read]) => read)].sort((a, b) => a - b),
+    );
+    expect(seen.at(-1)?.[0]).toBe(bytes.byteLength);
+  });
+
+  it('counts across files', async () => {
+    const a = csv(50);
+    const b = csv(50);
+    const last: number[] = [];
+    await loadSources(
+      [chunkSourceFromBytes('bedarf.csv', a, 100), chunkSourceFromBytes('x.csv', b, 100)],
+      { onProgress: (read) => void last.push(read) },
+    );
+    expect(last.at(-1)).toBe(a.byteLength + b.byteLength);
+  });
+
+  it('stops when the progress hook throws', async () => {
+    let calls = 0;
+    const run = loadSources([chunkSourceFromBytes('bedarf.csv', csv(400), 500)], {
+      onProgress: () => {
+        calls += 1;
+        if (calls === 2) throw new Error('stop');
+      },
+    });
+    await expect(run).rejects.toThrow('stop');
+    expect(calls).toBe(2);
+  });
+
+  it('reports a workbook once, at its full size', async () => {
+    const dir = join(import.meta.dirname, '../test/fixtures/xlsx/sample_data');
+    const name = 'materials.xlsx';
+    const bytes = new Uint8Array(readFileSync(join(dir, name)));
+    const seen: number[] = [];
+    await loadSources([chunkSourceFromBytes(name, bytes, 100)], {
+      onProgress: (read) => void seen.push(read),
+    });
+    expect(seen).toEqual([bytes.byteLength]);
+  });
+});
