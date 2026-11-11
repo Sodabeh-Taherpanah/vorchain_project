@@ -70,9 +70,17 @@ export function decodeText(bytes: Bytes): DecodedText {
  */
 export function detectNonText(bytes: Bytes): NonTextKind | null {
   const view = toUint8Array(bytes);
-  if (startsWith(view, ZIP_SIGNATURE)) return 'zip';
-  if (startsWith(view, UTF16_LE_BOM) || startsWith(view, UTF16_BE_BOM)) return 'utf-16';
-  if (!view.includes(0)) return null;
-  const [first, second] = view;
+  return classifyNonText(view.subarray(0, 4), view.includes(0));
+}
+
+/**
+ * The decision of {@link detectNonText} from the first four bytes (or fewer, for a short file)
+ * and whether a NUL byte occurs anywhere, so a streaming reader can decide without the whole file.
+ */
+export function classifyNonText(head: Uint8Array, hasNul: boolean): NonTextKind | null {
+  if (startsWith(head, ZIP_SIGNATURE)) return 'zip';
+  if (startsWith(head, UTF16_LE_BOM) || startsWith(head, UTF16_BE_BOM)) return 'utf-16';
+  if (!hasNul) return null;
+  const [first, second] = head;
   return (first === 0) !== (second === 0) ? 'utf-16' : 'binary';
 }

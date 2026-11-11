@@ -35,16 +35,23 @@ const UNSUPPORTED_EXTENSIONS: ReadonlySet<string> = new Set([
 export async function parseFile(file: SourceFile): Promise<Result<RawTable, DataError>> {
   const { name } = file;
   const bytes = toUint8Array(file.bytes);
-  if (bytes.byteLength > MAX_FILE_BYTES) {
-    return err({
+  const rejected = rejectBeforeReading(name, bytes.byteLength);
+  if (rejected !== null) return err(rejected);
+  return isWorkbookContainer(bytes) ? readXlsx({ name, bytes }) : readCsv({ name, bytes });
+}
+
+/** The checks that need only the name and size, shared by `parseFile` and `loadSources`. */
+export function rejectBeforeReading(name: string, size: number): DataError | null {
+  if (size > MAX_FILE_BYTES) {
+    return {
       code: 'FILE_TOO_LARGE',
       fileName: name,
       params: { limit: MAX_FILE_BYTES, unit: 'bytes' },
-    });
+    };
   }
   const extension = extensionOf(name);
   if (UNSUPPORTED_EXTENSIONS.has(extension)) {
-    return err({ code: 'UNSUPPORTED_FILE_TYPE', fileName: name, params: { extension } });
+    return { code: 'UNSUPPORTED_FILE_TYPE', fileName: name, params: { extension } };
   }
-  return isWorkbookContainer(bytes) ? readXlsx({ name, bytes }) : readCsv({ name, bytes });
+  return null;
 }
