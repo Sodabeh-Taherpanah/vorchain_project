@@ -1,16 +1,19 @@
 import type { AnalysisOptions, MaterialId, ProjectionSeries, Report } from '@vorchain/engine';
 import type { SampleLocale } from '@vorchain/sample-data';
+import { proxy } from 'comlink';
 import { useCallback, useEffect, useReducer, useRef } from 'react';
 
-import type { AnalysisService, LoadSummary } from '../workers/analysis-service.ts';
+import type { AnalysisService, LoadProgress, LoadSummary } from '../workers/analysis-service.ts';
 import {
   connectAnalysisWorker,
   type AnalysisConnection,
 } from '../workers/connect-analysis-worker.ts';
 
 /**
- * Longest a single worker call may take before the worker is stopped. Defence in depth against
- * huge but valid sheets that the parsers' limits let through (P1-10 QA).
+ * Longest a worker call may stay silent before the worker is stopped. Defence in depth against
+ * huge but valid sheets that the parsers' limits let through (P1-10 QA). A load that reports
+ * progress restarts the clock with every report, so a slow but healthy read of a large file is
+ * not cut off.
  */
 export const ANALYSIS_TIMEOUT_MS = 30_000;
 
@@ -19,7 +22,8 @@ export type AnalysisErrorCode = 'ANALYSIS_TIMEOUT' | 'WORKER_FAILED';
 
 export type AnalysisState =
   | { readonly status: 'idle' }
-  | { readonly status: 'loading' }
+  | { readonly status: 'loading'; readonly progress: LoadProgress | null }
+  | { readonly status: 'cancelled' }
   | { readonly status: 'mapped'; readonly load: LoadSummary }
   | { readonly status: 'analysing'; readonly load: LoadSummary }
   | { readonly status: 'ready'; readonly load: LoadSummary; readonly report: Report }
@@ -28,6 +32,8 @@ export type AnalysisState =
 type AnalysisEvent =
   | { readonly type: 'reset' }
   | { readonly type: 'load' }
+  | { readonly type: 'progress'; readonly progress: LoadProgress }
+  | { readonly type: 'cancel' }
   | { readonly type: 'loaded'; readonly load: LoadSummary }
   | { readonly type: 'analyse' }
   | { readonly type: 'analysed'; readonly report: Report }
@@ -45,7 +51,11 @@ function transition(state: AnalysisState, event: AnalysisEvent): AnalysisState {
     case 'reset':
       return IDLE;
     case 'load':
-      return { status: 'loading' };
+      return { status: 'loading', progress: null };
+    case 'progress':
+      return state.status === 'loading' ? { status: 'loading', progress: event.progress } : state;
+    case 'cancel':
+      return state.status === 'loading' ? { status: 'cancelled' } : state;
     case 'loaded':
       return state.status === 'loading' ? { status: 'mapped', load: event.load } : state;
     case 'analyse':
@@ -61,14 +71,24 @@ function transition(state: AnalysisState, event: AnalysisEvent): AnalysisState {
 
 class AnalysisTimeoutError extends Error {}
 
-function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+/**
+ * Rejects when `run` stays silent for `ms`; `run` calls the `touch` it is given to say it is still
+ * alive.
+ */
+function withIdleTimeout<T>(run: (touch: () => void) => Promise<T>, ms: number): Promise<T> {
   let timer: ReturnType<typeof setTimeout> | undefined;
+  let expire: (error: Error) => void = () => undefined;
   const timeout = new Promise<never>((_resolve, reject) => {
-    timer = setTimeout(() => {
-      reject(new AnalysisTimeoutError());
-    }, ms);
+    expire = reject;
   });
-  return Promise.race([promise, timeout]).finally(() => {
+  const touch = () => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      expire(new AnalysisTimeoutError());
+    }, ms);
+  };
+  touch();
+  return Promise.race([run(touch), timeout]).finally(() => {
     clearTimeout(timer);
   });
 }
@@ -98,6 +118,8 @@ export interface UseAnalysis {
   readonly getProjection: (materialId: MaterialId) => Promise<ProjectionSeries | null>;
   /** Forgets the last load (e.g. the user removed every file); a pending load is ignored. */
   readonly reset: () => void;
+  /** Stops a load that is running: the worker drops what it read; the state becomes `cancelled`. */
+  readonly cancel: () => void;
 }
 
 /**
@@ -121,6 +143,8 @@ export function useAnalysis({
   const loaded = useRef<LoadSummary | null>(null);
   // Counts loads so that only the newest one reaches the state; an older load may finish later.
   const loadGeneration = useRef(0);
+  // The generation of the load that has not finished yet, so `cancel` knows what it may stop.
+  const pendingLoad = useRef<number | null>(null);
   // The same for analyses: the settings may change while an analysis is still running.
   const analyseGeneration = useRef(0);
 
@@ -133,11 +157,13 @@ export function useAnalysis({
   );
 
   const call = useCallback(
-    async <T>(task: (service: AnalysisService) => Promise<T>): Promise<T | null> => {
+    async <T>(
+      task: (service: AnalysisService, touch: () => void) => Promise<T>,
+    ): Promise<T | null> => {
       connection.current ??= connectRef.current();
       const current = connection.current;
       try {
-        return await withTimeout(task(current.service), ANALYSIS_TIMEOUT_MS);
+        return await withIdleTimeout((touch) => task(current.service, touch), ANALYSIS_TIMEOUT_MS);
       } catch (error) {
         // Unmount or another call already stopped this worker (a second release would throw);
         // a stale failure must not replace the state of a newer worker either.
@@ -154,12 +180,24 @@ export function useAnalysis({
   );
 
   const load = useCallback(
-    async (task: (service: AnalysisService) => Promise<LoadSummary>) => {
+    async (
+      task: (
+        service: AnalysisService,
+        onProgress: (progress: LoadProgress) => void,
+      ) => Promise<LoadSummary>,
+    ) => {
       const generation = ++loadGeneration.current;
+      pendingLoad.current = generation;
       loaded.current = null;
       dispatch({ type: 'load' });
-      const result = await call(task);
+      const result = await call((service, touch) =>
+        task(service, (progress) => {
+          touch();
+          if (generation === loadGeneration.current) dispatch({ type: 'progress', progress });
+        }),
+      );
       if (generation !== loadGeneration.current) return null;
+      pendingLoad.current = null;
       if (result !== null) {
         loaded.current = result;
         dispatch({ type: 'loaded', load: result });
@@ -170,7 +208,8 @@ export function useAnalysis({
   );
 
   const loadFiles = useCallback(
-    (files: readonly File[]) => load((service) => service.loadFiles(files)),
+    (files: readonly File[]) =>
+      load((service, onProgress) => service.loadFiles(files, proxy(onProgress))),
     [load],
   );
   const loadSample = useCallback(
@@ -203,9 +242,22 @@ export function useAnalysis({
 
   const reset = useCallback(() => {
     loadGeneration.current += 1;
+    pendingLoad.current = null;
     loaded.current = null;
     dispatch({ type: 'reset' });
   }, []);
 
-  return { state, loadFiles, loadSample, analyse, getProjection, reset };
+  const cancel = useCallback(() => {
+    const running = connection.current;
+    if (running === null || pendingLoad.current === null) return;
+    pendingLoad.current = null;
+    // The pending load resolves `ready: false` and is ignored by its generation.
+    loadGeneration.current += 1;
+    loaded.current = null;
+    dispatch({ type: 'cancel' });
+    // Fire and forget: the worker stops at its next chunk; a dead worker needs no cancel.
+    void running.service.cancel().catch(() => undefined);
+  }, []);
+
+  return { state, loadFiles, loadSample, analyse, getProjection, reset, cancel };
 }

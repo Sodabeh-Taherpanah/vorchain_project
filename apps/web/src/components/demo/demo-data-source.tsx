@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { Button } from '@vorchain/ui/components/button';
 
 import { useAnalysis, type AnalysisState } from '../../hooks/use-analysis.ts';
+import type { LoadProgress } from '../../workers/analysis-service.ts';
 import {
   DEFAULT_HORIZON_DAYS,
   defaultAsOf,
@@ -25,7 +26,7 @@ import { SampleTemplates } from './sample-templates.tsx';
 export function DemoDataSource({ reportMessages }: { readonly reportMessages: ReportMessages }) {
   const t = useTranslations('demo');
   const locale = useLocale();
-  const { state, loadFiles, loadSample, analyse, getProjection, reset } = useAnalysis();
+  const { state, loadFiles, loadSample, analyse, getProjection, reset, cancel } = useAnalysis();
   const [source, setSource] = useState<DataSource>(NO_SOURCE);
   const [settings, setSettings] = useState<AnalysisSettings>({
     asOf: null,
@@ -107,6 +108,9 @@ export function DemoDataSource({ reportMessages }: { readonly reportMessages: Re
       <p role="status" className="text-muted-foreground print:hidden">
         <StatusText state={state} />
       </p>
+      {state.status === 'loading' && (
+        <LoadProgressBar progress={state.progress} onCancel={cancel} />
+      )}
       {state.status === 'error' && (
         <p role="alert" className="font-medium text-critical print:hidden">
           {t(`errors.${state.error}`)}
@@ -146,8 +150,41 @@ function StatusText({ state }: { readonly state: AnalysisState }) {
       return state.load.ready
         ? t('complete')
         : t('incomplete', { count: state.load.errors.length });
+    case 'cancelled':
+      return t('cancelled');
     case 'idle':
     case 'error':
       return null;
   }
+}
+
+/**
+ * Progress of reading the files and a way to stop it. The bar is native `<progress>` (role
+ * progressbar, value announced by the browser); until the first report it is indeterminate.
+ */
+function LoadProgressBar({
+  progress,
+  onCancel,
+}: {
+  readonly progress: LoadProgress | null;
+  readonly onCancel: () => void;
+}) {
+  const t = useTranslations('demo.status');
+  const percent =
+    progress === null || progress.totalBytes === 0
+      ? null
+      : Math.min(100, Math.floor((progress.bytesRead / progress.totalBytes) * 100));
+  return (
+    <div className="flex items-center gap-3 print:hidden">
+      <progress
+        aria-label={t('progressLabel')}
+        className="h-2 w-full max-w-md accent-primary"
+        {...(percent === null ? {} : { value: percent, max: 100 })}
+      />
+      {percent !== null && <span className="tabular-nums">{t('percent', { percent })}</span>}
+      <Button type="button" variant="outline" size="sm" onClick={onCancel}>
+        {t('cancel')}
+      </Button>
+    </div>
+  );
 }

@@ -93,7 +93,11 @@
     "status": {
       "loading": "Reading your data in the browser …",
       "complete": "All required tables recognised. The data is ready for analysis.",
-      "incomplete": "{count, plural, one {# problem found} other {# problems found}}. See the details next to the tables below."
+      "incomplete": "{count, plural, one {# problem found} other {# problems found}}. See the details next to the tables below.",
+      "cancelled": "Loading cancelled. Nothing was kept.",
+      "progressLabel": "Reading your files",
+      "percent": "{percent} %",
+      "cancel": "Cancel"
     },
     "mapCheck": {
       "heading": "2. Recognised tables",

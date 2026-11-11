@@ -42,6 +42,7 @@ function flatSeries(materialId: ProjectionSeries['materialId']): ProjectionSerie
 }
 
 const service = {
+  cancel: vi.fn<AnalysisService['cancel']>(() => Promise.resolve()),
   loadFiles: vi.fn<AnalysisService['loadFiles']>(() => Promise.resolve(incomplete)),
   loadSample: vi.fn(() => Promise.resolve(complete)),
   analyse: vi.fn<AnalysisService['analyse']>((options) =>
@@ -306,5 +307,26 @@ describe('sample templates', () => {
       unmount();
     });
     expect(revokeObjectURL).toHaveBeenCalledTimes(5);
+  });
+
+  it('shows how far the read is and lets the user cancel it', async () => {
+    service.loadFiles.mockImplementationOnce((_files, onProgress) => {
+      onProgress?.({ bytesRead: 40, totalBytes: 100 });
+      return new Promise<LoadSummary>(() => undefined);
+    });
+    const user = userEvent.setup();
+    const { input } = renderDemo();
+
+    await user.upload(input, csv('bedarf.csv'));
+
+    const bar = await screen.findByRole('progressbar', { name: de.demo.status.progressLabel });
+    expect(bar.getAttribute('value')).toBe('40');
+    expect(screen.getByText('40 %')).toBeTruthy();
+
+    await user.click(screen.getByRole('button', { name: de.demo.status.cancel }));
+
+    expect(service.cancel).toHaveBeenCalledOnce();
+    expect(screen.queryByRole('progressbar')).toBeNull();
+    expect(screen.getByRole('status').textContent).toBe(de.demo.status.cancelled);
   });
 });
