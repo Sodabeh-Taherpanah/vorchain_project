@@ -5,10 +5,16 @@
 import { err, ok, type AnalysisInput, type Result } from '@vorchain/engine';
 
 import { mapHeaders, type CanonicalColumn, type TableName } from './columns.ts';
-import type { RawTable } from './table.ts';
+import type { DateSystem, RawTable } from './table.ts';
 import { detectTable } from './detect.ts';
 import type { DataError, DataWarning } from './errors.ts';
-import { validateRows, type TableRecords, type ValidatedTable } from './rows.ts';
+import {
+  createRowValidator,
+  type MappedHeader,
+  type RowValidator,
+  type TableRecords,
+  type ValidatedTable,
+} from './rows.ts';
 
 /** Tables the analysis cannot run without; `suppliers` (names only) is optional. */
 export const REQUIRED_TABLES: readonly TableName[] = [
@@ -108,23 +114,49 @@ export function assembleInput(tables: readonly ValidatedTable[]): {
   };
 }
 
-/** Detect, map and validate one file; `null` table if it cannot be recognised. */
-function loadTable(raw: RawTable): {
+/** What loading one file gave: the validated table, what the map check shows, and the errors. */
+export interface LoadedFile {
   readonly table: ValidatedTable | null;
   readonly recognised: RecognisedTable | null;
   readonly errors: readonly DataError[];
-} {
+}
+
+/** Rows still to come for a file whose header was accepted. */
+export interface TableInProgress {
+  readonly push: RowValidator['push'];
+  readonly finish: () => LoadedFile;
+}
+
+/**
+ * Detects the table and maps the headers; the rows follow through `push` (one by one, so a
+ * streaming reader never holds them) and `finish` gives the same result `loadTable` does.
+ * `null` tells the caller the file is already settled (`settled`) and its rows are not needed.
+ */
+export function beginTable(raw: {
+  readonly fileName: string;
+  readonly headers: readonly string[];
+  readonly dateSystem?: DateSystem;
+}): { readonly settled: LoadedFile } | { readonly inProgress: TableInProgress } {
   const { fileName, headers } = raw;
   const detected = detectTable(fileName, headers);
-  if (!detected.ok) return { table: null, recognised: null, errors: [detected.error] };
+  if (!detected.ok) return { settled: { table: null, recognised: null, errors: [detected.error] } };
   const table = detected.value;
   const mapping = mapHeaders(table, headers);
   if (!mapping.ok) {
     // Still counts as present, so the user is not also told the table is missing.
     const empty = { table, fileName, records: [] } as ValidatedTable;
-    return { table: empty, recognised: null, errors: [{ ...mapping.error, fileName }] };
+    return {
+      settled: { table: empty, recognised: null, errors: [{ ...mapping.error, fileName }] },
+    };
   }
-  const validated = validateRows({ ...raw, table, mapping: mapping.value });
+  const mapped: MappedHeader = {
+    fileName,
+    table,
+    headers,
+    mapping: mapping.value,
+    ...(raw.dateSystem === undefined ? {} : { dateSystem: raw.dateSystem }),
+  };
+  const validator = createRowValidator(mapped);
   const mappedColumns = Object.entries(mapping.value)
     .sort(([, a], [, b]) => a - b)
     .map(([column, index]) => ({
@@ -132,19 +164,33 @@ function loadTable(raw: RawTable): {
       header: headers[index] ?? '',
     }));
   return {
-    table: validated.table,
-    recognised: { fileName, table, rowCount: validated.table.records.length, mappedColumns },
-    errors: validated.errors,
+    inProgress: {
+      push: validator.push,
+      finish() {
+        const validated = validator.finish();
+        return {
+          table: validated.table,
+          recognised: { fileName, table, rowCount: validated.table.records.length, mappedColumns },
+          errors: validated.errors,
+        };
+      },
+    },
   };
 }
 
+/** Detect, map and validate one file; `null` table if it cannot be recognised. */
+function loadTable(raw: RawTable): LoadedFile {
+  const begun = beginTable(raw);
+  if ('settled' in begun) return begun.settled;
+  for (const row of raw.rows) begun.inProgress.push(row);
+  return begun.inProgress.finish();
+}
+
 /**
- * Loads read files (`readCsv` output) into engine input: per file detection, header mapping and
- * row validation, then assembly. All problems are collected, so the user sees every file's issues
- * at once; `input` is only set when there are none.
+ * Assembles loaded files into the final result: all problems are collected, so the user sees every
+ * file's issues at once; `input` is only set when there are none.
  */
-export function loadTables(files: readonly RawTable[]): LoadResult {
-  const loaded = files.map(loadTable);
+export function combineLoaded(loaded: readonly LoadedFile[]): LoadResult {
   const tables = loaded.flatMap((l) => (l.table === null ? [] : [l.table]));
   const assembled = assembleInput(tables);
   const errors = [
@@ -157,4 +203,12 @@ export function loadTables(files: readonly RawTable[]): LoadResult {
     warnings: assembled.warnings,
     input: errors.length === 0 && assembled.input.ok ? assembled.input.value : null,
   };
+}
+
+/**
+ * Loads read files (`readCsv` output) into engine input: per file detection, header mapping and
+ * row validation, then assembly.
+ */
+export function loadTables(files: readonly RawTable[]): LoadResult {
+  return combineLoaded(files.map(loadTable));
 }

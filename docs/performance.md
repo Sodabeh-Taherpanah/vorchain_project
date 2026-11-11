@@ -22,11 +22,34 @@ Machine: Intel Mac (darwin-x64), Node 24.21.0, single thread, no browser. 2026-1
   (0.9 s including parsing).
 - Scaling is close to linear: 10x rows costs about 10x time (parse) and 12x (analyse). No
   quadratic path at these sizes.
-- Peak memory at 1M rows is about 2.2 GB (resident set, Node main thread, all five files as
-  strings plus parsed tables). That is the limit for the browser: V-13 (streaming parse, chunked
-  worker) has to bring it down before 1M rows are offered in `/demo`.
+- Peak memory at 1M rows: see "Memory and streaming" below. The 2.2 GB measured in V-12 included
+  the generator holding the dataset; the real whole-file load peaks at about 1.7 GB.
 - Vitest benchmarks in `pnpm bench` keep the older absolute backstops (engine 3 s, parse + analyse
   6 s at 20k/100k) for anything catastrophic.
+
+## Memory and streaming
+
+V-13a reads CSV files as byte chunks and validates row by row (`loadSources`), so the decoded text,
+Papa's record array and the raw rows are never held at once. XLSX files are still read whole
+(SheetJS cannot stream; `XLSX_LIMITS` bounds them). 1M demand rows are 42 MB of CSV in total, under
+the 50 MB limit of ADR-0003, so the limit stays.
+
+Peak resident set (`process.resourceUsage().maxRSS`), one process per run, files read from disk,
+Node 24.21.0, Intel Mac, 2026-11-11, two runs each:
+
+| Strategy | After load | After analyse | Load time |
+|---|---:|---:|---:|
+| Whole file (`parseFile` + `loadTables`) | 1 626 to 1 666 MB | 1 666 to 1 787 MB | 8.9 to 9.6 s |
+| Streamed (`loadSources`, 64 KB chunks) | 645 to 662 MB | 885 to 888 MB | 6.2 to 6.7 s |
+
+About 60 % less at load and 50 % less overall, and faster, because the 1M-row `RawRow` copies and
+the text never exist. The rest is the validated `AnalysisInput` itself plus the report.
+
+```
+node packages/sample-data/scripts/measure-memory.ts prepare <dir> 1000000
+node packages/sample-data/scripts/measure-memory.ts whole <dir>
+node packages/sample-data/scripts/measure-memory.ts stream <dir>
+```
 
 ## Landing page
 

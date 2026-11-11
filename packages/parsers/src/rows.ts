@@ -206,6 +206,55 @@ function dataErrorOf(issue: z.core.$ZodIssue): DataError {
   return error as DataError;
 }
 
+/** Everything {@link RowValidator} needs except the rows, which arrive one by one. */
+export type MappedHeader = Omit<MappedTable, 'rows'>;
+
+/** Validates a table row by row, so a streaming reader never holds the raw rows (backlog V-13a). */
+export interface RowValidator {
+  /** Validates one row; a no-op once the error cap was reached. */
+  readonly push: (row: { readonly rowNumber: number; readonly cells: readonly RawCell[] }) => void;
+  /** `true` after {@link MAX_ROW_ERRORS} errors plus the `TOO_MANY_ERRORS` marker: stop reading. */
+  readonly full: () => boolean;
+  readonly finish: () => { readonly table: ValidatedTable; readonly errors: readonly DataError[] };
+}
+
+/** Incremental form of {@link validateRows}; both give identical records and errors. */
+export function createRowValidator(mapped: MappedHeader): RowValidator {
+  const { fileName, headers, mapping, dateSystem = 1900 } = mapped;
+  const schema = ROW_SCHEMAS[mapped.table];
+  const records: NumberedRecord<unknown>[] = [];
+  const errors: DataError[] = [];
+  let capped = false;
+  return {
+    push({ rowNumber, cells }) {
+      if (capped) return;
+      const values = mappedCells(cells, mapping, dateSystem);
+      if (values === null) return;
+      const parsed = schema.safeParse(values);
+      if (parsed.success) {
+        records.push({ rowNumber, record: parsed.data });
+        return;
+      }
+      for (const issue of parsed.error.issues) {
+        if (errors.length === MAX_ROW_ERRORS) {
+          errors.push({ code: 'TOO_MANY_ERRORS', fileName, params: { limit: MAX_ROW_ERRORS } });
+          capped = true;
+          return;
+        }
+        const column = headers[mapping[issue.path[0] as CanonicalColumn] ?? -1];
+        errors.push({
+          ...dataErrorOf(issue),
+          fileName,
+          row: rowNumber,
+          ...(column === undefined ? {} : { column }),
+        });
+      }
+    },
+    full: () => capped,
+    finish: () => ({ table: validatedTable(mapped, records), errors }),
+  };
+}
+
 /**
  * Validates the rows of a mapped table. Each row error carries the file name, physical line,
  * column header and at most the one offending cell (privacy, AGENTS.md §2).
@@ -217,36 +266,15 @@ export function validateRows(mapped: MappedTable): {
   readonly table: ValidatedTable;
   readonly errors: readonly DataError[];
 } {
-  const { fileName, headers, mapping, dateSystem = 1900 } = mapped;
-  const schema = ROW_SCHEMAS[mapped.table];
-  const records: NumberedRecord<unknown>[] = [];
-  const errors: DataError[] = [];
-  for (const { rowNumber, cells } of mapped.rows) {
-    const values = mappedCells(cells, mapping, dateSystem);
-    if (values === null) continue;
-    const parsed = schema.safeParse(values);
-    if (parsed.success) {
-      records.push({ rowNumber, record: parsed.data });
-      continue;
-    }
-    for (const issue of parsed.error.issues) {
-      if (errors.length === MAX_ROW_ERRORS) {
-        errors.push({ code: 'TOO_MANY_ERRORS', fileName, params: { limit: MAX_ROW_ERRORS } });
-        return { table: validatedTable(mapped, records), errors };
-      }
-      const column = headers[mapping[issue.path[0] as CanonicalColumn] ?? -1];
-      errors.push({
-        ...dataErrorOf(issue),
-        fileName,
-        row: rowNumber,
-        ...(column === undefined ? {} : { column }),
-      });
-    }
+  const validator = createRowValidator(mapped);
+  for (const row of mapped.rows) {
+    validator.push(row);
+    if (validator.full()) break;
   }
-  return { table: validatedTable(mapped, records), errors };
+  return validator.finish();
 }
 
-function validatedTable(mapped: MappedTable, records: NumberedRecord<unknown>[]): ValidatedTable {
+function validatedTable(mapped: MappedHeader, records: NumberedRecord<unknown>[]): ValidatedTable {
   // Each record was produced by ROW_SCHEMAS[mapped.table], so it has that table's record type.
   return { table: mapped.table, fileName: mapped.fileName, records } as ValidatedTable;
 }
