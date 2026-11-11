@@ -223,7 +223,9 @@
         "notHidden": "Nein",
         "details": "Details zu {materialId}",
         "showAll": "Alle anzeigen ({count})",
-        "showTop": "Nur die ersten {count} anzeigen"
+        "showTop": "Nur die ersten {count} anzeigen",
+        "showMore": "{count} weitere anzeigen",
+        "printLimited": "Gedruckt werden nur die angezeigten Zeilen; der CSV-Export enthält alle {total}."
       },
       "suppliers": {
         "heading": "Termintreue der Lieferanten",

@@ -13,6 +13,16 @@ import { ActionText, ReasonText, type SupplierName } from './explanation-text.ts
 /** Rows shown before "Alle anzeigen" (spec §4.1 step 4). */
 export const TOP_ROWS = 10;
 
+/**
+ * Up to this many exceptions every row stays in the page (the rest hidden by CSS) so the printed
+ * report lists them all. Beyond it only the rows on screen exist and the user pages through them,
+ * so 50 000 exceptions from a large file do not become 50 000 table rows (backlog V-13b).
+ */
+export const PRINT_ROW_LIMIT = 250;
+
+/** Rows added by "Show more" once the table is paged. */
+export const PAGE_ROWS = 100;
+
 const SEVERITY_STYLE = {
   CRITICAL: 'bg-critical text-critical-foreground',
   WARNING: 'bg-warning text-warning-foreground',
@@ -42,8 +52,13 @@ export interface ExceptionTableProps {
 export function ExceptionTable({ exceptions, supplierName, onSelect }: ExceptionTableProps) {
   const t = useTranslations('demo.report.table');
   const tableId = useId();
-  const [expanded, setExpanded] = useState(false);
-  const shown = expanded ? exceptions.length : Math.min(exceptions.length, TOP_ROWS);
+  const total = exceptions.length;
+  const paged = total > PRINT_ROW_LIMIT;
+  const [visible, setVisible] = useState(TOP_ROWS);
+  const shown = Math.min(total, visible);
+  const expanded = shown > TOP_ROWS;
+  // Paged tables render only what is shown; small ones keep every row for printing.
+  const rows = paged ? exceptions.slice(0, shown) : exceptions;
   return (
     <div className="space-y-3">
       <div
@@ -55,15 +70,16 @@ export function ExceptionTable({ exceptions, supplierName, onSelect }: Exception
         tabIndex={0}
         className="overflow-x-auto rounded-lg border focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none print:overflow-visible"
       >
-        <table id={tableId} data-total={exceptions.length} className="w-full text-sm print:text-xs">
+        <table id={tableId} data-total={total} className="w-full text-sm print:text-xs">
           <caption className="p-3 text-left font-medium">
-            <span className="print:hidden">
-              {t('caption', { shown, total: exceptions.length })}
-            </span>
-            {/* The printed report always lists every row (backlog P1-19). */}
-            {shown < exceptions.length && (
+            <span className="print:hidden">{t('caption', { shown, total })}</span>
+            {/* The printed report lists every row (backlog P1-19), unless the table is paged. */}
+            {!paged && shown < total && (
+              <span className="hidden print:inline">{t('caption', { shown: total, total })}</span>
+            )}
+            {paged && (
               <span className="hidden print:inline">
-                {t('caption', { shown: exceptions.length, total: exceptions.length })}
+                {t('caption', { shown, total })} {t('printLimited', { total })}
               </span>
             )}
           </caption>
@@ -88,7 +104,7 @@ export function ExceptionTable({ exceptions, supplierName, onSelect }: Exception
             </tr>
           </thead>
           <tbody>
-            {exceptions.map((exception, index) => (
+            {rows.map((exception, index) => (
               <ExceptionRow
                 // Duplicate material rows are possible, so the rank is part of the key.
                 key={`${exception.materialId}-${String(index)}`}
@@ -101,21 +117,34 @@ export function ExceptionTable({ exceptions, supplierName, onSelect }: Exception
           </tbody>
         </table>
       </div>
-      {exceptions.length > TOP_ROWS && (
-        <Button
-          type="button"
-          variant="outline"
-          className="print:hidden"
-          aria-controls={tableId}
-          aria-expanded={expanded}
-          onClick={() => {
-            setExpanded(!expanded);
-          }}
-        >
-          {expanded
-            ? t('showTop', { count: TOP_ROWS })
-            : t('showAll', { count: exceptions.length })}
-        </Button>
+      {total > TOP_ROWS && (
+        <div className="flex flex-wrap gap-2 print:hidden">
+          {paged && shown < total && (
+            <Button
+              type="button"
+              variant="outline"
+              aria-controls={tableId}
+              onClick={() => {
+                setVisible(shown + PAGE_ROWS);
+              }}
+            >
+              {t('showMore', { count: Math.min(PAGE_ROWS, total - shown) })}
+            </Button>
+          )}
+          {(!paged || expanded) && (
+            <Button
+              type="button"
+              variant="outline"
+              aria-controls={tableId}
+              aria-expanded={paged ? undefined : expanded}
+              onClick={() => {
+                setVisible(expanded ? TOP_ROWS : total);
+              }}
+            >
+              {expanded ? t('showTop', { count: TOP_ROWS }) : t('showAll', { count: total })}
+            </Button>
+          )}
+        </div>
       )}
     </div>
   );
