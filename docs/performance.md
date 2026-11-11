@@ -51,6 +51,21 @@ node packages/sample-data/scripts/measure-memory.ts whole <dir>
 node packages/sample-data/scripts/measure-memory.ts stream <dir>
 ```
 
+### The page stays responsive (V-13b)
+
+The worker reads each `File` through `stream()` and reports progress at most ten times a second;
+cancel stops at the next chunk. The result table is paged (10, then 100 more per click) once there
+are more than 250 exceptions, so 53 200 exceptions are never 53 200 table rows. The report crosses
+from the worker as one 22 MB structured clone (about 0.4 s to deserialise at 1M rows).
+
+Longest task on the main thread after the files were handed over (Long Tasks API, Chromium,
+`apps/web/e2e/demo-large.spec.ts`, 2026-11-11):
+
+| Demand rows | Longest main-thread task | Budget in the test |
+|---:|---:|---:|
+| 200 000 (CI) | 51 ms | 500 ms |
+| 1 000 000 (local, `E2E_LARGE_ROWS=1000000`) | 343 ms | 1000 ms |
+
 ## Landing page
 
 Lighthouse CI, mobile profile (simulated slow 4G), production build, median of 3 runs, local run
