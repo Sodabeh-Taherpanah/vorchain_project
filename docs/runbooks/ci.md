@@ -33,6 +33,13 @@ pnpm store cache, `pnpm install --frozen-lockfile`, Turborepo cache per job). Th
 the build job's Turborepo cache, so its `build` step is a cache hit. Playwright browsers are cached
 per Playwright version.
 
+`@playwright/test`, `playwright-core` and `@axe-core/playwright` are pinned to exact versions
+(1.63.0, 1.63.0, 4.13.0) on purpose. Playwright 1.65 ships Firefox 159, which crashes the page
+("Page crashed") in the XLSX and axe specs of `demo.spec.ts` (CI run #172, reproduced locally).
+`playwright-core` is listed so axe's peer resolves to the same version as `@playwright/test`;
+otherwise the two `Page` types differ and `tsc` fails. Move all three together, and only after
+`pnpm --filter @vorchain/web test:e2e` passes in Firefox.
+
 Security settings: default `permissions: contents: read`, jobs widen only what they need
 (`pull-requests: read` for gitleaks, `security-events: write` for CodeQL). Every action is pinned
 to a commit SHA with the version in a comment; Dependabot keeps them current. `concurrency`
