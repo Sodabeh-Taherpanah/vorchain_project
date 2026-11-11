@@ -76,16 +76,28 @@ Status: todo | doing | blocked | done. "done" needs evidence.
 - Evidence: docs/adr/0019 (optional server + Postgres, separate service, demo stays server-free), 0020 (Hetzner first, EU-owned managed DB later, hyperscaler only on demand), 0021 (AI Act risk class, Art. 50 transparency, GDPR roles, transfers, DPA needs); all three `proposed`; indexed in docs/adr/README.md; threat model: T19 added, T6 and T13 updated; UI claims in 0021 checked against `apps/web/messages/en.json`; `prettier --check docs` clean (see commit)
 
 ## V-12 Benchmarks and performance budgets
-- Status: in review
+- Status: done
 - Depends on: V-01
 - Acceptance: docs/performance.md has numbers for 10k/100k/1M rows; CI fails on bundle size or benchmark regression; Lighthouse CI runs
 - Evidence: `pnpm bench:update` + `pnpm bench:gate` (10k/100k/1M rows, numbers in docs/performance.md); `pnpm test:scripts` (9 unit tests for the gates); `pnpm budget:bundle` (180.8 KB gzip, ceiling 190 KB, +5% vs baseline); `pnpm lhci` passed locally on /de and /en (median of 3: Perf 99-100, A11y 100, BP 96, SEO 100, LCP 0.77 s, CLS 0). CI jobs `Performance budgets` and `Lighthouse CI` are new in ci.yml and can only be confirmed on GitHub.
 - Deviation: first-load JS of / is 180.8 KB, above the 120 KB target, so the enforced ceiling is 190 KB until the gap is closed (see docs/performance.md, "Known gap"). Follow-up needed (P1-27 or a new task).
 
 ## V-13 Large-file handling in the browser
-- Status: todo
+- Status: split into V-13a and V-13b (owner to confirm; 1M rows = 42 MB, so the 50 MB limit of ADR-0003 stays)
 - Depends on: V-12
 - Acceptance: streaming parse, worker chunks, progress and cancel; UI stays responsive on 1M rows; parity tests green
+- Evidence: see V-13a and V-13b
+
+## V-13a Streaming CSV parse to validated rows (parsers)
+- Status: todo
+- Depends on: V-12
+- Acceptance: `readCsvStream` over a re-openable async chunk source gives the same table as `readCsv` at any chunk size (differential test on all fixtures and python golden inputs, plus fast-check on split points); late invalid UTF-8 restarts as Windows-1252; quote errors keep physical line numbers; `validateRows` consumes rows incrementally with identical errors and `MAX_ROW_ERRORS`; XLSX stays whole-file (documented); peak RSS at 1M rows recorded before and after in docs/performance.md
+- Evidence:
+
+## V-13b Worker progress, cancel and large-report UI
+- Status: todo
+- Depends on: V-13a
+- Acceptance: worker reads `File` chunks, throttled progress and cancel (Comlink proxy, awaits between chunks); exception table paged so 53k exceptions stay responsive; progressbar with keyboard cancel, de and en strings; long-task check on a large load; e2e network test still passes; QA agent review (file handling and worker)
 - Evidence:
 
 ## V-14 Property-based and mutation tests for the engine
