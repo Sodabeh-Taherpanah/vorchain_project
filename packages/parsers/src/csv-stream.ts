@@ -125,7 +125,11 @@ class RecordScanner {
   /** Set when a quoted cell is closed by something odd; see {@link feed}. */
   private unsplittable = false;
 
-  constructor(private readonly delimiter: Delimiter) {}
+  private readonly delimiter: Delimiter;
+
+  constructor(delimiter: Delimiter) {
+    this.delimiter = delimiter;
+  }
 
   /**
    * Index of the last line break in `text` that ends a record, or -1. `final` lets a quote at the

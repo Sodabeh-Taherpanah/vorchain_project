@@ -89,10 +89,10 @@ Status: todo | doing | blocked | done. "done" needs evidence.
 - Evidence: see V-13a and V-13b
 
 ## V-13a Streaming CSV parse to validated rows (parsers)
-- Status: todo
+- Status: in review
 - Depends on: V-12
 - Acceptance: `readCsvStream` over a re-openable async chunk source gives the same table as `readCsv` at any chunk size (differential test on all fixtures and python golden inputs, plus fast-check on split points); late invalid UTF-8 restarts as Windows-1252; quote errors keep physical line numbers; `validateRows` consumes rows incrementally with identical errors and `MAX_ROW_ERRORS`; XLSX stays whole-file (documented); peak RSS at 1M rows recorded before and after in docs/performance.md
-- Evidence:
+- Evidence: packages/parsers/src/csv-stream.test.ts (195 tests): `streamCsv` deep-equals `readCsv` for every CSV fixture and 25 edge cases at chunk sizes 1 to 64 KB, plus fast-check over arbitrary text and chunk sizes (600 runs; mutation-checked: breaking the quote scanner fails it); load-sources.test.ts: `loadSources` equals `parseFile` + `loadTables` (errors, quote errors after the error cap, XLSX set, size limit rejected before reading); late invalid UTF-8 and late NUL handled by a first pass over the source; `validateRows` is now a loop over `createRowValidator`, rows.test.ts unchanged and green; parsers coverage 98 % lines; memory at 1M rows: 1.67 GB to 0.65 GB after load (docs/performance.md, `measure-memory.ts`).
 
 ## V-13b Worker progress, cancel and large-report UI
 - Status: todo
