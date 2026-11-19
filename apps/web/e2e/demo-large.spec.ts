@@ -74,6 +74,9 @@ async function openDemo(page: Page) {
 
 test.describe('a large upload', () => {
   test.skip(({ browserName }) => browserName !== 'chromium', 'Long Tasks API: Chromium only');
+  // Why serial: both tests load a very large file; running them side by side
+  // starves the main thread and makes the long-task budget flaky.
+  test.describe.configure({ mode: 'serial' });
 
   test('shows progress, pages the result and keeps the page responsive', async ({ page }) => {
     const sent = await openDemo(page);
