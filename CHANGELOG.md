@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.9.0](https://github.com/Sodabeh-Taherpanah/vorchain_project/compare/v0.8.0...v0.9.0) (2026-11-19)
+
+
+### Features
+
+* **parsers:** report byte progress while loading sources ([33dc18b](https://github.com/Sodabeh-Taherpanah/vorchain_project/commit/33dc18b7038353ddb4c361e9c9a3dd8df109278c))
+* **web:** page the exception table so large results stay responsive ([bd9bab8](https://github.com/Sodabeh-Taherpanah/vorchain_project/commit/bd9bab8bff695e70d60d1ae503e2ee79527dc320))
+* **web:** read files in chunks in the worker with progress and cancel ([b444fcf](https://github.com/Sodabeh-Taherpanah/vorchain_project/commit/b444fcf8b39994a8595538aa0fbcec1842a019df))
+* **web:** stream large files in the worker with progress, cancel and paging ([0fb5d72](https://github.com/Sodabeh-Taherpanah/vorchain_project/commit/0fb5d72dcdb0c300dda5425e780c0cbb6ad88571))
+
+
+### Bug Fixes
+
+* **web:** pin Playwright 1.63 and axe 4.13 to stop Firefox page crashes ([103c18b](https://github.com/Sodabeh-Taherpanah/vorchain_project/commit/103c18b899f64e777db13752ca3cd584ef433ea7))
+* **web:** pin Playwright 1.63 and axe 4.13 to stop Firefox page crashes ([93681fc](https://github.com/Sodabeh-Taherpanah/vorchain_project/commit/93681fc94cb2622a1b23fce9cbe737422b20668e))
+
 ## [0.8.0](https://github.com/Sodabeh-Taherpanah/vorchain_project/compare/v0.7.0...v0.8.0) (2026-11-11)
 
 
