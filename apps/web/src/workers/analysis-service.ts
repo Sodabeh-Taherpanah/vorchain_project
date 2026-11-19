@@ -17,15 +17,15 @@ import {
   type Report,
 } from '@vorchain/engine';
 import {
-  loadTables,
+  chunkSourceFromBytes,
+  loadSources,
   MAX_FILE_BYTES,
-  parseFile,
+  type ChunkSource,
   type DataError,
   type LoadResult,
-  type RawTable,
-  type SourceFile,
 } from '@vorchain/parsers';
 import type { SampleLocale } from '@vorchain/sample-data';
+import { releaseProxy } from 'comlink';
 
 /** What the page learns from a load: `LoadResult` without the input, which stays in the worker. */
 export interface LoadSummary {
@@ -43,8 +43,26 @@ export interface LoadSummary {
   readonly supplierNames: Readonly<Record<string, string>>;
 }
 
+/** How far a load is; counts only, never file content (AGENTS.md section 2). */
+export interface LoadProgress {
+  readonly bytesRead: number;
+  readonly totalBytes: number;
+}
+
+/** The page's callback; it reaches the worker as a Comlink proxy. */
+export type ProgressListener = (progress: LoadProgress) => void;
+
 export interface AnalysisService {
-  readonly loadFiles: (files: readonly File[]) => Promise<LoadSummary>;
+  /**
+   * Reads the files in chunks inside the worker. `onProgress` is called at most about ten times a
+   * second. A load that was cancelled or replaced resolves with `ready: false` and no tables.
+   */
+  readonly loadFiles: (
+    files: readonly File[],
+    onProgress?: ProgressListener,
+  ) => Promise<LoadSummary>;
+  /** Stops the load that is running (if any), drops what it read and frees its memory. */
+  readonly cancel: () => Promise<void>;
   readonly loadSample: (locale: SampleLocale) => Promise<LoadSummary>;
   readonly analyse: (options: AnalysisOptions) => Promise<Report>;
   readonly getProjection: (materialId: MaterialId) => Promise<ProjectionSeries>;
@@ -71,22 +89,75 @@ function tooLarge(): LoadResult {
   return { tables: [], errors: [error], warnings: [], input: null };
 }
 
-async function parseAll(files: readonly SourceFile[]): Promise<LoadResult> {
-  const parsed = await Promise.all(files.map(parseFile));
-  const tables: RawTable[] = parsed.flatMap((r) => (r.ok ? [r.value] : []));
-  const fileErrors = parsed.flatMap((r) => (r.ok ? [] : [r.error]));
-  const loaded = loadTables(tables);
-  if (fileErrors.length === 0) return loaded;
-  return { ...loaded, errors: [...fileErrors, ...loaded.errors], input: null };
+/**
+ * The page's progress callback arrives as a Comlink proxy that holds a message port; releasing it
+ * closes the port. A plain function (tests, no Comlink) has nothing to release.
+ */
+function releaseListener(listener: ProgressListener | undefined): void {
+  const release = (listener as Partial<Record<typeof releaseProxy, () => void>> | undefined)?.[
+    releaseProxy
+  ];
+  release?.();
 }
 
-async function readUploads(files: readonly File[]): Promise<LoadResult> {
-  const total = files.reduce((sum, file) => sum + file.size, 0);
-  if (total > MAX_TOTAL_BYTES) return tooLarge();
-  const sources = await Promise.all(
-    files.map(async (file) => ({ name: file.name, bytes: await file.arrayBuffer() })),
-  );
-  return parseAll(sources);
+/** Thrown inside a load that was cancelled or replaced; never leaves this module. */
+class LoadStopped extends Error {}
+
+/** Progress is sent at most this often; every chunk still checks whether the load was stopped. */
+export const PROGRESS_INTERVAL_MS = 100;
+
+const nextTask = (): Promise<void> =>
+  new Promise((resolve) => {
+    setTimeout(resolve, 0);
+  });
+
+/**
+ * Reads a `File` chunk by chunk (`File.stream()`); the bytes of one chunk are garbage once the
+ * parser has used them. Can be opened again, as the parsers need two passes for the encoding.
+ */
+function chunkSourceFromFile(file: File): ChunkSource {
+  return {
+    name: file.name,
+    size: file.size,
+    async *open() {
+      const reader = file.stream().getReader();
+      try {
+        for (;;) {
+          const { done, value } = await reader.read();
+          if (done) return;
+          yield value;
+        }
+      } finally {
+        // Also runs when the parser stops early (peeking at the first bytes, cancel, an error).
+        await reader.cancel().catch(() => undefined);
+      }
+    },
+  };
+}
+
+async function loadAll(
+  sources: readonly ChunkSource[],
+  isCurrent: () => boolean,
+  onProgress: ProgressListener | undefined,
+): Promise<LoadResult> {
+  let lastSent = Number.NEGATIVE_INFINITY;
+  try {
+    return await loadSources(sources, {
+      async onProgress(bytesRead, totalBytes) {
+        if (!isCurrent()) throw new LoadStopped();
+        const now = performance.now();
+        if (now - lastSent < PROGRESS_INTERVAL_MS) return;
+        lastSent = now;
+        // A real task boundary, so a `cancel()` message can be handled during a long load.
+        await nextTask();
+        if (!isCurrent()) throw new LoadStopped();
+        onProgress?.({ bytesRead, totalBytes });
+      },
+    });
+  } catch (error) {
+    if (error instanceof LoadStopped) return { tables: [], errors: [], warnings: [], input: null };
+    throw error;
+  }
 }
 
 /** Creates one analysis session; the worker holds exactly one. */
@@ -95,6 +166,8 @@ export function createAnalysisService(): AnalysisService {
   let lastOptions: AnalysisOptions | null = null;
   // Loads await file reads, so an older load can finish after a newer one; only the newest counts.
   let latestLoad = 0;
+  // The load that is reading right now, so `cancel` knows whether there is anything to stop.
+  let reading: number | null = null;
 
   const remember = (load: number, result: LoadResult, asOf: IsoDate | null): LoadSummary => {
     const { tables, errors, warnings } = result;
@@ -112,9 +185,31 @@ export function createAnalysisService(): AnalysisService {
   };
 
   return {
-    async loadFiles(files) {
+    async loadFiles(files, onProgress) {
       const load = ++latestLoad;
-      return remember(load, await readUploads(files), null);
+      const total = files.reduce((sum, file) => sum + file.size, 0);
+      if (total > MAX_TOTAL_BYTES) return remember(load, tooLarge(), null);
+      reading = load;
+      try {
+        const result = await loadAll(
+          files.map(chunkSourceFromFile),
+          () => load === latestLoad,
+          onProgress,
+        );
+        return remember(load, result, null);
+      } finally {
+        if (reading === load) reading = null;
+        releaseListener(onProgress);
+      }
+    },
+
+    // eslint-disable-next-line @typescript-eslint/require-await -- see `analyse`.
+    async cancel() {
+      if (reading === null) return;
+      latestLoad += 1;
+      reading = null;
+      input = null;
+      lastOptions = null;
     },
 
     async loadSample(locale) {
@@ -123,11 +218,14 @@ export function createAnalysisService(): AnalysisService {
       const { sampleDatasets } = await import('@vorchain/sample-data');
       const dataset = sampleDatasets[locale];
       const encoder = new TextEncoder();
-      const sources = dataset.files.map((f) => ({
-        name: f.name,
-        bytes: encoder.encode(f.content),
-      }));
-      return remember(load, await parseAll(sources), dataset.asOf);
+      const sources = dataset.files.map((f) =>
+        chunkSourceFromBytes(f.name, encoder.encode(f.content)),
+      );
+      return remember(
+        load,
+        await loadAll(sources, () => load === latestLoad, undefined),
+        dataset.asOf,
+      );
     },
 
     // eslint-disable-next-line @typescript-eslint/require-await -- Comlink calls are async anyway; a rejected promise is the uniform error channel.

@@ -89,16 +89,16 @@ Status: todo | doing | blocked | done. "done" needs evidence.
 - Evidence: see V-13a and V-13b
 
 ## V-13a Streaming CSV parse to validated rows (parsers)
-- Status: in review
+- Status: done (merged #73)
 - Depends on: V-12
 - Acceptance: `readCsvStream` over a re-openable async chunk source gives the same table as `readCsv` at any chunk size (differential test on all fixtures and python golden inputs, plus fast-check on split points); late invalid UTF-8 restarts as Windows-1252; quote errors keep physical line numbers; `validateRows` consumes rows incrementally with identical errors and `MAX_ROW_ERRORS`; XLSX stays whole-file (documented); peak RSS at 1M rows recorded before and after in docs/performance.md
 - Evidence: packages/parsers/src/csv-stream.test.ts (195 tests): `streamCsv` deep-equals `readCsv` for every CSV fixture and 25 edge cases at chunk sizes 1 to 64 KB, plus fast-check over arbitrary text and chunk sizes (600 runs; mutation-checked: breaking the quote scanner fails it); load-sources.test.ts: `loadSources` equals `parseFile` + `loadTables` (errors, quote errors after the error cap, XLSX set, size limit rejected before reading); late invalid UTF-8 and late NUL handled by a first pass over the source; `validateRows` is now a loop over `createRowValidator`, rows.test.ts unchanged and green; parsers coverage 98 % lines; memory at 1M rows: 1.67 GB to 0.65 GB after load (docs/performance.md, `measure-memory.ts`).
 
 ## V-13b Worker progress, cancel and large-report UI
-- Status: todo
+- Status: done
 - Depends on: V-13a
 - Acceptance: worker reads `File` chunks, throttled progress and cancel (Comlink proxy, awaits between chunks); exception table paged so 53k exceptions stay responsive; progressbar with keyboard cancel, de and en strings; long-task check on a large load; e2e network test still passes; QA agent review (file handling and worker)
-- Evidence:
+- Evidence: analysis-service.test.ts (progress carries only `bytesRead` and `totalBytes`; throttled to one update per interval; cancel stops the read at the next chunk, frees the input, load resolves not ready; cancel with nothing loading keeps data; load works after cancel); use-analysis.test.ts (progress in state, timeout clock restarts on each report, cancel ignores the late result and keeps the worker); demo-data-source.test.tsx (progressbar value and cancel button); exception-table.test.tsx (paged above 250: only shown rows in the DOM, pages of 100, remainder, collapse, print caption; unchanged up to 250). e2e/demo-large.spec.ts (Chromium): 200k rows in CI, 1M rows locally: progressbar shown, status complete, table paged, longest main-thread task 51 ms (200k) and 343 ms (1M), no request carries content; cancel then reload works. parsers: `loadSources` onProgress (4 tests). Full e2e in all three browsers green. docs/performance.md. QA review done (pass with notes): demo-large.spec.ts now serial; full e2e 3 runs: 131/131, 131/131, 130/131 (unrelated demo-data-source test failed under load, passes alone). Open notes: XLSX read whole with one progress report; loadSample not cancellable
 
 ## V-14 Property-based and mutation tests for the engine
 - Status: todo

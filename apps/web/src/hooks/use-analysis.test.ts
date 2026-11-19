@@ -49,6 +49,7 @@ function strictTerminate() {
 function fakeService(overrides: Partial<AnalysisService> = {}): AnalysisService {
   return {
     loadFiles: vi.fn(() => Promise.resolve({ ...loaded, asOf: null })),
+    cancel: vi.fn(() => Promise.resolve()),
     loadSample: vi.fn(() => Promise.resolve(loaded)),
     analyse: vi.fn(() => Promise.resolve(report)),
     getProjection: vi.fn(() => Promise.resolve(series)),
@@ -94,7 +95,7 @@ describe('useAnalysis', () => {
     act(() => {
       load = hook.result.current.loadSample('de');
     });
-    expect(hook.result.current.state).toEqual({ status: 'loading' });
+    expect(hook.result.current.state).toEqual({ status: 'loading', progress: null });
     await act(() => load);
     expect(hook.result.current.state).toEqual({ status: 'mapped', load: loaded });
 
@@ -117,7 +118,7 @@ describe('useAnalysis', () => {
 
     await act(() => hook.result.current.loadFiles([file]));
 
-    expect(service.loadFiles).toHaveBeenCalledWith([file]);
+    expect(service.loadFiles).toHaveBeenCalledWith([file], expect.any(Function));
     expect(read).not.toHaveBeenCalled();
     expect(text).not.toHaveBeenCalled();
   });
@@ -141,7 +142,7 @@ describe('useAnalysis', () => {
       void hook.result.current.loadSample('de');
     });
     await act(() => vi.advanceTimersByTimeAsync(ANALYSIS_TIMEOUT_MS - 1));
-    expect(hook.result.current.state).toEqual({ status: 'loading' });
+    expect(hook.result.current.state).toEqual({ status: 'loading', progress: null });
     await act(() => vi.advanceTimersByTimeAsync(1));
 
     expect(hook.result.current.state).toEqual({ status: 'error', error: 'ANALYSIS_TIMEOUT' });
@@ -232,7 +233,7 @@ describe('useAnalysis', () => {
       older.resolve(olderLoad);
       await first;
     });
-    expect(hook.result.current.state).toEqual({ status: 'loading' });
+    expect(hook.result.current.state).toEqual({ status: 'loading', progress: null });
     await act(async () => {
       newer.resolve(loaded);
       await second;
@@ -413,5 +414,106 @@ describe('useAnalysis', () => {
     await expect(projection).resolves.toBeNull();
     expect(connect).toHaveBeenCalledTimes(2);
     expect(hook.result.current.state).toEqual({ status: 'mapped', load: loaded });
+  });
+
+  describe('progress and cancel', () => {
+    const progress = (bytesRead: number) => ({ bytesRead, totalBytes: 100 });
+    const file = () => new File(['a;b\n'], 'bedarf.csv');
+
+    it('shows the progress the worker reports while loading', async () => {
+      const pending = deferred<LoadSummary>();
+      const loadFiles = vi.fn<AnalysisService['loadFiles']>((_files, onProgress) => {
+        onProgress?.(progress(40));
+        return pending.promise;
+      });
+      const { hook } = setup(fakeService({ loadFiles }));
+
+      act(() => {
+        void hook.result.current.loadFiles([file()]);
+      });
+
+      expect(hook.result.current.state).toEqual({ status: 'loading', progress: progress(40) });
+      await act(async () => {
+        pending.resolve(loaded);
+        await pending.promise;
+      });
+      expect(hook.result.current.state.status).toBe('mapped');
+    });
+
+    it('restarts the timeout clock with every progress report', async () => {
+      let report: (bytesRead: number) => void = () => undefined;
+      const loadFiles = vi.fn<AnalysisService['loadFiles']>((_files, onProgress) => {
+        report = (n) => onProgress?.(progress(n));
+        return new Promise(() => undefined);
+      });
+      const { hook, terminate } = setup(fakeService({ loadFiles }));
+      act(() => {
+        void hook.result.current.loadFiles([file()]);
+      });
+
+      for (const bytes of [10, 20, 30]) {
+        await act(() => vi.advanceTimersByTimeAsync(ANALYSIS_TIMEOUT_MS - 1));
+        act(() => {
+          report(bytes);
+        });
+      }
+      expect(hook.result.current.state.status).toBe('loading');
+      expect(terminate).not.toHaveBeenCalled();
+
+      await act(() => vi.advanceTimersByTimeAsync(ANALYSIS_TIMEOUT_MS));
+      expect(hook.result.current.state).toEqual({ status: 'error', error: 'ANALYSIS_TIMEOUT' });
+    });
+
+    it('cancel stops the worker call, shows cancelled and ignores the late result', async () => {
+      const pending = deferred<LoadSummary>();
+      const service = fakeService({ loadFiles: vi.fn(() => pending.promise) });
+      const { hook, terminate } = setup(service);
+      let load: Promise<LoadSummary | null> = Promise.resolve(null);
+      act(() => {
+        load = hook.result.current.loadFiles([file()]);
+      });
+
+      act(() => {
+        hook.result.current.cancel();
+      });
+      expect(hook.result.current.state).toEqual({ status: 'cancelled' });
+      expect(service.cancel).toHaveBeenCalledOnce();
+
+      await act(async () => {
+        pending.resolve({ ...loaded, ready: false });
+        await load;
+      });
+      expect(hook.result.current.state).toEqual({ status: 'cancelled' });
+      expect(terminate).not.toHaveBeenCalled(); // the worker stays for the next load
+    });
+
+    it('cancel does nothing when no load is running', async () => {
+      const { hook, service } = setup();
+      await act(() => hook.result.current.loadSample('de'));
+
+      act(() => {
+        hook.result.current.cancel();
+      });
+
+      expect(hook.result.current.state.status).toBe('mapped');
+      expect(service.cancel).not.toHaveBeenCalled();
+    });
+
+    it('loads again after a cancel', async () => {
+      const service = fakeService({
+        loadFiles: vi.fn(() => new Promise<LoadSummary>(() => undefined)),
+      });
+      const { hook } = setup(service);
+      act(() => {
+        void hook.result.current.loadFiles([file()]);
+      });
+      act(() => {
+        hook.result.current.cancel();
+      });
+
+      await act(() => hook.result.current.loadSample('de'));
+
+      expect(hook.result.current.state.status).toBe('mapped');
+    });
   });
 });

@@ -40,8 +40,10 @@ async function readAll(source: ChunkSource): Promise<Uint8Array> {
 
 type Loaded = { readonly file: LoadedFile } | { readonly error: DataError };
 
-async function loadWorkbook(source: ChunkSource): Promise<Loaded> {
-  const read = await readXlsx({ name: source.name, bytes: await readAll(source) });
+async function loadWorkbook(source: ChunkSource, onBytes: ByteCounter): Promise<Loaded> {
+  const bytes = await readAll(source);
+  await onBytes(bytes.byteLength);
+  const read = await readXlsx({ name: source.name, bytes });
   if (!read.ok) return { error: read.error };
   const begun = beginTable(read.value);
   if ('settled' in begun) return { file: begun.settled };
@@ -49,7 +51,7 @@ async function loadWorkbook(source: ChunkSource): Promise<Loaded> {
   return { file: begun.inProgress.finish() };
 }
 
-async function loadCsv(source: ChunkSource): Promise<Loaded> {
+async function loadCsv(source: ChunkSource, onBytes: ByteCounter): Promise<Loaded> {
   const state: { current: LoadedFile | TableInProgress | null } = { current: null };
   const result = await streamCsv(source, {
     onHead(head) {
@@ -61,6 +63,7 @@ async function loadCsv(source: ChunkSource): Promise<Loaded> {
       if (current === null || !('push' in current)) return;
       for (const row of rows) current.push(row);
     },
+    onBytes,
   });
   if (!result.ok) return { error: result.error };
   const { current } = state;
@@ -69,11 +72,23 @@ async function loadCsv(source: ChunkSource): Promise<Loaded> {
   return { file: 'push' in current ? current.finish() : current };
 }
 
-async function loadSource(source: ChunkSource): Promise<Loaded> {
+type ByteCounter = (bytesOfThisFile: number) => void | Promise<void>;
+
+async function loadSource(source: ChunkSource, onBytes: ByteCounter): Promise<Loaded> {
   const rejected = rejectBeforeReading(source.name, source.size);
   if (rejected !== null) return { error: rejected };
   const head = await firstBytes(source, 8);
-  return isWorkbookContainer(head) ? loadWorkbook(source) : loadCsv(source);
+  return isWorkbookContainer(head) ? loadWorkbook(source, onBytes) : loadCsv(source, onBytes);
+}
+
+/** Options of {@link loadSources}. */
+export interface LoadSourcesOptions {
+  /**
+   * Called after each chunk with the bytes read so far across all files and their total size.
+   * Awaited: it may yield to the event loop or throw (e.g. to cancel); the error propagates out
+   * of `loadSources`. Counts only, never content (AGENTS.md section 2).
+   */
+  readonly onProgress?: (bytesRead: number, totalBytes: number) => void | Promise<void>;
 }
 
 /**
@@ -81,9 +96,18 @@ async function loadSource(source: ChunkSource): Promise<Loaded> {
  * File-level errors (`NOT_TEXT`, `EMPTY_FILE`, quote errors, size, type) come first, then the
  * table errors; `input` is `null` if there is any, as with `parseFile` + `loadTables`.
  */
-export async function loadSources(sources: readonly ChunkSource[]): Promise<LoadResult> {
+export async function loadSources(
+  sources: readonly ChunkSource[],
+  { onProgress }: LoadSourcesOptions = {},
+): Promise<LoadResult> {
+  const totalBytes = sources.reduce((sum, source) => sum + source.size, 0);
   const loaded: Loaded[] = [];
-  for (const source of sources) loaded.push(await loadSource(source));
+  let before = 0;
+  for (const source of sources) {
+    const offset = before;
+    loaded.push(await loadSource(source, (own) => onProgress?.(offset + own, totalBytes)));
+    before += source.size;
+  }
   const files = loaded.flatMap((l) => ('file' in l ? [l.file] : []));
   const fileErrors = loaded.flatMap((l) => ('error' in l ? [l.error] : []));
   const result = combineLoaded(files);

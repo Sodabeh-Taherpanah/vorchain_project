@@ -7,7 +7,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import de from '../../../messages/de.json';
 import en from '../../../messages/en.json';
-import { ExceptionTable, TOP_ROWS } from './exception-table.tsx';
+import { ExceptionTable, PAGE_ROWS, PRINT_ROW_LIMIT, TOP_ROWS } from './exception-table.tsx';
 import { supplierNameLookup } from './explanation-text.tsx';
 import { OverdueNote, SummaryTiles } from './summary-tiles.tsx';
 import { exception, overdueReason, testReport } from './test-report.ts';
@@ -238,5 +238,76 @@ describe('OverdueNote', () => {
     const { container } = renderIn('de', <OverdueNote overdue={[]} supplierName={supplierName} />);
 
     expect(container.textContent).toBe('');
+  });
+
+  describe('a large result', () => {
+    const total = PRINT_ROW_LIMIT + 2 * PAGE_ROWS + 30;
+    const many = () =>
+      Array.from({ length: total }, (_, i) => exception(`M${String(i).padStart(5, '0')}`));
+    const rowCount = () => screen.getAllByRole('row').length - 1; // minus the header row
+
+    it('puts only the top rows in the page, so 50 000 exceptions are not 50 000 rows', () => {
+      renderIn('en', <ExceptionTable exceptions={many()} supplierName={supplierName} />);
+
+      expect(rowCount()).toBe(TOP_ROWS);
+      expect(screen.getByRole('table').querySelector('caption')?.textContent).toContain(
+        `(${String(TOP_ROWS)} of ${String(total)})`,
+      );
+      expect(screen.queryByRole('button', { name: /Show all/ })).toBeNull();
+    });
+
+    it('adds one page at a time and shows how many are left', async () => {
+      const user = userEvent.setup();
+      renderIn('en', <ExceptionTable exceptions={many()} supplierName={supplierName} />);
+
+      await user.click(screen.getByRole('button', { name: `Show ${String(PAGE_ROWS)} more` }));
+      expect(rowCount()).toBe(TOP_ROWS + PAGE_ROWS);
+
+      await user.click(screen.getByRole('button', { name: `Show ${String(PAGE_ROWS)} more` }));
+      await user.click(screen.getByRole('button', { name: `Show ${String(PAGE_ROWS)} more` }));
+      expect(rowCount()).toBe(TOP_ROWS + 3 * PAGE_ROWS);
+    });
+
+    it('offers only the remainder on the last page and then no more button', async () => {
+      const user = userEvent.setup();
+      renderIn('en', <ExceptionTable exceptions={many()} supplierName={supplierName} />);
+
+      for (let page = 0; page < 5; page += 1) {
+        const more = screen.queryByRole('button', { name: /more$/ });
+        if (more === null) break;
+        await user.click(more);
+      }
+
+      expect(rowCount()).toBe(total);
+      expect(screen.queryByRole('button', { name: /more$/ })).toBeNull();
+    });
+
+    it('collapses back to the top rows', async () => {
+      const user = userEvent.setup();
+      renderIn('en', <ExceptionTable exceptions={many()} supplierName={supplierName} />);
+      await user.click(screen.getByRole('button', { name: `Show ${String(PAGE_ROWS)} more` }));
+
+      await user.click(
+        screen.getByRole('button', { name: `Show only the first ${String(TOP_ROWS)}` }),
+      );
+
+      expect(rowCount()).toBe(TOP_ROWS);
+    });
+
+    it('says in the printed caption that only the shown rows are printed', () => {
+      renderIn('en', <ExceptionTable exceptions={many()} supplierName={supplierName} />);
+
+      const printed = screen.getByRole('table').querySelector('caption .print\\:inline');
+      expect(printed?.textContent).toContain(`the CSV export lists all ${String(total)}`);
+    });
+
+    it('keeps every row for printing right up to the limit', () => {
+      const atLimit = Array.from({ length: PRINT_ROW_LIMIT }, (_, i) =>
+        exception(`M${String(i).padStart(5, '0')}`),
+      );
+      renderIn('en', <ExceptionTable exceptions={atLimit} supplierName={supplierName} />);
+
+      expect(rowCount()).toBe(PRINT_ROW_LIMIT);
+    });
   });
 });

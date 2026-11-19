@@ -93,7 +93,11 @@
     "status": {
       "loading": "Daten werden im Browser gelesen …",
       "complete": "Alle Pflichttabellen erkannt. Die Daten sind bereit für die Analyse.",
-      "incomplete": "{count, plural, one {# Problem gefunden} other {# Probleme gefunden}}. Details stehen bei den Tabellen unten."
+      "incomplete": "{count, plural, one {# Problem gefunden} other {# Probleme gefunden}}. Details stehen bei den Tabellen unten.",
+      "cancelled": "Laden abgebrochen. Es wurde nichts behalten.",
+      "progressLabel": "Ihre Dateien werden gelesen",
+      "percent": "{percent} %",
+      "cancel": "Abbrechen"
     },
     "mapCheck": {
       "heading": "2. Erkannte Tabellen",
@@ -219,7 +223,9 @@
         "notHidden": "Nein",
         "details": "Details zu {materialId}",
         "showAll": "Alle anzeigen ({count})",
-        "showTop": "Nur die ersten {count} anzeigen"
+        "showTop": "Nur die ersten {count} anzeigen",
+        "showMore": "{count} weitere anzeigen",
+        "printLimited": "Gedruckt werden nur die angezeigten Zeilen; der CSV-Export enthält alle {total}."
       },
       "suppliers": {
         "heading": "Termintreue der Lieferanten",

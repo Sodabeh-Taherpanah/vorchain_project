@@ -7,7 +7,7 @@ import { MAX_FILE_BYTES } from '@vorchain/parsers';
 import { sampleDatasets } from '@vorchain/sample-data';
 import { describe, expect, it, vi } from 'vitest';
 
-import { createAnalysisService } from './analysis-service.ts';
+import { createAnalysisService, PROGRESS_INTERVAL_MS } from './analysis-service.ts';
 
 interface GoldenException {
   readonly severity: 'CRITICAL' | 'WARNING';
@@ -97,7 +97,7 @@ describe('createAnalysisService', () => {
       new File([new Uint8Array(half)], 'a.csv'),
       new File([new Uint8Array(half)], 'b.csv'),
     ];
-    const reads = files.map((f) => vi.spyOn(f, 'arrayBuffer'));
+    const reads = files.map((f) => vi.spyOn(f, 'stream'));
 
     const load = await service.loadFiles(files);
 
@@ -148,11 +148,20 @@ describe('createAnalysisService', () => {
       release = resolve;
     });
     for (const file of slow) {
-      const read = file.arrayBuffer.bind(file);
-      vi.spyOn(file, 'arrayBuffer').mockImplementation(async () => {
-        await gate;
-        return read();
-      });
+      const original = file.stream.bind(file);
+      vi.spyOn(file, 'stream').mockImplementation(
+        () =>
+          new ReadableStream<Uint8Array<ArrayBuffer>>({
+            async start(controller) {
+              await gate;
+              const reader = original().getReader();
+              for (let part = await reader.read(); !part.done; part = await reader.read()) {
+                controller.enqueue(part.value);
+              }
+              controller.close();
+            },
+          }),
+      );
     }
 
     const older = service.loadFiles(slow);
@@ -165,5 +174,104 @@ describe('createAnalysisService', () => {
     await expect(service.analyse({ asOf: golden.asOf, horizonDays: 28 })).rejects.toThrow(
       /no input/i,
     );
+  });
+
+  describe('progress and cancel', () => {
+    /** A demand table of about `kb` kilobytes: several chunks for `File.stream()`. */
+    const bigDemand = (kb: number): File => {
+      const row = 'M0001;05.10.2026;3\n';
+      return new File(
+        ['Artikelnummer;Datum;Menge\n', row.repeat(Math.ceil((kb * 1024) / row.length))],
+        'bedarf.csv',
+      );
+    };
+    const withFile = (replacement: File): File[] =>
+      sampleFiles().map((f) => (f.name === replacement.name ? replacement : f));
+
+    it('reports byte counts and nothing else', async () => {
+      const service = createAnalysisService();
+      const seen: object[] = [];
+
+      const load = await service.loadFiles(sampleFiles(), (progress) => void seen.push(progress));
+
+      expect(load.ready).toBe(true);
+      expect(seen.length).toBeGreaterThan(0);
+      for (const progress of seen) {
+        expect(Object.keys(progress).sort()).toEqual(['bytesRead', 'totalBytes']);
+      }
+    });
+
+    it('sends at most one update per interval although every chunk is checked', async () => {
+      const now = vi.spyOn(performance, 'now').mockReturnValue(1000); // time stands still
+      try {
+        const service = createAnalysisService();
+        const calls: number[] = [];
+        await service.loadFiles(withFile(bigDemand(600)), (p) => void calls.push(p.bytesRead));
+        expect(calls).toHaveLength(1);
+      } finally {
+        now.mockRestore();
+      }
+    });
+
+    it('sends growing counts when time passes between chunks', async () => {
+      let clock = 0;
+      const now = vi
+        .spyOn(performance, 'now')
+        .mockImplementation(() => (clock += PROGRESS_INTERVAL_MS));
+      try {
+        const service = createAnalysisService();
+        const calls: number[] = [];
+        await service.loadFiles(withFile(bigDemand(600)), (p) => void calls.push(p.bytesRead));
+        expect(calls.length).toBeGreaterThan(3);
+        expect(calls).toEqual([...calls].sort((a, b) => a - b));
+      } finally {
+        now.mockRestore();
+      }
+    });
+
+    it('cancel stops the read, frees the input and resolves the load as not ready', async () => {
+      const service = createAnalysisService();
+      let chunksAfterCancel = 0;
+      let cancelled = false;
+      let clock = 0;
+      vi.spyOn(performance, 'now').mockImplementation(() => (clock += PROGRESS_INTERVAL_MS));
+
+      const load = await service.loadFiles(withFile(bigDemand(600)), () => {
+        if (cancelled) chunksAfterCancel += 1;
+        else {
+          cancelled = true;
+          void service.cancel();
+        }
+      });
+
+      vi.restoreAllMocks();
+      expect(load).toMatchObject({ ready: false, tables: [], errors: [] });
+      expect(chunksAfterCancel).toBe(0);
+      await expect(service.analyse({ asOf: golden.asOf, horizonDays: 28 })).rejects.toThrow(
+        /no input/i,
+      );
+    });
+
+    it('cancel with nothing loading keeps the loaded data', async () => {
+      const service = createAnalysisService();
+      await service.loadSample('de');
+
+      await service.cancel();
+
+      const report = await service.analyse({ asOf: golden.asOf, horizonDays: golden.horizon });
+      expect(report.summary).toMatchObject(goldenSummary);
+    });
+
+    it('can load again after a cancel', async () => {
+      const service = createAnalysisService();
+      let clock = 0;
+      vi.spyOn(performance, 'now').mockImplementation(() => (clock += PROGRESS_INTERVAL_MS));
+      await service.loadFiles(withFile(bigDemand(600)), () => void service.cancel());
+      vi.restoreAllMocks();
+
+      const load = await service.loadFiles(sampleFiles());
+
+      expect(load.ready).toBe(true);
+    });
   });
 });

@@ -10,6 +10,7 @@ export const PARSERS_PACKAGE_NAME = '@vorchain/parsers';
 
 export { assembleInput, loadTables, REQUIRED_TABLES } from './assemble.ts';
 export { loadSources } from './load-sources.ts';
+export type { LoadSourcesOptions } from './load-sources.ts';
 export { chunkSourceFromBytes, streamCsv } from './csv-stream.ts';
 export type { ChunkSource, CsvHead, CsvRowSink } from './csv-stream.ts';
 export type { LoadResult, RecognisedTable } from './assemble.ts';

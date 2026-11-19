@@ -56,6 +56,11 @@ export interface CsvHead {
 export interface CsvRowSink {
   readonly onHead: (head: CsvHead) => void;
   readonly onRows: (rows: readonly RawRow[]) => void | Promise<void>;
+  /**
+   * Called after each chunk of the parse pass with the bytes read so far; awaited, so the sink may
+   * yield to the event loop or throw to stop the read (the error comes out of `streamCsv`).
+   */
+  readonly onBytes?: (bytesRead: number) => void | Promise<void>;
 }
 
 const UTF8_BOM = [0xef, 0xbb, 0xbf] as const;
@@ -218,6 +223,7 @@ export async function streamCsv(
     buffer: '',
     line: 1,
   };
+  let bytesRead = 0;
   let heldReturn = ''; // a trailing "\r" may be the first half of "\r\n"
 
   /** Parses complete records, numbering lines from `state.line`; delivers rows or returns an error. */
@@ -274,6 +280,8 @@ export async function streamCsv(
     state.buffer += normaliseLineBreaks(cut ? text.slice(0, -1) : text);
     const failed = await drain(false);
     if (failed !== null) return err(failed);
+    bytesRead += chunk.byteLength;
+    await sink.onBytes?.(bytesRead);
   }
   state.buffer += normaliseLineBreaks(heldReturn + decoder.decode());
   const failed = await drain(true);
